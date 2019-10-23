@@ -1,0 +1,40 @@
+{
+  "project_info": {
+    "project_number": "230872018787",
+    "firebase_url": "https://doctonomy-5191f.firebaseio.com",
+    "project_id": "doctonomy-5191f",
+    "storage_bucket": "doctonomy-5191f.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:230872018787:android:b51bfa1d75b40f2315ad56",
+        "android_client_info": {
+          "package_name": "com.doctonomyapp.com.doctonomy_app"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "230872018787-0hv68551d2ngolo4jsi50sc65r9tdrk6.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyANrbG50kuBhb-Iw200cjIAzvY5_jRcOw8"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "230872018787-0hv68551d2ngolo4jsi50sc65r9tdrk6.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
