@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
+import './widgets/Hyperlink.dart';
+
 
 void main() => runApp(MyApp());
 
@@ -42,7 +43,16 @@ class LoginPageState extends State<LoginPage> {
             ),
           ),
 
-
+          Positioned(
+            right: 195.0,
+            bottom: 80.0,
+            child: Hyperlink('https://www.phoenixchildrens.org/contact', 'Contact |'),
+          ),
+          Positioned(
+            right: 160.0,
+            bottom: 80.0,
+            child: Hyperlink('https://www.phoenixchildrens.org/contact', 'Legal'),
+          ),
           new Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: <Widget>[
@@ -85,7 +95,7 @@ class LoginPageState extends State<LoginPage> {
                             textColor: Colors.white,
                             child: new Text("LOGIN"),
 
-                            onPressed: ()=>{}
+                            onPressed: ()=>{}  //insert action for the button
                             )
                       ],
                     ),
