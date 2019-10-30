@@ -46,12 +46,12 @@ class LoginPageState extends State<LoginPage> {
           Positioned(
             right: 195.0,
             bottom: 80.0,
-            child: Hyperlink('https://www.phoenixchildrens.org/contact', 'Contact |'),
+            child: Hyperlink('https://www.phoenixchildrens.org/contact', 'Legal |'),
           ),
           Positioned(
             right: 160.0,
             bottom: 80.0,
-            child: Hyperlink('https://www.phoenixchildrens.org/contact', 'Legal'),
+            child: Hyperlink('https://www.phoenixchildrens.org/contact', 'Contact'),
           ),
           new Column(
             mainAxisAlignment: MainAxisAlignment.center,
