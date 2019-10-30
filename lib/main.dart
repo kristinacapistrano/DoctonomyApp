@@ -44,9 +44,9 @@ class LoginPageState extends State<LoginPage> {
           ),
 
           Positioned(
-            right: 195.0,
+            right: 210.0,
             bottom: 80.0,
-            child: Hyperlink('https://www.phoenixchildrens.org/contact', 'Legal |'),
+            child: Hyperlink('https://www.phoenixchildrens.org/about-us', 'About Us |'),
           ),
           Positioned(
             right: 160.0,
@@ -69,7 +69,14 @@ class LoginPageState extends State<LoginPage> {
                   ),
                   child: Container(
                     padding: const EdgeInsets.all(50.0),
-
+                    decoration: const BoxDecoration(
+                      border: Border(
+                        top: BorderSide(width: 2.0, color: Color(0xFFFFDFDFDF)),
+                        left: BorderSide(width: 2.0, color: Color(0xFFFFDFDFDF)),
+                        right: BorderSide(width: 2.0, color: Color(0xFFFF7F7F7F)),
+                        bottom: BorderSide(width: 2.0, color: Color(0xFFFF7F7F7F)),
+                      ),
+                    ),
                     child: new Column(
                       crossAxisAlignment: CrossAxisAlignment.center,
                       children: <Widget>[
