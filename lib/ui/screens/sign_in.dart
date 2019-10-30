@@ -1,14 +1,14 @@
 import 'package:flutter/material.dart';
-//import 'package:flushbar/flushbar.dart';
 import 'package:flutter/services.dart';
 
-import '../../util/state_widget.dart';
 import '../../util/auth.dart';
+import '../../util/state_widget.dart';
 import '../../util/validator.dart';
-import '../../widgets/Hyperlink.dart';
 import '../../widgets/loading.dart';
 
 class SignInScreen extends StatefulWidget {
+  static const String id = 'sign_in_screen';
+
   _SignInScreenState createState() => _SignInScreenState();
 }
 
@@ -33,7 +33,7 @@ class _SignInScreenState extends State<SignInScreen> {
           fit: BoxFit.none,
           color: Colors.red,
           colorBlendMode: BlendMode.dst //dst
-      ),
+          ),
     );
 
     final email = TextFormField(
