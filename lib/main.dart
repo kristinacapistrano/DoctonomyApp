@@ -32,12 +32,13 @@ class LoginPageState extends State<LoginPage> {
         children: <Widget>[
           Positioned(
             right: 70.0,
-            top: 70.0,
+            top: 50.0,
             child: new Image(
 
                 image: new AssetImage("assets/resizedLOGO.jpg"),
                 alignment: Alignment.topCenter,
                 fit:  BoxFit.none,
+
                 color: Colors.red,
                 colorBlendMode: BlendMode.dst//dst
             ),
@@ -69,27 +70,41 @@ class LoginPageState extends State<LoginPage> {
                   ),
                   child: Container(
                     padding: const EdgeInsets.all(50.0),
-                    decoration: const BoxDecoration(
-                      border: Border(
-                        top: BorderSide(width: 2.0, color: Color(0xFFFFDFDFDF)),
-                        left: BorderSide(width: 2.0, color: Color(0xFFFFDFDFDF)),
-                        right: BorderSide(width: 2.0, color: Color(0xFFFF7F7F7F)),
-                        bottom: BorderSide(width: 2.0, color: Color(0xFFFF7F7F7F)),
-                      ),
-                    ),
+
                     child: new Column(
                       crossAxisAlignment: CrossAxisAlignment.center,
                       children: <Widget>[
 
                         new TextFormField(
-                          decoration: new InputDecoration(
-                            labelText: "Enter Email",
+                            decoration: new InputDecoration(
+                              labelText: "Enter Email",
+                              fillColor: Color.fromRGBO(246, 59, 73,65),
+                              filled: true,
+
+                              focusedBorder: OutlineInputBorder(
+                                  borderSide: new BorderSide(color: Colors.white),
+                                  borderRadius: new BorderRadius.circular(15)
+
+                              ),
+
+                              //contentPadding: EdgeInsets.only(bottom: 5.0)
+                            ),
+                            keyboardType: TextInputType.emailAddress,
+
                           ),
-                          keyboardType: TextInputType.emailAddress,
-                        ),
+
                         new TextFormField(
                           decoration: new InputDecoration(
                             labelText: "Enter Password",
+                            fillColor: Color.fromRGBO(246, 59, 73,65),
+                            filled: true,
+
+                            focusedBorder: OutlineInputBorder(
+                                borderSide: new BorderSide(color: Colors.white),
+                                borderRadius: new BorderRadius.circular(15)
+
+                            ),
+
                           ),
                           keyboardType: TextInputType.text,
                           obscureText: true,
@@ -97,13 +112,15 @@ class LoginPageState extends State<LoginPage> {
                         new Padding(
                             padding: const EdgeInsets.only(top: 20.0)
                         ),
-                        new MaterialButton(
-                            color: Colors.amber,
-                            textColor: Colors.white,
-                            child: new Text("LOGIN"),
 
-                            onPressed: ()=>{}  //insert action for the button
-                            )
+                        new MaterialButton(
+                              color: Colors.amber,
+
+                              textColor: Colors.white,
+                              child: new Text("LOGIN"),
+
+                              onPressed: ()=>{}  //insert action for the button
+                              ),
                       ],
                     ),
                   ),
