@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 //import 'package:flushbar/flushbar.dart';
 import 'package:flutter/services.dart';
+import 'package:flushbar/flushbar.dart';
 
 import '../../util/state_widget.dart';
 import '../../util/auth.dart';
@@ -50,6 +51,7 @@ class _SignInScreenState extends State<SignInScreen> {
         FocusScope.of(context).requestFocus(focus);
       },
       decoration: InputDecoration(
+        errorStyle: TextStyle(fontSize: 16.0, color: Colors.black),
         prefixIcon: Padding(
           padding: EdgeInsets.only(left: 5.0),
           child: Icon(
@@ -80,6 +82,7 @@ class _SignInScreenState extends State<SignInScreen> {
             email: _email.text, password: _password.text, context: context);
         },
       decoration: InputDecoration(
+        errorStyle: TextStyle(fontSize: 16.0, color: Colors.black),
         prefixIcon: Padding(
           padding: EdgeInsets.only(left: 5.0),
           child: Icon(
@@ -185,14 +188,12 @@ class _SignInScreenState extends State<SignInScreen> {
         await Navigator.pushNamed(context, '/');
       } catch (e) {
         _changeLoadingVisible();
-        print("Sign In Error: $e");
         String exception = Auth.getExceptionText(e);
-        //TODO
-        /*Flushbar(
+        Flushbar(
           title: "Sign In Error",
           message: exception,
           duration: Duration(seconds: 5),
-        )..show(context);*/
+        )..show(context);
       }
     } else {
       setState(() => _autoValidate = true);
