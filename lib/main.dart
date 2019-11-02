@@ -31,6 +31,7 @@ class LoginPageState extends State<LoginPage> {
       body: new Stack (
         children: <Widget>[
           Positioned(
+
             right: 70.0,
             top: 50.0,
             child: new Image(
@@ -44,15 +45,22 @@ class LoginPageState extends State<LoginPage> {
             ),
           ),
 
-          Positioned(
-            right: 210.0,
-            bottom: 80.0,
-            child: Hyperlink('https://www.phoenixchildrens.org/about-us', 'About Us |'),
+          Container(
+            padding: const EdgeInsets.all(50.0),
+
+            child: Align(
+              alignment: Alignment.bottomCenter,
+
+              child: Hyperlink('https://www.phoenixchildrens.org/about-us', 'About Us'),
+            ),
           ),
-          Positioned(
-            right: 160.0,
-            bottom: 80.0,
-            child: Hyperlink('https://www.phoenixchildrens.org/contact', 'Contact'),
+          Container(
+            padding: const EdgeInsets.all(80.0),
+
+            child: Align(
+              alignment: Alignment.bottomCenter,
+              child: Hyperlink('https://www.phoenixchildrens.org/contact', 'Contact'),
+            ),
           ),
           new Column(
             mainAxisAlignment: MainAxisAlignment.center,
