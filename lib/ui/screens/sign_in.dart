@@ -36,11 +36,19 @@ class _SignInScreenState extends State<SignInScreen> {
       ),
     );
 
+    final focus = FocusNode();
     final email = TextFormField(
       keyboardType: TextInputType.emailAddress,
+      textInputAction: TextInputAction.next,
       autofocus: false,
       controller: _email,
       validator: Validator.validateEmail,
+      style: TextStyle(
+        color: Colors.white,
+      ),
+      onFieldSubmitted: (v){
+        FocusScope.of(context).requestFocus(focus);
+      },
       decoration: InputDecoration(
         prefixIcon: Padding(
           padding: EdgeInsets.only(left: 5.0),
@@ -50,17 +58,27 @@ class _SignInScreenState extends State<SignInScreen> {
           ), // icon is 48px widget.
         ), // icon is 48px widget.
         hintText: 'Email',
-        hintStyle: TextStyle(fontSize: 20.0, color: Colors.white),
+        hintStyle: TextStyle(color: Colors.white),
         contentPadding: EdgeInsets.fromLTRB(20.0, 10.0, 20.0, 10.0),
         border: OutlineInputBorder(borderRadius: BorderRadius.circular(32.0)),
       ),
     );
 
     final password = TextFormField(
+      focusNode: focus,
+      textInputAction: TextInputAction.done,
       autofocus: false,
       obscureText: true,
       controller: _password,
       validator: Validator.validatePassword,
+      style: TextStyle(
+        color: Colors.white,
+      ),
+      onFieldSubmitted: (v){
+        focus.unfocus();
+        _emailLogin(
+            email: _email.text, password: _password.text, context: context);
+        },
       decoration: InputDecoration(
         prefixIcon: Padding(
           padding: EdgeInsets.only(left: 5.0),
@@ -70,7 +88,7 @@ class _SignInScreenState extends State<SignInScreen> {
           ), // icon is 48px widget.
         ), // icon is 48px widget.
         hintText: 'Password',
-        hintStyle: TextStyle(fontSize: 20.0, color: Colors.white),
+        hintStyle: TextStyle(color: Colors.white),
         contentPadding: EdgeInsets.fromLTRB(20.0, 10.0, 20.0, 10.0),
         border: OutlineInputBorder(borderRadius: BorderRadius.circular(32.0)),
       ),
@@ -121,21 +139,26 @@ class _SignInScreenState extends State<SignInScreen> {
             child: Padding(
               padding: const EdgeInsets.symmetric(horizontal: 24.0),
               child: Center(
-                child: SingleChildScrollView(
-                  child: Column(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    crossAxisAlignment: CrossAxisAlignment.stretch,
-                    children: <Widget>[
-                      logo,
-                      SizedBox(height: 48.0),
-                      email,
-                      SizedBox(height: 24.0),
-                      password,
-                      SizedBox(height: 12.0),
-                      loginButton,
-                      forgotLabel,
-                      signUpLabel
-                    ],
+                child: new GestureDetector(
+                  onTap: () {
+                    FocusScope.of(context).requestFocus(new FocusNode());
+                  },
+                  child: SingleChildScrollView(
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      crossAxisAlignment: CrossAxisAlignment.stretch,
+                      children: <Widget>[
+                        logo,
+                        SizedBox(height: 48.0),
+                        email,
+                        SizedBox(height: 24.0),
+                        password,
+                        SizedBox(height: 12.0),
+                        loginButton,
+                        forgotLabel,
+                        signUpLabel
+                      ],
+                    ),
                   ),
                 ),
               ),
