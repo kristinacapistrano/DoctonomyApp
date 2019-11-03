@@ -1,10 +1,13 @@
 import 'package:flutter/material.dart';
+
+import './sign_in.dart';
 import '../../models/state.dart';
 import '../../util/state_widget.dart';
-import './sign_in.dart';
 import '../../widgets/loading.dart';
 
 class HomeScreen extends StatefulWidget {
+  static const String id = 'home_screen';
+
   _HomeScreenState createState() => _HomeScreenState();
 }
 
@@ -20,9 +23,8 @@ class _HomeScreenState extends State<HomeScreen> {
   Widget build(BuildContext context) {
     appState = StateWidget.of(context).state;
     if (!appState.isLoading &&
-        (appState.firebaseUserAuth == null ||
-            appState.user == null
-            // || appState.settings == null
+        (appState.firebaseUserAuth == null || appState.user == null
+        // || appState.settings == null
         )) {
       return SignInScreen();
     } else {
@@ -56,9 +58,7 @@ class _HomeScreenState extends State<HomeScreen> {
             StateWidget.of(context).logOutUser();
           },
           padding: EdgeInsets.all(12),
-          color: Theme
-              .of(context)
-              .primaryColor,
+          color: Theme.of(context).primaryColor,
           child: Text('SIGN OUT', style: TextStyle(color: Colors.white)),
         ),
       );
