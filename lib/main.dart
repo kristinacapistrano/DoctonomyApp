@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import './views/homePage.dart';
 
 void main() => runApp(MyApp());
 
@@ -7,31 +8,16 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return new MaterialApp(
-      title: 'Home Page Prototype',
-      theme: new ThemeData(
-        primarySwatch: Colors.red,
-      ),
-      home: new HomePage()
-      //home: MyHomePage(title: 'Flutter Demo Home Page'),
-    );
-  }
-}
-
-class HomePage extends StatefulWidget {
-  @override
-  State createState() => HomePageState();
-}
-
-class HomePageState extends State<HomePage> {
-  @override
-  Widget build(BuildContext context) {
-    return new Scaffold(); //scaffold is the root for all other elements to be place on the page.
+        title: 'Home Page Prototype',
+        theme: new ThemeData(
+          primarySwatch: Colors.red,
+        ),
+        home: new HomePage());
   }
 }
 
 /**
  * 
- 
   @override
   Widget build(BuildContext context) {
     // This method is rerun every time setState is called, for instance as done
