@@ -3,10 +3,6 @@ import 'package:flutter/material.dart';
 import './ui/screens/home.dart';
 import './ui/screens/sign_in.dart';
 import './util/state_widget.dart';
-//import 'package:flutter_firebase_auth_example/ui/screens/sign_up.dart';
-//import 'package:flutter_firebase_auth_example/ui/screens/forgot_password.dart';
-
-//void main() => runApp(MyApp());
 
 void main() {
   StateWidget stateWidget = new StateWidget(

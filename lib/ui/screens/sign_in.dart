@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flushbar/flushbar.dart';
-
 import '../../util/auth.dart';
 import '../../util/state_widget.dart';
 import '../../util/validator.dart';
@@ -183,7 +182,6 @@ class _SignInScreenState extends State<SignInScreen> {
       try {
         SystemChannels.textInput.invokeMethod('TextInput.hide');
         await _changeLoadingVisible();
-        //need await so it has chance to go through error if found.
         await StateWidget.of(context).logInUser(email, password);
         await Navigator.pushNamed(context, '/');
       } catch (e) {
