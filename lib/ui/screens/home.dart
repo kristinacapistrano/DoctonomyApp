@@ -1,3 +1,4 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 
 import './sign_in.dart';
@@ -14,10 +15,21 @@ class HomeScreen extends StatefulWidget {
 class _HomeScreenState extends State<HomeScreen> {
   StateModel appState;
   bool _loadingVisible = false;
+  final _firestore = Firestore.instance;
 
   @override
   void initState() {
     super.initState();
+    messagesStream();
+  }
+
+  //test to read data from firestore as a stream
+  void messagesStream() async {
+    await for (var snapshot in _firestore.collection("messages").snapshots()) {
+      for (var message in snapshot.documents) {
+        print(message.data);
+      }
+    }
   }
 
   Widget build(BuildContext context) {
