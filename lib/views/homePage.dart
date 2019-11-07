@@ -6,18 +6,6 @@ class HomePage extends StatefulWidget {
 }
 
 class HomePageState extends State<HomePage> {
-  void providerButtonTest(){
-    print('Provider Button has been pressed!');
-  }
-  
-  void datesButtonTest(){
-    print('Dates Button has been pressed!');
-  }
-
-  void remindersButtonTest(){
-    print('Reminders Button has been pressed!');
-  }
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
