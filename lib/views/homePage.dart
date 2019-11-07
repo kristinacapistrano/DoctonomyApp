@@ -33,7 +33,7 @@ class HomePageState extends State<HomePage> {
           ),
         ),
       //backgroundColor: Color.fromARGB(246, 59, 73, 10),
-      body: new Column(
+      body: new Stack (
         children: <Widget>[
           //Text('Welcome to the Home Page!'),
           Positioned(
