@@ -72,32 +72,36 @@ class _HomeScreenState extends State<HomeScreen> {
 
       return Scaffold(
         backgroundColor: Colors.white,
-        body: LoadingScreen(
-            child: Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 48.0),
-              child: Center(
-                child: SingleChildScrollView(
-                  child: Column(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    crossAxisAlignment: CrossAxisAlignment.stretch,
-                    children: <Widget>[
-                      SizedBox(height: 48.0),
-                      userIdLabel,
-                      Text(userId,
-                          style: TextStyle(fontWeight: FontWeight.bold)),
-                      SizedBox(height: 12.0),
-                      emailLabel,
-                      Text(email,
-                          style: TextStyle(fontWeight: FontWeight.bold)),
-                      SizedBox(height: 12.0),
-                      signOutButton
-                    ],
+        body:
+              LoadingScreen(
+
+                child: Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 48.0),
+                  child: Center(
+                    child: SingleChildScrollView(
+                      child: Column(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        crossAxisAlignment: CrossAxisAlignment.stretch,
+                        children: <Widget>[
+                          SizedBox(height: 48.0),
+                          userIdLabel,
+                          Text(userId,
+                              style: TextStyle(fontWeight: FontWeight.bold)),
+                          SizedBox(height: 12.0),
+                          emailLabel,
+                          Text(email,
+                              style: TextStyle(fontWeight: FontWeight.bold)),
+                          SizedBox(height: 12.0),
+                          signOutButton
+                        ],
+                      ),
+                    ),
                   ),
                 ),
-              ),
-            ),
-            inAsyncCall: _loadingVisible),
-      );
+                  inAsyncCall: _loadingVisible)
+
+        );
+
     }
   }
 }
