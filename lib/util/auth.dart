@@ -63,11 +63,18 @@ class Auth {
 
   static Future<User> getUserFirestore(String userId) async {
     if (userId != null) {
-      return Firestore.instance
-          .collection('users')
-          .document(userId)
-          .get()
-          .then((documentSnapshot) => User.fromDocument(documentSnapshot));
+      User user;
+      DocumentReference docRef = Firestore.instance.collection('users').document(userId);
+
+      await docRef.get().then((docSnapshot) async {
+        if (docSnapshot.exists) {
+          user = User.fromDocument(docSnapshot);
+        } else {
+          await docRef.setData({});
+          user = await getUserFirestore(userId);
+        }
+      });
+      return user;
     } else {
       print('firestore userId can not be null');
       return null;
