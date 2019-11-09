@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 
-import './sign_in.dart';
-import '../../models/state.dart';
-import '../../util/state_widget.dart';
-import '../../widgets/loading.dart';
+import 'sign_in.dart';
+import '../models/state.dart';
+import '../util/state_widget.dart';
+import '../widgets/loading.dart';
 
 class HomeScreen extends StatefulWidget {
   static const String id = 'home_screen';

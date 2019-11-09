@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 
-import './ui/screens/home.dart';
-import './ui/screens/sign_in.dart';
+import './screens/home.dart';
+import './screens/sign_in.dart';
 import './util/state_widget.dart';
 
 void main() {
