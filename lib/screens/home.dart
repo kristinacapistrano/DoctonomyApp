@@ -56,6 +56,29 @@ class _HomeScreenState extends State<HomeScreen> {
 
       return Scaffold(
         backgroundColor: Colors.white,
+        appBar: AppBar(
+          title: Text("Home Page"),
+        ),
+        bottomNavigationBar: BottomAppBar(
+          child: new Row(
+            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+            mainAxisSize: MainAxisSize.max,
+            children: <Widget>[
+              IconButton(
+                icon: Icon(Icons.home),
+                onPressed: (){print('home icon pressed!');},
+              ),
+              IconButton(
+                icon: Icon(Icons.calendar_today),
+                onPressed: (){print('Calendar icon pressed!');},
+              ),
+              IconButton(
+                icon: Icon(Icons.notifications),
+                onPressed: (){print('Notifications Icon button Pressed!');},
+              ),
+            ],
+          ),
+        ),
         body: LoadingScreen(
             child: Padding(
               padding: const EdgeInsets.symmetric(horizontal: 48.0),
@@ -65,6 +88,13 @@ class _HomeScreenState extends State<HomeScreen> {
                     mainAxisAlignment: MainAxisAlignment.center,
                     crossAxisAlignment: CrossAxisAlignment.stretch,
                     children: <Widget>[
+                      Image(
+                        image: new AssetImage("assets/resizedLOGO.jpg"),
+                        alignment: Alignment.topCenter,
+                        fit: BoxFit.none,
+                        color: Colors.red,
+                        colorBlendMode: BlendMode.dst,
+                      ),
                       SizedBox(height: 48.0),
                       userIdLabel,
                       Text(userId,
