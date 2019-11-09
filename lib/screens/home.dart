@@ -1,13 +1,12 @@
 import 'package:flutter/material.dart';
 
-import './sign_in.dart';
-import '../../models/state.dart';
-import '../../util/state_widget.dart';
-import '../../widgets/loading.dart';
+import 'sign_in.dart';
+import '../models/state.dart';
+import '../util/state_widget.dart';
+import '../widgets/loading.dart';
 
 class HomeScreen extends StatefulWidget {
   static const String id = 'home_screen';
-
   _HomeScreenState createState() => _HomeScreenState();
 }
 
@@ -33,20 +32,6 @@ class _HomeScreenState extends State<HomeScreen> {
       } else {
         _loadingVisible = false;
       }
-      final logo = Hero(
-        tag: 'hero',
-        child: CircleAvatar(
-            backgroundColor: Colors.transparent,
-            radius: 60.0,
-            child: ClipOval(
-              child: Image.asset(
-                'assets/images/default.png',
-                fit: BoxFit.cover,
-                width: 120.0,
-                height: 120.0,
-              ),
-            )),
-      );
 
       final signOutButton = Padding(
         padding: EdgeInsets.symmetric(vertical: 16.0),
@@ -63,7 +48,6 @@ class _HomeScreenState extends State<HomeScreen> {
         ),
       );
 
-//check for null https://stackoverflow.com/questions/49775261/check-null-in-ternary-operation
       final userId = appState?.firebaseUserAuth?.uid ?? '';
       final email = appState?.firebaseUserAuth?.email ?? '';
 
