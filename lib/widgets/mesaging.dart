@@ -19,13 +19,27 @@ class _MessagingWidgetState extends State<MessagingWidget> {
     _firebaseMessaging.configure(
         onLaunch: (Map<String, dynamic> message) async {
           print("onLaunch: $message");
+          setState(() {
+            messages.add(Message(
+              title: '$message',
+              body: 'onLaunch'
+            ));
+          });
+          final notification = message['data '];
+          setState(() {
+            messages.add(Message(
+                title: 'onLaunch: ${notification['title']}',
+                body: 'onLaunch: ${notification['body']}'
+            ));
+          });
         },
         onMessage: (Map<String, dynamic> message) async {
           print("onMessage: $message");
           final notification = message['notification'];
           setState(() {
             messages.add(Message(
-                title: notification['title'], body: notification['body']
+                title: notification['title'],
+                body: notification['body']
             ));
           });
         },
