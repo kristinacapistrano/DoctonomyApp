@@ -46,7 +46,6 @@ class _StateWidgetState extends State<StateWidget> {
     if (user != null) {
       user = await Auth.getUserFirestore(firebaseUserAuth.uid);
       Auth.storeUserLocal(user);
-      print(user.toJson());
     }
     //Settings settings = await Auth.getSettingsLocal();
     setState(() {
