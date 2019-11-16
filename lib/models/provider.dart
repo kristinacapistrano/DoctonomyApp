@@ -1,5 +1,3 @@
-
-
 import 'package:doctonomy_app/models/user.dart';
 
 class Provider extends User {
