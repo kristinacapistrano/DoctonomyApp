@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 
 import 'package:doctonomy_app/screens/sign_in.dart';
+import 'package:doctonomy_app/models/user.dart';
 
 void main() {
   testWidgets('Test Form Empty Validation', (WidgetTester tester) async {
@@ -37,16 +38,18 @@ void main() {
 
     //Asserts that the form is in a valid state
     expect(formKey.currentState.validate(), isTrue);
+
+    //Note: Actual login method cannot be Unit Tested, since tests don't run on devices, but only the devices have the Firebase framework
   });
 
-  testWidgets('Login unit test', (WidgetTester tester) async {
-    //Tests the login functionality with the test login account
-    SignInScreen sis = new SignInScreen();
-    var app = new MediaQuery(data: new MediaQueryData(), child: new MaterialApp(home: sis));
-    await tester.pumpWidget(app);
-    Finder email = find.byKey(new Key('email'));
-    Finder pwd = find.byKey(new Key('password'));
-
-    //TODO simulate login API, check for a successful response
+  testWidgets('Test Constructors', (WidgetTester tester) async {
+    User user = userFromJson('{"userId": "fakeID", "firstName": "testFirst", "lastName": "testLast", "email": "testEmail", "admin": false, "phone": "4801234567"}');
+    expect(user != null, true);
+    expect(user.userId, "fakeID");
+    expect(user.firstName, "testFirst");
+    expect(user.lastName, "testLast");
+    expect(user.email, "testEmail");
+    expect(user.admin, false);
+    expect(user.phone, "4801234567");
   });
 }
