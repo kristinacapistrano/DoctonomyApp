@@ -38,6 +38,7 @@ class _SignInScreenState extends State<SignInScreen> {
 
     final focus = FocusNode();
     final email = TextFormField(
+      key: new Key('email'),
       keyboardType: TextInputType.emailAddress,
       textInputAction: TextInputAction.next,
       autofocus: false,
@@ -66,6 +67,7 @@ class _SignInScreenState extends State<SignInScreen> {
     );
 
     final password = TextFormField(
+      key: new Key('password'),
       focusNode: focus,
       textInputAction: TextInputAction.done,
       autofocus: false,
