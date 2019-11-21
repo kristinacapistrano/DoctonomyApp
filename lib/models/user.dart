@@ -41,4 +41,16 @@ class User {
   factory User.fromDocument(DocumentSnapshot doc) {
     return User.fromJson(doc.data);
   }
+
+  String get id{
+    return userId;
+  }
+
+  String get name{
+    return firstName + lastName;
+  }
+
+  String get emailAddress{
+    return email;
+  }
 }
