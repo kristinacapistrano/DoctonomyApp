@@ -54,6 +54,7 @@ flutter:
    - assets/PCH_LOGO.jpg
    - assets/logo2.jpg
    - assets/resizedLOGO.jpg
+   - kids.jpg
 
   # An image asset can refer to one or more resolution-specific "variants", see
   # https://flutter.dev/assets-and-images/#resolution-aware.

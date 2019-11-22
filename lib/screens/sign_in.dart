@@ -28,13 +28,25 @@ class _SignInScreenState extends State<SignInScreen> {
     final logo = Hero(
       tag: 'hero',
       child: new Image(
-          image: new AssetImage("assets/resizedLOGO.jpg"),
-          alignment: Alignment.topCenter,
+          image: new AssetImage("assets/kids.jpg"),
+          alignment: Alignment.bottomCenter,
           fit: BoxFit.none,
-          color: Colors.red,
-          colorBlendMode: BlendMode.dst //dst
+          //color: Colors.red,
+          //colorBlendMode: BlendMode.dst //dst
           ),
     );
+
+    final pch_logo = Hero(
+      tag: 'hero',
+      child: new Image(
+        image: new AssetImage("assets/logo2.jpg"),
+        alignment: Alignment.bottomRight,
+        fit: BoxFit.none,
+        //color: Colors.red,
+        //colorBlendMode: BlendMode.dst //dst
+      ),
+    );
+
 
     final focus = FocusNode();
     final email = TextFormField(
@@ -44,7 +56,7 @@ class _SignInScreenState extends State<SignInScreen> {
       controller: _email,
       validator: Validator.validateEmail,
       style: TextStyle(
-        color: Colors.white,
+        color: Colors.black,
       ),
       onFieldSubmitted: (v){
         FocusScope.of(context).requestFocus(focus);
@@ -55,11 +67,11 @@ class _SignInScreenState extends State<SignInScreen> {
           padding: EdgeInsets.only(left: 5.0),
           child: Icon(
             Icons.email,
-            color: Colors.white,
+            color: Colors.black,
           ), // icon is 48px widget.
         ), // icon is 48px widget.
         hintText: 'Email',
-        hintStyle: TextStyle(color: Colors.white),
+        hintStyle: TextStyle(color: Colors.black),
         contentPadding: EdgeInsets.fromLTRB(20.0, 10.0, 20.0, 10.0),
         border: OutlineInputBorder(borderRadius: BorderRadius.circular(32.0)),
       ),
@@ -73,7 +85,7 @@ class _SignInScreenState extends State<SignInScreen> {
       controller: _password,
       validator: Validator.validatePassword,
       style: TextStyle(
-        color: Colors.white,
+        color: Colors.black, //inside box text color
       ),
       onFieldSubmitted: (v){
         focus.unfocus();
@@ -86,11 +98,11 @@ class _SignInScreenState extends State<SignInScreen> {
           padding: EdgeInsets.only(left: 5.0),
           child: Icon(
             Icons.lock,
-            color: Colors.white,
+            color: Colors.black,
           ), // icon is 48px widget.
         ), // icon is 48px widget.
         hintText: 'Password',
-        hintStyle: TextStyle(color: Colors.white),
+        hintStyle: TextStyle(color: Colors.black),
         contentPadding: EdgeInsets.fromLTRB(20.0, 10.0, 20.0, 10.0),
         border: OutlineInputBorder(borderRadius: BorderRadius.circular(32.0)),
       ),
@@ -133,7 +145,8 @@ class _SignInScreenState extends State<SignInScreen> {
     );
 
     return Scaffold(
-      backgroundColor: Color.fromRGBO(246, 59, 73, 10),
+
+      backgroundColor: Colors.white,
       body: LoadingScreen(
           child: Form(
             key: _formKey,
@@ -158,7 +171,8 @@ class _SignInScreenState extends State<SignInScreen> {
                         SizedBox(height: 12.0),
                         loginButton,
                         forgotLabel,
-                        signUpLabel
+                        signUpLabel,
+
                       ],
                     ),
                   ),

@@ -55,9 +55,26 @@ class _HomeScreenState extends State<HomeScreen> {
       final emailLabel = Text('Email: ');
 
       return Scaffold(
-        backgroundColor: Colors.white,
+
         appBar: AppBar(
-          title: Text("Home Page"),
+          textTheme: TextTheme(
+            title: TextStyle(
+              color: Colors.lightBlueAccent[700],
+              fontSize: 20,
+              fontWeight: FontWeight.bold,
+
+            )
+          ),
+
+          title: Row(
+            children: <Widget>[
+              Text("Home Page"),
+            ],
+          ),
+
+          backgroundColor: Colors.grey[50],
+
+
         ),
         bottomNavigationBar: BottomAppBar(
           child: new Row(
@@ -79,38 +96,46 @@ class _HomeScreenState extends State<HomeScreen> {
             ],
           ),
         ),
-        body: LoadingScreen(
-            child: Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 48.0),
-              child: Center(
-                child: SingleChildScrollView(
-                  child: Column(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    crossAxisAlignment: CrossAxisAlignment.stretch,
-                    children: <Widget>[
-                      Image(
-                        image: new AssetImage("assets/resizedLOGO.jpg"),
-                        alignment: Alignment.topCenter,
-                        fit: BoxFit.none,
-                        color: Colors.red,
-                        colorBlendMode: BlendMode.dst,
-                      ),
-                      SizedBox(height: 48.0),
-                      userIdLabel,
-                      Text(userId,
-                          style: TextStyle(fontWeight: FontWeight.bold)),
-                      SizedBox(height: 12.0),
-                      emailLabel,
-                      Text(email,
-                          style: TextStyle(fontWeight: FontWeight.bold)),
-                      SizedBox(height: 12.0),
-                      signOutButton
-                    ],
+        body: Container(
+          decoration: BoxDecoration(
+            gradient: LinearGradient(
+                colors: [Colors.blue, Colors.blue[50] ],
+                begin: Alignment.bottomCenter,
+                end: Alignment.topCenter)
+          ),
+          child: LoadingScreen(
+              child: Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 48.0),
+                child: Center(
+                  child: SingleChildScrollView(
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      crossAxisAlignment: CrossAxisAlignment.stretch,
+                      children: <Widget>[
+                        Image(
+                          image: new AssetImage("assets/resizedLOGO.jpg"),
+                          alignment: Alignment.topCenter,
+                          fit: BoxFit.none,
+                          color: Colors.red,
+                          colorBlendMode: BlendMode.dst,
+                        ),
+                        SizedBox(height: 48.0),
+                        userIdLabel,
+                        Text(userId,
+                            style: TextStyle(fontWeight: FontWeight.bold)),
+                        SizedBox(height: 12.0),
+                        emailLabel,
+                        Text(email,
+                            style: TextStyle(fontWeight: FontWeight.bold)),
+                        SizedBox(height: 12.0),
+                        signOutButton
+                      ],
+                    ),
                   ),
                 ),
               ),
-            ),
-            inAsyncCall: _loadingVisible),
+              inAsyncCall: _loadingVisible),
+        ),
       );
     }
   }
