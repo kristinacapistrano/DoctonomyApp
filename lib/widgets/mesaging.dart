@@ -3,63 +3,53 @@ import 'package:doctonomy_app/models/message.dart';
 import 'package:flutter/material.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 
-
-class MessagingWidget extends StatefulWidget{
+class MessagingWidget extends StatefulWidget {
   @override
   _MessagingWidgetState createState() => _MessagingWidgetState();
 }
 
 class _MessagingWidgetState extends State<MessagingWidget> {
   final FirebaseMessaging _firebaseMessaging = FirebaseMessaging();
-  final List<Message> messages =[]; //will contain messages from the FB console
+  final List<Message> messages = [];
 
-
+  @override
   void initState() {
     super.initState();
     _firebaseMessaging.configure(
-        onLaunch: (Map<String, dynamic> message) async {
-          print("onLaunch: $message");
-          setState(() {
-            messages.add(Message(
-              title: '$message',
-              body: 'onLaunch'
-            ));
-          });
-          final notification = message['data '];
-          setState(() {
-            messages.add(Message(
-                title: 'onLaunch: ${notification['title']}',
-                body: 'onLaunch: ${notification['body']}'
-            ));
-          });
-        },
-        onMessage: (Map<String, dynamic> message) async {
-          print("onMessage: $message");
-          final notification = message['notification'];
-          setState(() {
-            messages.add(Message(
-                title: notification['title'],
-                body: notification['body']
-            ));
-          });
-        },
-        onResume: (Map<String, dynamic> message) async {
-          print("onResume: $message");
-        }
+      onMessage: (Map<String, dynamic> message) async {
+        print("onMessage: $message");
+        final notification = message['notification'];
+        setState(() {
+          messages.add(Message(
+              title: notification['title'], body: notification['body']));
+        });
+      },
+      onLaunch: (Map<String, dynamic> message) async {
+        print("onLaunch: $message");
+
+        final notification = message['data'];
+        setState(() {
+          messages.add(Message(
+            title: '${notification['title']}',
+            body: '${notification['body']}',
+          ));
+        });
+      },
+      onResume: (Map<String, dynamic> message) async {
+        print("onResume: $message");
+      },
     );
     _firebaseMessaging.requestNotificationPermissions(
-        const IosNotificationSettings(sound: true, alert: true, badge: true));
-
+        const IosNotificationSettings(sound: true, badge: true, alert: true));
   }
 
   @override
-  Widget build(BuildContext) => ListView(
+  Widget build(BuildContext context) => ListView(
     children: messages.map(buildMessage).toList(),
   );
 
   Widget buildMessage(Message message) => ListTile(
-      title: Text(message.title),
-      subtitle: Text(message.body)
+    title: Text(message.title),
+    subtitle: Text(message.body),
   );
 }
-

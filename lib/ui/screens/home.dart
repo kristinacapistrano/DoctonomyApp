@@ -1,3 +1,4 @@
+import 'package:doctonomy_app/widgets/mesaging.dart';
 import 'package:flutter/material.dart';
 
 import './sign_in.dart';
@@ -63,6 +64,7 @@ class _HomeScreenState extends State<HomeScreen> {
         ),
       );
 
+
 //check for null https://stackoverflow.com/questions/49775261/check-null-in-ternary-operation
       final userId = appState?.firebaseUserAuth?.uid ?? '';
       final email = appState?.firebaseUserAuth?.email ?? '';
@@ -83,6 +85,7 @@ class _HomeScreenState extends State<HomeScreen> {
                         mainAxisAlignment: MainAxisAlignment.center,
                         crossAxisAlignment: CrossAxisAlignment.stretch,
                         children: <Widget>[
+                          MessagingWidget(),
                           SizedBox(height: 48.0),
                           userIdLabel,
                           Text(userId,
@@ -92,7 +95,8 @@ class _HomeScreenState extends State<HomeScreen> {
                           Text(email,
                               style: TextStyle(fontWeight: FontWeight.bold)),
                           SizedBox(height: 12.0),
-                          signOutButton
+                          signOutButton,
+
                         ],
                       ),
                     ),
