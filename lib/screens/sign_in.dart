@@ -29,19 +29,18 @@ class _SignInScreenState extends State<SignInScreen> {
       tag: 'hero',
       child: new Image(
           image: new AssetImage("assets/kids.jpg"),
-          alignment: Alignment.bottomCenter,
-          fit: BoxFit.none,
-          //color: Colors.red,
-          //colorBlendMode: BlendMode.dst //dst
+          alignment: Alignment.center,
+          fit: BoxFit.fitHeight,
           ),
     );
 
     final pch_logo = Hero(
       tag: 'hero',
       child: new Image(
-        image: new AssetImage("assets/logo2.jpg"),
-        alignment: Alignment.bottomRight,
-        fit: BoxFit.none,
+        image: new AssetImage("assets/appbar_logo.png"),
+        alignment: Alignment.center,
+        fit: BoxFit.fitWidth,
+
         //color: Colors.red,
         //colorBlendMode: BlendMode.dst //dst
       ),
@@ -153,6 +152,7 @@ class _SignInScreenState extends State<SignInScreen> {
             autovalidate: _autoValidate,
             child: Padding(
               padding: const EdgeInsets.symmetric(horizontal: 24.0),
+
               child: Center(
                 child: new GestureDetector(
                   onTap: () {
@@ -163,8 +163,9 @@ class _SignInScreenState extends State<SignInScreen> {
                       mainAxisAlignment: MainAxisAlignment.center,
                       crossAxisAlignment: CrossAxisAlignment.stretch,
                       children: <Widget>[
+
                         logo,
-                        SizedBox(height: 48.0),
+                          SizedBox(height: 15.0),
                         email,
                         SizedBox(height: 24.0),
                         password,

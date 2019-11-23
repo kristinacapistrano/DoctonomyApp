@@ -54,6 +54,7 @@ class _HomeScreenState extends State<HomeScreen> {
       final userIdLabel = Text('User Id: ');
       final emailLabel = Text('Email: ');
 
+        
       return Scaffold(
 
         appBar: AppBar(
@@ -67,15 +68,28 @@ class _HomeScreenState extends State<HomeScreen> {
           ),
 
           title: Row(
+            mainAxisAlignment: MainAxisAlignment.start,
             children: <Widget>[
               Text("Home Page"),
+
             ],
+
           ),
+            actions: <Widget>[
+              IconButton(
+                icon: Image.asset('assets/appbar_logo.png'),
+                iconSize: 100.0,
+                highlightColor: Colors.red,
+                onPressed: () {
+                  print('Click PCH');
 
-          backgroundColor: Colors.grey[50],
-
+                },
+              ),
+            ],
+            backgroundColor: Colors.white
 
         ),
+
         bottomNavigationBar: BottomAppBar(
           child: new Row(
             mainAxisAlignment: MainAxisAlignment.spaceEvenly,
