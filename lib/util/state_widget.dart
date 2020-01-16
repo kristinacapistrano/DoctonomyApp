@@ -70,6 +70,9 @@ class _StateWidgetState extends State<StateWidget> {
     String userId = await Auth.signIn(email, password);
     User user = await Auth.getUserFirestore(userId);
     await Auth.storeUserLocal(user);
+    setState(() {
+      state.user = user;
+    });
    // Settings settings = await Auth.getSettingsFirestore(userId);
    // await Auth.storeSettingsLocal(settings);
     await initUser();

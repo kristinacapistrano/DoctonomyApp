@@ -4,14 +4,14 @@ import 'sign_in.dart';
 import '../models/state.dart';
 import '../util/state_widget.dart';
 import '../widgets/loading.dart';
-import 'admin.dart';
+import 'home.dart';
 
-class HomeScreen extends StatefulWidget {
-  static const String id = 'home_screen';
-  _HomeScreenState createState() => _HomeScreenState();
+class AdminScreen extends StatefulWidget {
+  static const String id = 'admin_screen';
+  _AdminScreenState createState() => _AdminScreenState();
 }
 
-class _HomeScreenState extends State<HomeScreen> {
+class _AdminScreenState extends State<AdminScreen> {
   StateModel appState;
   bool _loadingVisible = false;
 
@@ -27,8 +27,8 @@ class _HomeScreenState extends State<HomeScreen> {
         // || appState.settings == null
         )) {
       return SignInScreen();
-    } else if(appState.user?.admin == true) {
-      return AdminScreen();
+    } else if(appState.user?.admin != true) {
+      return HomeScreen();
     } else {
       if (appState.isLoading) {
         _loadingVisible = true;
@@ -53,6 +53,7 @@ class _HomeScreenState extends State<HomeScreen> {
 
       final userId = appState?.firebaseUserAuth?.uid ?? '';
       final email = appState?.firebaseUserAuth?.email ?? '';
+      print(appState.user?.admin);
 
       final userIdLabel = Text('User Id: ');
       final emailLabel = Text('Email: ');
@@ -144,6 +145,7 @@ class _HomeScreenState extends State<HomeScreen> {
                         emailLabel,
                         Text(email,
                             style: TextStyle(fontWeight: FontWeight.bold)),
+                        Text("(You are an Admin)"),
                         SizedBox(height: 12.0),
                         signOutButton
                       ],
