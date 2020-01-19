@@ -33,7 +33,7 @@ class _SignInScreenState extends State<SignInScreen> {
           fit: BoxFit.fitHeight,
           ),
     );
-    
+
     final focus = FocusNode();
     final email = TextFormField(
       key: new Key('email'),

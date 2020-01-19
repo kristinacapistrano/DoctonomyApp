@@ -1,17 +1,17 @@
 import 'package:flutter/material.dart';
 
-import 'sign_in.dart';
-import '../models/state.dart';
-import '../util/state_widget.dart';
-import '../widgets/loading.dart';
-import 'admin.dart';
+import '../sign_in.dart';
+import '../../models/state.dart';
+import '../../util/state_widget.dart';
+import '../../widgets/loading.dart';
+import '../patient/home.dart';
 
-class HomeScreen extends StatefulWidget {
-  static const String id = 'home_screen';
-  _HomeScreenState createState() => _HomeScreenState();
+class AdminScreen extends StatefulWidget {
+  static const String id = 'admin_screen';
+  _AdminScreenState createState() => _AdminScreenState();
 }
 
-class _HomeScreenState extends State<HomeScreen> {
+class _AdminScreenState extends State<AdminScreen> {
   StateModel appState;
   bool _loadingVisible = false;
 
@@ -27,8 +27,8 @@ class _HomeScreenState extends State<HomeScreen> {
         // || appState.settings == null
         )) {
       return SignInScreen();
-    } else if(appState.user?.admin == true) {
-      return AdminScreen();
+    } else if (appState.user?.admin != true) {
+      return HomeScreen();
     } else {
       if (appState.isLoading) {
         _loadingVisible = true;
@@ -57,27 +57,20 @@ class _HomeScreenState extends State<HomeScreen> {
       final userIdLabel = Text('User Id: ');
       final emailLabel = Text('Email: ');
 
-        
       return Scaffold(
-
         appBar: AppBar(
-          textTheme: TextTheme(
-            title: TextStyle(
+            textTheme: TextTheme(
+                title: TextStyle(
               color: Colors.lightBlueAccent[700],
               fontSize: 20,
               fontWeight: FontWeight.bold,
-
-            )
-          ),
-
-          title: Row(
-            mainAxisAlignment: MainAxisAlignment.start,
-            children: <Widget>[
-              Text("Home Page"),
-
-            ],
-
-          ),
+            )),
+            title: Row(
+              mainAxisAlignment: MainAxisAlignment.start,
+              children: <Widget>[
+                Text("Home Page"),
+              ],
+            ),
             actions: <Widget>[
               IconButton(
                 icon: Image.asset('assets/appbar_logo.png'),
@@ -85,41 +78,57 @@ class _HomeScreenState extends State<HomeScreen> {
                 highlightColor: Colors.red,
                 onPressed: () {
                   print('Click PCH');
-
                 },
               ),
             ],
-            backgroundColor: Colors.white
-
-        ),
-
+            backgroundColor: Colors.white),
         bottomNavigationBar: BottomAppBar(
           child: new Row(
             mainAxisAlignment: MainAxisAlignment.spaceEvenly,
             mainAxisSize: MainAxisSize.max,
             children: <Widget>[
-              IconButton(
-                icon: Icon(Icons.home),
-                onPressed: (){print('home icon pressed!');},
+              Column(
+                mainAxisSize: MainAxisSize.min,
+                children: <Widget>[
+                  IconButton(
+                      icon: Icon(Icons.home),
+                      onPressed: () {
+                        print('home icon pressed!');
+                      }),
+                  Text('Home')
+                ]
               ),
-              IconButton(
-                icon: Icon(Icons.calendar_today),
-                onPressed: (){print('Calendar icon pressed!');},
+              Column(
+                mainAxisSize: MainAxisSize.min,
+                children: <Widget>[
+                  IconButton(
+                      icon: Icon(Icons.calendar_today),
+                      onPressed: () {
+                        print('Calendar icon pressed!');
+                      }),
+                  Text('Calendar')
+                ]
               ),
-              IconButton(
-                icon: Icon(Icons.notifications),
-                onPressed: (){print('Notifications Icon button Pressed!');},
-              ),
+              Column(
+                mainAxisSize: MainAxisSize.min,
+                children: <Widget>[
+                  IconButton(
+                      icon: Icon(Icons.notifications),
+                      onPressed: () {
+                        print('Notifications Icon button Pressed!');
+                      }),
+                  Text('Notifications')
+                ]
+              )
             ],
           ),
         ),
         body: Container(
           decoration: BoxDecoration(
-            gradient: LinearGradient(
-                colors: [Colors.blue, Colors.blue[50] ],
-                begin: Alignment.bottomCenter,
-                end: Alignment.topCenter)
-          ),
+              gradient: LinearGradient(
+                  colors: [Colors.blue, Colors.blue[50]],
+                  begin: Alignment.bottomCenter,
+                  end: Alignment.topCenter)),
           child: LoadingScreen(
               child: Padding(
                 padding: const EdgeInsets.symmetric(horizontal: 48.0),
@@ -144,6 +153,7 @@ class _HomeScreenState extends State<HomeScreen> {
                         emailLabel,
                         Text(email,
                             style: TextStyle(fontWeight: FontWeight.bold)),
+                        Text("(You are logged in as an Admin)"),
                         SizedBox(height: 12.0),
                         signOutButton
                       ],

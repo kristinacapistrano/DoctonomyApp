@@ -1,17 +1,17 @@
 import 'package:flutter/material.dart';
 
-import 'sign_in.dart';
-import '../models/state.dart';
-import '../util/state_widget.dart';
-import '../widgets/loading.dart';
-import 'home.dart';
+import '../sign_in.dart';
+import '../../models/state.dart';
+import '../../util/state_widget.dart';
+import '../../widgets/loading.dart';
+import '../provider/admin.dart';
 
-class AdminScreen extends StatefulWidget {
-  static const String id = 'admin_screen';
-  _AdminScreenState createState() => _AdminScreenState();
+class HomeScreen extends StatefulWidget {
+  static const String id = 'home_screen';
+  _HomeScreenState createState() => _HomeScreenState();
 }
 
-class _AdminScreenState extends State<AdminScreen> {
+class _HomeScreenState extends State<HomeScreen> {
   StateModel appState;
   bool _loadingVisible = false;
 
@@ -27,8 +27,8 @@ class _AdminScreenState extends State<AdminScreen> {
         // || appState.settings == null
         )) {
       return SignInScreen();
-    } else if(appState.user?.admin != true) {
-      return HomeScreen();
+    } else if (appState.user?.admin == true) {
+      return AdminScreen();
     } else {
       if (appState.isLoading) {
         _loadingVisible = true;
@@ -53,21 +53,17 @@ class _AdminScreenState extends State<AdminScreen> {
 
       final userId = appState?.firebaseUserAuth?.uid ?? '';
       final email = appState?.firebaseUserAuth?.email ?? '';
-      print(appState.user?.admin);
 
       final userIdLabel = Text('User Id: ');
       final emailLabel = Text('Email: ');
 
-        
       return Scaffold(
-
         appBar: AppBar(
           textTheme: TextTheme(
             title: TextStyle(
               color: Colors.lightBlueAccent[700],
               fontSize: 20,
               fontWeight: FontWeight.bold,
-
             )
           ),
 
@@ -99,18 +95,39 @@ class _AdminScreenState extends State<AdminScreen> {
             mainAxisAlignment: MainAxisAlignment.spaceEvenly,
             mainAxisSize: MainAxisSize.max,
             children: <Widget>[
-              IconButton(
-                icon: Icon(Icons.home),
-                onPressed: (){print('home icon pressed!');},
+              Column(
+                  mainAxisSize: MainAxisSize.min,
+                  children: <Widget>[
+                    IconButton(
+                        icon: Icon(Icons.home),
+                        onPressed: () {
+                          print('home icon pressed!');
+                        }),
+                    Text('Home')
+                  ]
               ),
-              IconButton(
-                icon: Icon(Icons.calendar_today),
-                onPressed: (){print('Calendar icon pressed!');},
+              Column(
+                  mainAxisSize: MainAxisSize.min,
+                  children: <Widget>[
+                    IconButton(
+                        icon: Icon(Icons.calendar_today),
+                        onPressed: () {
+                          print('Calendar icon pressed!');
+                        }),
+                    Text('Calendar')
+                  ]
               ),
-              IconButton(
-                icon: Icon(Icons.notifications),
-                onPressed: (){print('Notifications Icon button Pressed!');},
-              ),
+              Column(
+                  mainAxisSize: MainAxisSize.min,
+                  children: <Widget>[
+                    IconButton(
+                        icon: Icon(Icons.notifications),
+                        onPressed: () {
+                          print('Notifications Icon button Pressed!');
+                        }),
+                    Text('Notifications')
+                  ]
+              )
             ],
           ),
         ),
@@ -145,7 +162,6 @@ class _AdminScreenState extends State<AdminScreen> {
                         emailLabel,
                         Text(email,
                             style: TextStyle(fontWeight: FontWeight.bold)),
-                        Text("(You are an Admin)"),
                         SizedBox(height: 12.0),
                         signOutButton
                       ],

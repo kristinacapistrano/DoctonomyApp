@@ -56,7 +56,7 @@ class _StateWidgetState extends State<StateWidget> {
     });
   }
 
-  Future<void> logOutUser() async {
+  Future<void>  logOutUser() async {
     await Auth.signOut();
     FirebaseUser firebaseUserAuth = await Auth.getCurrentFirebaseUser();
     setState(() {
