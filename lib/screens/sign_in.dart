@@ -33,20 +33,7 @@ class _SignInScreenState extends State<SignInScreen> {
           fit: BoxFit.fitHeight,
           ),
     );
-
-    final pch_logo = Hero(
-      tag: 'hero',
-      child: new Image(
-        image: new AssetImage("assets/appbar_logo.png"),
-        alignment: Alignment.center,
-        fit: BoxFit.fitWidth,
-
-        //color: Colors.red,
-        //colorBlendMode: BlendMode.dst //dst
-      ),
-    );
-
-
+    
     final focus = FocusNode();
     final email = TextFormField(
       key: new Key('email'),
