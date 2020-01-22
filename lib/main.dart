@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'screens/patient/home.dart';
+import 'screens/patient/patientNav.dart';
 import './screens/sign_in.dart';
 import './util/state_widget.dart';
 
@@ -16,11 +16,12 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return new MaterialApp(
       theme: new ThemeData(primarySwatch: Colors.red),
-      initialRoute: HomeScreen.id,
+      initialRoute: PatientNav.id,
       routes: {
-        HomeScreen.id: (context) => HomeScreen(),
+        PatientNav.id: (context) => PatientNav(),
         SignInScreen.id: (context) => SignInScreen(),
       },
+      debugShowCheckedModeBanner: false,
     );
   }
 }
