@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 
 import '../../models/state.dart';
 import '../../util/state_widget.dart';
-import '../../widgets/loading.dart';
 
 class AdminHome extends StatefulWidget {
   static const String id = 'admin_home';
@@ -12,7 +11,6 @@ class AdminHome extends StatefulWidget {
 
 class _AdminHomeState extends State<AdminHome> {
   StateModel appState;
-  bool _loadingVisible = false;
 
   @override
   void initState() {
