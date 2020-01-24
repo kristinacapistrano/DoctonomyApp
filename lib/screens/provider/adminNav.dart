@@ -5,6 +5,7 @@ import '../../models/state.dart';
 import '../../util/state_widget.dart';
 import '../patient/patientNav.dart';
 import './adminHome.dart';
+import './adminPatients.dart';
 
 class AdminNav extends StatefulWidget {
   static const String id = 'admin_nav';
@@ -32,30 +33,6 @@ class _AdminNavState extends State<AdminNav> {
       return PatientNav();
     } else {
       return Scaffold(
-        appBar: AppBar(
-            textTheme: TextTheme(
-                title: TextStyle(
-              color: Colors.lightBlueAccent[700],
-              fontSize: 20,
-              fontWeight: FontWeight.bold,
-            )),
-            title: Row(
-              mainAxisAlignment: MainAxisAlignment.start,
-              children: <Widget>[
-                Text("Home Page"),
-              ],
-            ),
-            actions: <Widget>[
-              IconButton(
-                icon: Image.asset('assets/appbar_logo.png'),
-                iconSize: 100.0,
-                highlightColor: Colors.red,
-                onPressed: () {
-                  print('Click PCH');
-                },
-              ),
-            ],
-            backgroundColor: Colors.white),
         bottomNavigationBar: new BottomNavigationBar(
             currentIndex: tab,
             onTap: (int index) {
@@ -67,8 +44,8 @@ class _AdminNavState extends State<AdminNav> {
             },
             items: [
               new BottomNavigationBarItem(
-                icon: const Icon(Icons.star),
-                title: new Text('TODO'),
+                icon: const Icon(Icons.people),
+                title: new Text('Patients'),
               ),
               new BottomNavigationBarItem(
                 icon: const Icon(Icons.home),
@@ -81,13 +58,13 @@ class _AdminNavState extends State<AdminNav> {
             ]),
         body: new Stack(
           children: <Widget>[
-//            new Offstage(
-//              offstage: tab != 0,
-//              child: new TickerMode(
-//                enabled: tab == 0,
-//                child: new MaterialApp(home: new YourLeftPage()),
-//              ),
-//            ),
+            new Offstage(
+              offstage: tab != 0,
+              child: new TickerMode(
+                enabled: tab == 0,
+                child: new AdminPatients(),
+              ),
+            ),
             new Offstage(
               offstage: tab != 1,
               child: new TickerMode(
