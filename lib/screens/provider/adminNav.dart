@@ -6,6 +6,7 @@ import '../../util/state_widget.dart';
 import '../patient/patientNav.dart';
 import './adminHome.dart';
 import './adminPatients.dart';
+import './adminProcedures.dart';
 
 class AdminNav extends StatefulWidget {
   static const String id = 'admin_nav';
@@ -48,13 +49,17 @@ class _AdminNavState extends State<AdminNav> {
                 title: new Text('Patients'),
               ),
               new BottomNavigationBarItem(
+                icon: const Icon(Icons.healing),
+                title: new Text('Procedures'),
+              ),
+              new BottomNavigationBarItem(
                 icon: const Icon(Icons.home),
                 title: new Text('Home'),
               ),
-              new BottomNavigationBarItem(
-                icon: const Icon(Icons.settings),
-                title: new Text('Options'),
-              )
+//              new BottomNavigationBarItem(
+//                icon: const Icon(Icons.settings),
+//                title: new Text('Options'),
+//              )
             ]),
         body: new Stack(
           children: <Widget>[
@@ -69,6 +74,13 @@ class _AdminNavState extends State<AdminNav> {
               offstage: tab != 1,
               child: new TickerMode(
                 enabled: tab == 1,
+                child: new AdminProcedures(),
+              ),
+            ),
+            new Offstage(
+              offstage: tab != 2,
+              child: new TickerMode(
+                enabled: tab == 2,
                 child: new AdminHome(),
               ),
             ),
