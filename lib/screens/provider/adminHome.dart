@@ -41,6 +41,30 @@ class _AdminHomeState extends State<AdminHome> {
     final emailLabel = Text('Email: ');
 
     return Scaffold(
+      appBar: AppBar(
+          textTheme: TextTheme(
+              title: TextStyle(
+                color: Colors.lightBlueAccent[700],
+                fontSize: 20,
+                fontWeight: FontWeight.bold,
+              )),
+          title: Row(
+            mainAxisAlignment: MainAxisAlignment.start,
+            children: <Widget>[
+              Text("Home Page"),
+            ],
+          ),
+          actions: <Widget>[
+            IconButton(
+              icon: Image.asset('assets/appbar_logo.png'),
+              iconSize: 100.0,
+              highlightColor: Colors.red,
+              onPressed: () {
+                print('Click PCH');
+              },
+            ),
+          ],
+          backgroundColor: Colors.white),
       body: Container(
         decoration: BoxDecoration(
             gradient: LinearGradient(
