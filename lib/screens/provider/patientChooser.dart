@@ -2,15 +2,14 @@ import 'package:flutter/material.dart';
 
 import '../../models/state.dart';
 import '../../util/state_widget.dart';
-import './patientChooser.dart';
 
-class AdminPatients extends StatefulWidget {
-  static const String id = 'admin_home';
+class PatientChooser extends StatefulWidget {
+  static const String id = 'patient_chooser';
 
-  _AdminPatientsState createState() => _AdminPatientsState();
+  _PatientChooserState createState() => _PatientChooserState();
 }
 
-class _AdminPatientsState extends State<AdminPatients> {
+class _PatientChooserState extends State<PatientChooser> {
   StateModel appState;
 
   @override
@@ -20,7 +19,6 @@ class _AdminPatientsState extends State<AdminPatients> {
 
   Widget build(BuildContext context) {
     appState = StateWidget.of(context).state;
-
     return Scaffold(
       appBar: AppBar(
           textTheme: TextTheme(
@@ -29,24 +27,10 @@ class _AdminPatientsState extends State<AdminPatients> {
                 fontSize: 20,
                 fontWeight: FontWeight.bold,
               )),
-          title: Text("Patients"),
-          actions: <Widget>[
-            IconButton(
-              icon: Icon(Icons.add),
-              color: Colors.blue,
-              onPressed: () {
-                print('Add patient');
-                Navigator.of(context).push(
-                    new MaterialPageRoute(
-                        builder: (BuildContext context) {
-                          return new PatientChooser();
-                        },
-                        fullscreenDialog: true
-                    )
-                );
-              },
-            ),
-          ],
+          title: Text("Select a Patient"),
+          iconTheme: IconThemeData(
+            color: Colors.lightBlueAccent[700],
+          ),
           backgroundColor: Colors.white
           ),
       body: ListView(
