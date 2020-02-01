@@ -11,6 +11,12 @@ class Surgery {
     performedBy = new List(teamSize);
   }
 
+  Surgery.fromJson(Map<String, dynamic>json) :
+    name = json['name'],
+    type = json['type'],
+    performedBy = json['performedBy'];
+
+
   void add(Provider provider){
     performedBy.add(provider);
   }

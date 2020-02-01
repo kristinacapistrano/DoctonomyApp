@@ -9,6 +9,13 @@ class Medication {
     this.name = name;
   }
 
+  Medication.fromJson(Map<String, dynamic>json) :
+    name = json['name'],
+    consumptionMethod = json['consumptionMethod'],
+    frequency = json['frequency'],
+    usage = json['usage'];
+
+
   String get medName {
     return name;
   }
