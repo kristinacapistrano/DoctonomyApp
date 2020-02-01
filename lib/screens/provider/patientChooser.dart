@@ -37,7 +37,7 @@ class _PatientChooserState extends State<PatientChooser> {
         body: StreamBuilder<QuerySnapshot>(
             stream: Firestore.instance
                 .collection("users")
-                .where("firstName", isGreaterThanOrEqualTo: "")
+                //.where("firstName", isGreaterThanOrEqualTo: "")
                 .snapshots(),
             builder:
                 (BuildContext context, AsyncSnapshot<QuerySnapshot> snapshot) {
@@ -58,10 +58,19 @@ class _PatientChooserState extends State<PatientChooser> {
                       itemCount: eventCount,
                       itemBuilder: (context, index) {
                         final DocumentSnapshot document = users[index];
+                        var fName = document.data["firstName"] ?? "";
+                        var lName = document.data["lastName"] ?? "";
+                        var name = fName + " " + lName;
+                        if (name == " ") {
+                          name = "(No Name) " + document.documentID;
+                        }
                         return new Card(
                             child: ListTile(
-                          leading: Icon(Icons.face),
-                          title: Text(document.data["firstName"] ?? "N/A"),
+                            leading: Icon(Icons.face),
+                            title: Text(name),
+                            onTap: () {
+                              print(document.documentID);
+                            }
                         ));
                       });
               }
