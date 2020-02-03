@@ -1,3 +1,4 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:doctonomy_app/models/provider.dart';
 
 class Surgery {
@@ -5,17 +6,27 @@ class Surgery {
   String type;
   List <Provider> performedBy;
   
-  Surgery({name, type, teamSize}){
-    this.name = name;
-    this.type = type;
-    performedBy = new List(teamSize);
+  Surgery({
+    this.name, 
+    this.type, 
+    this.performedBy,
+    });
+
+  factory Surgery.fromJson(Map<String, dynamic>json) => new Surgery(
+      name: json['name'],
+      type: json['type'],
+      performedBy:  json['performedBy'],
+  );
+
+  Map<String, dynamic> toJson()=> {
+    "name" : name,
+    "type" : type,
+    "performedBy" : performedBy,
+  };
+
+  factory Surgery.fromDocument(DocumentSnapshot doc) {
+    return Surgery.fromJson(doc.data);
   }
-
-  Surgery.fromJson(Map<String, dynamic>json) :
-    name = json['name'],
-    type = json['type'],
-    performedBy = json['performedBy'];
-
 
   void add(Provider provider){
     performedBy.add(provider);
