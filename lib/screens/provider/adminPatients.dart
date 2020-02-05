@@ -22,6 +22,7 @@ class _AdminPatientsState extends State<AdminPatients> {
     DocumentReference docRef = Firestore.instance.collection('users').document(
         appState?.firebaseUserAuth?.uid ?? "");
 
+    // TODO: add a way to remove patients from the list
     return docRef.get().then((datasnapshot) async {
       if (datasnapshot.exists) {
         List<dynamic> info = datasnapshot.data['patients'].toList();
@@ -29,9 +30,7 @@ class _AdminPatientsState extends State<AdminPatients> {
         for(var uid in info) {
           DocumentReference dr = Firestore.instance.collection('users').document(uid);
           DocumentSnapshot ds = await dr.get();
-          if (ds.exists) {
-            list.add(ds.data);
-          }
+          list.add(ds);
         }
         return list;
       } else {
@@ -74,16 +73,29 @@ class _AdminPatientsState extends State<AdminPatients> {
             future: getList(),
             builder: (context, AsyncSnapshot<List<dynamic>> snapshot) {
               if (snapshot.connectionState == ConnectionState.waiting) {
-                return CircularProgressIndicator();
+                return Center(child: CircularProgressIndicator());
               } else {
                 return Center(
                   child: ListView.builder(
                       itemCount: snapshot.data.length,
                       itemBuilder: (context, index) {
+                        final dynamic document = snapshot.data[index];
+                        var name = "(No Name) " + document.documentID;
+                        if (document.data != null) {
+                          var fName = document.data["firstName"] ?? "";
+                          var lName = document.data["lastName"] ?? "";
+                          name = fName + " " + lName;
+                        }
+                        if (name == " ") {
+                          name = "(No Name) " + document.documentID;
+                        }
                         return new Card(
                             child: ListTile(
                               leading: Icon(Icons.face),
-                              title: Text(snapshot.data[0]["firstName"]),
+                              title: Text(name),
+                              onTap: () {
+                                print("Clicked Patient: " + document.documentID);
+                              }
                             )
                         );
                       }),

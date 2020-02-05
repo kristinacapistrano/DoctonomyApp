@@ -53,6 +53,7 @@ class _PatientChooserState extends State<PatientChooser> {
                       users.add(ds);
                     }
                   });
+                  // TODO: hide patients that are already on the list
                   final int eventCount = users.length;
                   return new ListView.builder(
                       itemCount: eventCount,
@@ -69,7 +70,9 @@ class _PatientChooserState extends State<PatientChooser> {
                             leading: Icon(Icons.face),
                             title: Text(name),
                             onTap: () {
-                              print(document.documentID);
+                              print("Add Patient: " + document.documentID);
+                              Firestore.instance.document("users/${appState?.firebaseUserAuth?.uid}").updateData({'patients':FieldValue.arrayUnion([document.documentID])});
+                              Navigator.pop(context);
                             }
                         ));
                       });
