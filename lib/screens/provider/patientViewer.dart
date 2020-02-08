@@ -3,7 +3,6 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import '../../models/state.dart';
 import '../../util/state_widget.dart';
 import '../../models/user.dart';
-import 'dart:math';
 
 class PatientViewer extends StatefulWidget {
   static const String id = 'patient_viewer';
@@ -33,40 +32,79 @@ class _PatientViewerState extends State<PatientViewer> {
     return Scaffold(
         appBar: AppBar(
             textTheme: TextTheme(
-                title: TextStyle(
-              color: Colors.lightBlueAccent[700],
-              fontSize: min(15, 500 / userId.length),
-              fontWeight: FontWeight.bold,
-            )),
-            title: Text(title),
-            iconTheme: IconThemeData(
-              color: Colors.lightBlueAccent[700],
+              title: TextStyle(
+                color: Colors.lightBlueAccent[700],
+                fontWeight: FontWeight.bold,
+              )
             ),
+            centerTitle: true,
+            title: FittedBox(fit:BoxFit.fitWidth,
+                child: Text(title)
+            ),
+            iconTheme: IconThemeData(color: Colors.lightBlueAccent[700]),
             backgroundColor: Colors.white),
-        body: Container(
-          decoration: BoxDecoration(
-              gradient: LinearGradient(
-                  colors: [Colors.blue, Colors.blue[50]],
-                  begin: Alignment.bottomCenter,
-                  end: Alignment.topCenter)),
-          child: Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 48.0),
-            child: Center(
-              child: SingleChildScrollView(
-                child: Column(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  crossAxisAlignment: CrossAxisAlignment.stretch,
-                  children: <Widget>[
-                    SizedBox(height: 48.0),
-                    Text("You are viewing the account of:"),
-                    SizedBox(height: 12.0),
-                    Text(userId, style: TextStyle(fontWeight: FontWeight.bold)),
-                  ],
-                ),
+        body:
+          ListView(
+            children: <Widget>[
+              SizedBox(height: 20.0),
+              Text(' Upcoming Procedures'),
+              Card(child: ListTile(
+                leading: Icon(Icons.healing),
+                title: Text('Surgery'),
+                subtitle: Text('Coming up on 2/20/20'),
+                onTap: () {
+                  print("clicked Row");
+                },
+              )
               ),
-            ),
-          ),
-        ),
+              Card(child: ListTile(
+                leading: Icon(Icons.healing),
+                title: Text('Procedure #2'),
+                subtitle: Text('Coming up on 5/05/20'),
+                onTap: () {
+                  print("clicked Row");
+                },
+              )
+              ),
+              SizedBox(height: 20.0),
+              Text(' Reminders'),
+              Card(child: ListTile(
+                leading: Icon(Icons.alarm),
+                title: Text('Take medication'),
+                subtitle: Text('Every day at 5pm'),
+                onTap: () {
+                  print("clicked Row");
+                },
+              )
+              ),
+              SizedBox(height: 20.0),
+              Text(' Actions'),
+              Card(child: ListTile(
+                trailing: Icon(Icons.send),
+                title: Text('Send a message'),
+                onTap: () {
+                  print("clicked Row");
+                },
+              )
+              ),
+              Card(child: ListTile(
+                trailing: Icon(Icons.healing),
+                title: Text('Schedule new procedure'),
+                onTap: () {
+                  print("clicked Row");
+                },
+              )
+              ),
+              Card(child: ListTile(
+                trailing: Icon(Icons.clear),
+                title: Text('Remove from my list'),
+                onTap: () {
+                  print("clicked Row");
+                },
+              )
+              ),
+            ],
+          )
     );
   }
 }
