@@ -61,6 +61,7 @@ class _ProcedureChooserState extends State<ProcedureChooser> {
                     child: ListTile(
                       leading: Icon(Icons.event),
                       title: Text(name),
+                      subtitle: Text(description),
                       onTap: (){
                         print("Add procedure: " + document.documentID);
                         Firestore.instance.document("procedures/${appState?.firebaseUserAuth?.uid}").updateData({'procedures':FieldValue.arrayUnion([document.documentID])});

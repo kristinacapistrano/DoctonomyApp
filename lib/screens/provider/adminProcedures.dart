@@ -1,3 +1,5 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:doctonomy_app/screens/provider/procedureChooser.dart';
 import 'package:flutter/material.dart';
 
 import '../../models/state.dart';
@@ -15,6 +17,27 @@ class _AdminProceduresState extends State<AdminProcedures> {
   @override
   void initState() {
     super.initState();
+  }
+
+    Future<List<dynamic>> getList() async{
+    DocumentReference docRef = Firestore.instance.collection('procedures').document(
+        appState?.firebaseUserAuth?.uid ?? "");
+
+    // TODO: add a way to remove procedures from the list
+    return docRef.get().then((datasnapshot) async{
+      if (datasnapshot.exists){
+        List<dynamic> info = datasnapshot.data['procedures'].toList();
+        List<dynamic> list = new List();
+        for(var uid in info){
+          DocumentReference dr = Firestore.instance.collection('procedures').document(uid);
+          DocumentSnapshot ds = await dr.get();
+          list.add(ds);
+        }
+        return list;
+      } else{
+        return [];
+      }
+    });
   }
 
   Widget build(BuildContext context) {
@@ -47,7 +70,8 @@ class _AdminProceduresState extends State<AdminProcedures> {
                 color: Colors.lightBlueAccent[700],
                 fontSize: 20,
                 fontWeight: FontWeight.bold,
-              )),
+              )
+          ),
           title: Text("Procedures"),
           actions: <Widget>[
             IconButton(
@@ -55,33 +79,73 @@ class _AdminProceduresState extends State<AdminProcedures> {
               color: Colors.blue,
               onPressed: () {
                 print('Add procedure');
+                Navigator.of(context).push(
+                  new MaterialPageRoute(builder: (BuildContext context){
+                    return new ProcedureChooser();
+                  },
+                    fullscreenDialog: true
+                  )
+                );
               },
             ),
           ],
           backgroundColor: Colors.white
           ),
-      body: ListView(
-        children: <Widget>[
-          Card(child: ListTile(
-              leading: Icon(Icons.chevron_right),
-              title: Text('Procedure #1'),
-              subtitle: Text('Short description for procedure #1'),
-              onTap: () {
-                print("clicked Row");
-              },
-            )
-          ),
-          Card(child: ListTile(
-            leading: Icon(Icons.chevron_right),
-            title: Text('Procedure #2'),
-            subtitle: Text('Short description for procedure #2'),
-            onTap: () {
-              print("clicked Row");
-            },
-          )
-          ),
-        ],
-      ),
-    );
+       body: FutureBuilder(
+         future: getList(),
+         builder: (context, AsyncSnapshot<List<dynamic>> snapshot) {
+           if(snapshot.connectionState == ConnectionState.waiting) {
+             return Center(child: CircularProgressIndicator());
+           } else {
+             return Center(
+              child: ListView.builder(
+                itemCount: snapshot.data.length,
+                itemBuilder: (context, index) {
+                  final dynamic document = snapshot.data[index];
+                  var name = "(No Name) " + document.documentID;
+                  if (document.data != null) {
+                    name = document.data["name"] ?? "";
+                  }
+                  if (name == " ") {
+                    name = "(No Name) " + document.documentID;
+                  }
+                  return new Card(
+                      child: ListTile(
+                        leading: Icon(Icons.healing),
+                        title: Text(name),
+                        onTap: () {
+                          print("Clicked Procedure: " + document.documentID);
+                        }
+                      )
+                  );
+                }),
+              );
+            }
+          }
+        ),
+    ); 
+      //ListView(
+      //   children: <Widget>[
+      //     Card(child: ListTile(
+      //         leading: Icon(Icons.chevron_right),
+      //         title: Text('Procedure #1'),
+      //         subtitle: Text('Short description for procedure #1'),
+      //         onTap: () {
+      //           print("clicked Row");
+      //         },
+      //       )
+      //     ),
+      //     Card(child: ListTile(
+      //       leading: Icon(Icons.chevron_right),
+      //       title: Text('Procedure #2'),
+      //       subtitle: Text('Short description for procedure #2'),
+      //       onTap: () {
+      //         print("clicked Row");
+      //       },
+      //     )
+      //     ),
+      //   ],
+      // ),
+    //);
   }
 }
