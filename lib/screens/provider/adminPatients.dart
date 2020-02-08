@@ -3,6 +3,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import '../../models/state.dart';
 import '../../util/state_widget.dart';
 import './patientChooser.dart';
+import './patientViewer.dart';
 
 class AdminPatients extends StatefulWidget {
   static const String id = 'admin_home';
@@ -95,6 +96,13 @@ class _AdminPatientsState extends State<AdminPatients> {
                               title: Text(name),
                               onTap: () {
                                 print("Clicked Patient: " + document.documentID);
+                                Navigator.of(context).push(
+                                    new MaterialPageRoute(builder: (BuildContext context) {
+                                      return new PatientViewer(userId: document.documentID, title: name);
+                                    },
+                                        fullscreenDialog: true
+                                    )
+                                );
                               }
                             )
                         );
