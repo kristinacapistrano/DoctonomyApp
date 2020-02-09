@@ -3,9 +3,9 @@
 <plist version="1.0">
 <dict>
 	<key>CLIENT_ID</key>
-	<string>230872018787-n3d6blaori10tp2epiovl9a8tqn9gq3b.apps.googleusercontent.com</string>
+	<string>230872018787-u42vvurfom2seoi6c8ta0ns6hl6t3nd7.apps.googleusercontent.com</string>
 	<key>REVERSED_CLIENT_ID</key>
-	<string>com.googleusercontent.apps.230872018787-n3d6blaori10tp2epiovl9a8tqn9gq3b</string>
+	<string>com.googleusercontent.apps.230872018787-u42vvurfom2seoi6c8ta0ns6hl6t3nd7</string>
 	<key>API_KEY</key>
 	<string>AIzaSyDpbdN2SEDunISsJwApjL06Wu_gfqYWDnk</string>
 	<key>GCM_SENDER_ID</key>
@@ -13,7 +13,7 @@
 	<key>PLIST_VERSION</key>
 	<string>1</string>
 	<key>BUNDLE_ID</key>
-	<string>com.doctonomyapp.com.doctonomyApp</string>
+	<string>com.doctonomyapp.doctonomy</string>
 	<key>PROJECT_ID</key>
 	<string>doctonomy-5191f</string>
 	<key>STORAGE_BUCKET</key>
@@ -29,7 +29,7 @@
 	<key>IS_SIGNIN_ENABLED</key>
 	<true></true>
 	<key>GOOGLE_APP_ID</key>
-	<string>1:230872018787:ios:3cf03f9c20b0daa615ad56</string>
+	<string>1:230872018787:ios:c278877e4386065c15ad56</string>
 	<key>DATABASE_URL</key>
 	<string>https://doctonomy-5191f.firebaseio.com</string>
 </dict>

@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
 
-import '../sign_in.dart';
+import './patientHome.dart';
 import '../../models/state.dart';
 import '../../util/state_widget.dart';
 import '../provider/adminNav.dart';
-import './patientHome.dart';
+import '../sign_in.dart';
 
 class PatientNav extends StatefulWidget {
   static const String id = 'patient_nav';
