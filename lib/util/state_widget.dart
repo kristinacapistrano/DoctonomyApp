@@ -5,7 +5,6 @@ import 'package:firebase_auth/firebase_auth.dart';
 import '../models/state.dart';
 import '../models/user.dart';
 import '../util/auth.dart';
-//import 'package:flutter_firebase_auth_example/models/settings.dart';
 
 class StateWidget extends StatefulWidget {
   final StateModel state;
@@ -16,8 +15,6 @@ class StateWidget extends StatefulWidget {
     this.state,
   });
 
-  // Returns data of the nearest widget _StateDataWidget
-  // in the widget tree.
   static _StateWidgetState of(BuildContext context) {
     return (context.inheritFromWidgetOfExactType(_StateDataWidget)
     as _StateDataWidget)
@@ -30,8 +27,6 @@ class StateWidget extends StatefulWidget {
 
 class _StateWidgetState extends State<StateWidget> {
   StateModel state;
-  //GoogleSignInAccount googleAccount;
-  //final GoogleSignIn googleSignIn = new GoogleSignIn();
 
   @override
   void initState() {
@@ -45,9 +40,13 @@ class _StateWidgetState extends State<StateWidget> {
   }
 
   Future<Null> initUser() async {
-    //print('...initUser...');
     FirebaseUser firebaseUserAuth = await Auth.getCurrentFirebaseUser();
     User user = await Auth.getUserLocal();
+
+    if (user != null) {
+      user = await Auth.getUserFirestore(firebaseUserAuth.uid);
+      Auth.storeUserLocal(user);
+    }
     //Settings settings = await Auth.getSettingsLocal();
     setState(() {
       state.isLoading = false;
@@ -57,7 +56,7 @@ class _StateWidgetState extends State<StateWidget> {
     });
   }
 
-  Future<void> logOutUser() async {
+  Future<void>  logOutUser() async {
     await Auth.signOut();
     FirebaseUser firebaseUserAuth = await Auth.getCurrentFirebaseUser();
     setState(() {
@@ -71,6 +70,9 @@ class _StateWidgetState extends State<StateWidget> {
     String userId = await Auth.signIn(email, password);
     User user = await Auth.getUserFirestore(userId);
     await Auth.storeUserLocal(user);
+    setState(() {
+      state.user = user;
+    });
    // Settings settings = await Auth.getSettingsFirestore(userId);
    // await Auth.storeSettingsLocal(settings);
     await initUser();
@@ -94,8 +96,6 @@ class _StateDataWidget extends InheritedWidget {
     @required this.data,
   }) : super(key: key, child: child);
 
-  // Rebuild the widgets that inherit from this widget
-  // on every rebuild of _StateDataWidget:
   @override
   bool updateShouldNotify(_StateDataWidget old) => true;
 }

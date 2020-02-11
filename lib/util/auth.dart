@@ -63,11 +63,18 @@ class Auth {
 
   static Future<User> getUserFirestore(String userId) async {
     if (userId != null) {
-      return Firestore.instance
-          .collection('users')
-          .document(userId)
-          .get()
-          .then((documentSnapshot) => User.fromDocument(documentSnapshot));
+      User user;
+      DocumentReference docRef = Firestore.instance.collection('users').document(userId);
+
+      await docRef.get().then((docSnapshot) async {
+        if (docSnapshot.exists) {
+          user = User.fromDocument(docSnapshot);
+        } else {
+          await docRef.setData({});
+          user = await getUserFirestore(userId);
+        }
+      });
+      return user;
     } else {
       print('firestore userId can not be null');
       return null;
@@ -160,42 +167,4 @@ class Auth {
       return 'Unknown error occured.';
     }
   }
-
-/*static Stream<User> getUserFirestore(String userId) {
-    print("...getUserFirestore...");
-    if (userId != null) {
-      //try firestore
-      return Firestore.instance
-          .collection("users")
-          .where("userId", isEqualTo: userId)
-          .snapshots()
-          .map((QuerySnapshot snapshot) {
-        return snapshot.documents.map((doc) {
-          return User.fromDocument(doc);
-        }).first;
-      });
-    } else {
-      print('firestore user not found');
-      return null;
-    }
-  }*/
-
-/*static Stream<Settings> getSettingsFirestore(String settingsId) {
-    print("...getSettingsFirestore...");
-    if (settingsId != null) {
-      //try firestore
-      return Firestore.instance
-          .collection("settings")
-          .where("settingsId", isEqualTo: settingsId)
-          .snapshots()
-          .map((QuerySnapshot snapshot) {
-        return snapshot.documents.map((doc) {
-          return Settings.fromDocument(doc);
-        }).first;
-      });
-    } else {
-      print('no firestore settings available');
-      return null;
-    }
-  }*/
 }
