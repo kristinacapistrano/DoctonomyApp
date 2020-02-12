@@ -67,12 +67,12 @@ class _PatientNavState extends State<PatientNav> {
             },
             items: [
               new BottomNavigationBarItem(
-                icon: const Icon(Icons.star),
-                title: new Text('TODO'),
-              ),
-              new BottomNavigationBarItem(
                 icon: const Icon(Icons.home),
                 title: new Text('Home'),
+              ),
+              new BottomNavigationBarItem(
+                icon: const Icon(Icons.star),
+                title: new Text('TODO'),
               ),
               new BottomNavigationBarItem(
                 icon: const Icon(Icons.settings),
@@ -89,9 +89,9 @@ class _PatientNavState extends State<PatientNav> {
 //              ),
 //            ),
             new Offstage(
-              offstage: tab != 1,
+              offstage: tab != 0,
               child: new TickerMode(
-                enabled: tab == 1,
+                enabled: tab == 0,
                 child: new PatientHome(),
               ),
             ),
