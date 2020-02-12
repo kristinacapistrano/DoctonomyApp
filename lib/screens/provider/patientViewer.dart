@@ -26,6 +26,25 @@ class _PatientViewerState extends State<PatientViewer> {
     super.initState();
   }
 
+  Future<List<dynamic>> getList() async {
+    DocumentReference docRef = Firestore.instance.collection('users').document(userId ?? "");
+    return docRef.get().then((datasnapshot) async {
+      if (datasnapshot.exists) {
+        return datasnapshot.data['allergies'].toList();
+        /*List<dynamic> info = datasnapshot.data['patients'].toList();
+        List<dynamic> list = new List();
+        for(var uid in info) {
+          DocumentReference dr = Firestore.instance.collection('users').document(uid);
+          DocumentSnapshot ds = await dr.get();
+          list.add(ds);
+        }
+        return list;*/
+      } else {
+        return [];
+      }
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     appState = StateWidget.of(context).state;
@@ -77,6 +96,38 @@ class _PatientViewerState extends State<PatientViewer> {
                 },
               )
               ),
+              SizedBox(height: 20.0),
+              Text(' Allergies'),
+
+              FutureBuilder(
+                future: getList(),
+                builder: (context, AsyncSnapshot<List<dynamic>> snapshot) {
+                  if (snapshot.connectionState == ConnectionState.waiting) {
+                    return Card(child: CircularProgressIndicator());
+                  } else {
+                    // TODO Improve showing as a list
+                    print(snapshot.data);
+                    if (snapshot.data.length > 0) {
+                      return Card(child: ListTile(
+                        title: Text(snapshot.data[0]),
+                        onTap: () {
+                          print("clicked Row");
+                        },
+                      )
+                      );
+                    } else {
+                      return Card(child: ListTile(
+                        title: Text("No Allergies"),
+                        onTap: () {
+                          print("clicked Row");
+                        },
+                      )
+                      );
+                    }
+
+                  }
+              }),
+
               SizedBox(height: 20.0),
               Text(' Actions'),
               Card(child: ListTile(
