@@ -42,6 +42,7 @@ class _PatientViewerState extends State<PatientViewer> {
     appState = StateWidget.of(context).state;
     return Scaffold(
         appBar: AppBar(
+            brightness: Brightness.light,
             textTheme: TextTheme(
               title: TextStyle(
                 color: Colors.lightBlueAccent[700],

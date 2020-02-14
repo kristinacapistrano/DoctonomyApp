@@ -42,6 +42,7 @@ class _AdminHomeState extends State<AdminHome> {
 
     return Scaffold(
       appBar: AppBar(
+          brightness: Brightness.light,
           textTheme: TextTheme(
               title: TextStyle(
                 color: Colors.lightBlueAccent[700],
