@@ -3,6 +3,8 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import '../../models/state.dart';
 import '../../util/state_widget.dart';
 import '../../models/user.dart';
+import 'package:cloud_functions/cloud_functions.dart';
+
 
 class PatientViewer extends StatefulWidget {
   static const String id = 'patient_viewer';
@@ -74,6 +76,10 @@ class _PatientViewerState extends State<PatientViewer> {
                 subtitle: Text('Every day at 5pm'),
                 onTap: () {
                   print("clicked Row");
+                  CloudFunctions.instance.getHttpsCallable(
+                      functionName: "patientReminder",
+                  );
+                  print ("reminding every 5pm");
                 },
               )
               ),

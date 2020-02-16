@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'screens/patient/patientNav.dart';
 import './screens/sign_in.dart';
 import './util/state_widget.dart';
-import 'package:cloud_functions/cloud_functions.dart';
 
 
 void main() {
