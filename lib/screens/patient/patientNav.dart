@@ -33,6 +33,7 @@ class _PatientNavState extends State<PatientNav> {
     } else {
       return Scaffold(
         appBar: AppBar(
+            brightness: Brightness.light,
             textTheme: TextTheme(
                 title: TextStyle(
               color: Colors.lightBlueAccent[700],

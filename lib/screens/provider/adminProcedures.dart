@@ -65,6 +65,7 @@ class _AdminProceduresState extends State<AdminProcedures> {
 
     return Scaffold(
       appBar: AppBar(
+          brightness: Brightness.light,
           textTheme: TextTheme(
               title: TextStyle(
                 color: Colors.lightBlueAccent[700],
