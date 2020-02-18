@@ -1,8 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:flutter/cupertino.dart';
 import '../../models/state.dart';
 import '../../util/state_widget.dart';
 import '../../models/user.dart';
+import '../../widgets/AlertTextbox.dart';
 
 class PatientViewer extends StatefulWidget {
   static const String id = 'patient_viewer';
@@ -95,23 +97,68 @@ class _PatientViewerState extends State<PatientViewer> {
                           )
                           ),
 
+                          //Allergy information
                           SizedBox(height: 20.0),
                           Text('Allergies', style: TextStyle(fontWeight: FontWeight.w500)),
                           Builder(builder: (BuildContext context) {
                             var allergyList = snapshot.data["allergies"]?.toList() ?? [];
                             if (allergyList.length > 0) {
                               List<Widget> tiles = allergyList.fold(List<Widget>(), (total, el) {
-                                total.add(ListTile(title: Text(el, style: TextStyle(fontWeight: FontWeight.w500)), dense: true, onTap: () => {}));
+                                total.add(ListTile(title: Text(el, style: TextStyle(fontWeight: FontWeight.w500)), dense: true, onTap: () {
+                                  showDialog(
+                                      context: context,
+                                      builder: (context) {
+                                        return AlertTextbox("Edit Allergy", null, el, "Delete", "Cancel", "Save", (val) {
+                                          allergyList.removeAt(allergyList.indexOf(el));
+                                          Firestore.instance.collection('users').document(userId ?? "").updateData({'allergies':allergyList}).then((_) {
+                                            setState(() {});
+                                          });
+                                          Navigator.of(context).pop();
+                                        }, (val) {
+                                          Navigator.of(context).pop();
+                                        }, (val) {
+                                          allergyList[allergyList.indexOf(el)] = val;
+                                          Firestore.instance.collection('users').document(userId ?? "").updateData({'allergies':allergyList}).then((_) {
+                                            setState(() {});
+                                          });
+                                          Navigator.of(context).pop();
+                                        });
+                                      });
+                                }));
                                 total.add(Divider(thickness: 1, indent: 10, endIndent: 10, height: 1));
                                 return total;
                               });
-                              tiles.add(ListTile(title: Text("+ Add New"), dense: true, onTap: () => {}));
+                              tiles.add(ListTile(title: Text("+ Add New"), dense: true, onTap: () {
+                                showDialog(
+                                    context: context,
+                                    builder: (context) {
+                                      return AlertTextbox("Add Allergy", null, "", null, "Cancel", "Add", null, (val) {
+                                        Navigator.of(context).pop();
+                                      }, (val) {
+                                        Firestore.instance.collection('users').document(userId ?? "").updateData({'allergies':FieldValue.arrayUnion([val])}).then((_) {
+                                          setState(() {});
+                                        });
+                                        Navigator.of(context).pop();
+                                      });
+                                    });
+                              }));
                               return Card(child: Column(children: tiles.toList()));
                             } else {
                               return Card(child: ListTile(
                                 title: Text("No Allergies (Click here to add)"),
                                 onTap: () {
-                                  print("clicked Row");
+                                  showDialog(
+                                      context: context,
+                                      builder: (context) {
+                                        return AlertTextbox("Add Allergy", null, "", null, "Cancel", "Add", null, (val) {
+                                          Navigator.of(context).pop();
+                                        }, (val) {
+                                          Firestore.instance.collection('users').document(userId ?? "").updateData({'allergies':FieldValue.arrayUnion([val])}).then((_) {
+                                            setState(() {});
+                                          });
+                                          Navigator.of(context).pop();
+                                        });
+                                      });
                                 },
                                 dense: true
                               )
