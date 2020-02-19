@@ -1,5 +1,4 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:doctonomy_app/screens/provider/procedureChooser.dart';
 import 'package:flutter/material.dart';
 
 import '../../models/state.dart';
@@ -80,13 +79,14 @@ class _AdminProceduresState extends State<AdminProcedures> {
               color: Colors.blue,
               onPressed: () {
                 print('Add procedure');
-                Navigator.of(context).push(
-                  new MaterialPageRoute(builder: (BuildContext context){
-                    return new ProcedureChooser();
-                  },
-                    fullscreenDialog: true
-                  )
-                );
+                //we don't need procedure chooser here
+                // Navigator.of(context).push(
+                //   new MaterialPageRoute(builder: (BuildContext context){
+                //     return new ProcedureChooser();
+                //   },
+                //     fullscreenDialog: true
+                //   )
+                // );
               },
             ),
           ],
