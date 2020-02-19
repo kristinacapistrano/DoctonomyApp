@@ -1,6 +1,6 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
-
+import '../../models/surgery.dart';
 import '../../models/state.dart';
 import '../../util/state_widget.dart';
 
@@ -12,32 +12,34 @@ class AdminProcedures extends StatefulWidget {
 
 class _AdminProceduresState extends State<AdminProcedures> {
   StateModel appState;
+  List<Surgery> surgeryList;
 
   @override
   void initState() {
     super.initState();
   }
 
-    Future<List<dynamic>> getList() async{
-    DocumentReference docRef = Firestore.instance.collection('procedures').document(
-        appState?.firebaseUserAuth?.uid ?? "");
+// getList is unneeded for this page
+  //   Future<List<dynamic>> getList() async{
+  //   DocumentReference docRef = Firestore.instance.collection('procedures').document(
+  //       appState?.firebaseUserAuth?.uid ?? "");
 
-    // TODO: add a way to remove procedures from the list
-    return docRef.get().then((datasnapshot) async{
-      if (datasnapshot.exists){
-        List<dynamic> info = datasnapshot.data['procedures'].toList();
-        List<dynamic> list = new List();
-        for(var uid in info){
-          DocumentReference dr = Firestore.instance.collection('procedures').document(uid);
-          DocumentSnapshot ds = await dr.get();
-          list.add(ds);
-        }
-        return list;
-      } else{
-        return [];
-      }
-    });
-  }
+  //   // TODO: add a way to remove procedures from the list
+  //   return docRef.get().then((datasnapshot) async{
+  //     if (datasnapshot.exists){
+  //       List<dynamic> info = datasnapshot.data['surgeries'].toList();
+  //       List<dynamic> list = new List();
+  //       for(var uid in info){
+  //         DocumentReference dr = Firestore.instance.collection('procedures').document(uid);
+  //         DocumentSnapshot ds = await dr.get();
+  //         list.add(ds);
+  //       }
+  //       return list;
+  //     } else{
+  //       return [];
+  //     }
+  //   });
+  // }
 
   Widget build(BuildContext context) {
     appState = StateWidget.of(context).state;
@@ -78,7 +80,7 @@ class _AdminProceduresState extends State<AdminProcedures> {
               icon: Icon(Icons.add),
               color: Colors.blue,
               onPressed: () {
-                print('Add procedure');
+                print('Create new procedure');
                 //we don't need procedure chooser here
                 // Navigator.of(context).push(
                 //   new MaterialPageRoute(builder: (BuildContext context){
@@ -92,24 +94,26 @@ class _AdminProceduresState extends State<AdminProcedures> {
           ],
           backgroundColor: Colors.white
           ),
-       body: FutureBuilder(
-         future: getList(),
-         builder: (context, AsyncSnapshot<List<dynamic>> snapshot) {
-           if(snapshot.connectionState == ConnectionState.waiting) {
-             return Center(child: CircularProgressIndicator());
-           } else {
-             return Center(
-              child: ListView.builder(
-                itemCount: snapshot.data.length,
+       body: StreamBuilder<QuerySnapshot>(
+         stream: Firestore.instance.collection("procedures").snapshots(),
+         builder: (BuildContext context, AsyncSnapshot<QuerySnapshot> snapshot) {
+            if(snapshot.hasError)
+              return new Text('Error: ${snapshot.error}');
+            switch (snapshot.connectionState) {
+              case ConnectionState.waiting:
+                return Center(child: CircularProgressIndicator());
+              default: 
+                var procedures = List<DocumentSnapshot>();
+                snapshot.data.documents.forEach((ds){
+                  procedures.add(ds);
+                });
+                final int count = procedures.length;
+                return new ListView.builder(
+                itemCount: count,
                 itemBuilder: (context, index) {
-                  final dynamic document = snapshot.data[index];
-                  var name = "(No Name) " + document.documentID;
-                  if (document.data != null) {
-                    name = document.data["name"] ?? "";
-                  }
-                  if (name == " ") {
-                    name = "(No Name) " + document.documentID;
-                  }
+                  final DocumentSnapshot document = procedures[index];
+                  var name = document.data["name"] ?? "";
+                  var description = document.data["description"] ?? "";
                   return new Card(
                       child: ListTile(
                         leading: Icon(Icons.healing),
@@ -119,34 +123,10 @@ class _AdminProceduresState extends State<AdminProcedures> {
                         }
                       )
                   );
-                }),
-              );
-            }
+                });
           }
-        ),
-    ); 
-      //ListView(
-      //   children: <Widget>[
-      //     Card(child: ListTile(
-      //         leading: Icon(Icons.chevron_right),
-      //         title: Text('Procedure #1'),
-      //         subtitle: Text('Short description for procedure #1'),
-      //         onTap: () {
-      //           print("clicked Row");
-      //         },
-      //       )
-      //     ),
-      //     Card(child: ListTile(
-      //       leading: Icon(Icons.chevron_right),
-      //       title: Text('Procedure #2'),
-      //       subtitle: Text('Short description for procedure #2'),
-      //       onTap: () {
-      //         print("clicked Row");
-      //       },
-      //     )
-      //     ),
-      //   ],
-      // ),
-    //);
+        }
+      )
+    );
   }
 }
