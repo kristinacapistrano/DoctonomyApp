@@ -3,7 +3,8 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import '../../models/state.dart';
 import '../../util/state_widget.dart';
 import '../../models/user.dart';
-import 'package:cloud_functions/cloud_functions.dart';
+//import 'package:cloud_functions/cloud_functions.dart';
+import 'package:cron/cron.dart';
 
 
 class PatientViewer extends StatefulWidget {
@@ -11,7 +12,6 @@ class PatientViewer extends StatefulWidget {
   final String userId;
   final String title;
   PatientViewer({Key key, @required this.userId, @required this.title}) : super(key: key);
-
   @override
   _PatientViewerState createState() => _PatientViewerState(userId, title);
 }
@@ -22,6 +22,7 @@ class _PatientViewerState extends State<PatientViewer> {
   String userId;
   String title;
   _PatientViewerState(this.userId, this.title);
+  var cron = new Cron();
 
   @override
   void initState() {
@@ -76,10 +77,14 @@ class _PatientViewerState extends State<PatientViewer> {
                 subtitle: Text('Every day at 5pm'),
                 onTap: () {
                   print("clicked Row");
-                  CloudFunctions.instance.getHttpsCallable(
+                  cron.schedule(new Schedule.parse('*/1 * * * *'), () async {
+                    print('every 1 minute');
+                  });
+/*                  CloudFunctions.instance.getHttpsCallable(
                       functionName: "patientReminder",
+                      //no money for blaze upgrade
                   );
-                  print ("reminding every 5pm");
+                  print ("reminding every 5pm");*/
                 },
               )
               ),
