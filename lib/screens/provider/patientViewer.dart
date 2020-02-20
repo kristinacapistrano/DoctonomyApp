@@ -3,7 +3,6 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/cupertino.dart';
 import '../../models/state.dart';
 import '../../util/state_widget.dart';
-import '../../models/user.dart';
 import '../../widgets/AlertTextbox.dart';
 
 class PatientViewer extends StatefulWidget {
@@ -18,7 +17,6 @@ class PatientViewer extends StatefulWidget {
 
 class _PatientViewerState extends State<PatientViewer> {
   StateModel appState;
-  List<User> userList;
   String userId;
   String title;
   _PatientViewerState(this.userId, this.title);
