@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
 
-import '../sign_in.dart';
+import './patientHome.dart';
 import '../../models/state.dart';
 import '../../util/state_widget.dart';
 import '../provider/adminNav.dart';
-import './patientHome.dart';
+import '../sign_in.dart';
 
 class PatientNav extends StatefulWidget {
   static const String id = 'patient_nav';
@@ -58,28 +58,35 @@ class _PatientNavState extends State<PatientNav> {
             ],
             backgroundColor: Colors.white),
         bottomNavigationBar: new BottomNavigationBar(
-            currentIndex: tab,
-            onTap: (int index) {
-              print('Patient Tab: ' + index.toString());
-              setState(() {
-                tab = index;
-              });
-              //_navigateToScreens(index);
-            },
-            items: [
-              new BottomNavigationBarItem(
-                icon: const Icon(Icons.star),
-                title: new Text('TODO'),
-              ),
-              new BottomNavigationBarItem(
-                icon: const Icon(Icons.home),
-                title: new Text('Home'),
-              ),
-              new BottomNavigationBarItem(
-                icon: const Icon(Icons.settings),
-                title: new Text('Options'),
-              )
-            ]),
+          showSelectedLabels: true,
+          type: BottomNavigationBarType.shifting,
+          currentIndex: tab,
+          onTap: (int index) {
+            print('Patient Tab: ' + index.toString());
+            setState(() {
+              tab = index;
+            });
+            //_navigateToScreens(index);
+          },
+          items: [
+            new BottomNavigationBarItem(
+              icon: const Icon(Icons.star),
+              title: new Text('TODO'),
+            ),
+            new BottomNavigationBarItem(
+              icon: const Icon(Icons.home),
+              title: new Text('Home'),
+            ),
+            new BottomNavigationBarItem(
+              icon: const Icon(Icons.settings),
+              title: new Text('Options'),
+            ),
+            new BottomNavigationBarItem(
+              icon: const Icon(Icons.notifications),
+              title: new Text('Reminders'),
+            )
+          ],
+        ),
         body: new Stack(
           children: <Widget>[
 //            new Offstage(
@@ -96,6 +103,13 @@ class _PatientNavState extends State<PatientNav> {
                 child: new PatientHome(),
               ),
             ),
+            new Offstage(
+              offstage: tab != 3,
+              child: new TickerMode(
+                enabled: tab == 3,
+                child: new PatientHome(),
+              ),
+            )
           ],
         ),
       );
