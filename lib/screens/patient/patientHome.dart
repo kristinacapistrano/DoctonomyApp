@@ -1,7 +1,11 @@
 import 'package:flutter/material.dart';
-
 import '../../models/state.dart';
 import '../../util/state_widget.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:flutter/cupertino.dart';
+import '../../widgets/AlertTextbox.dart';
+
+
 
 class PatientHome extends StatefulWidget {
   static const String id = 'patient_home';
@@ -11,71 +15,157 @@ class PatientHome extends StatefulWidget {
 
 class _PatientHomeState extends State<PatientHome> {
   StateModel appState;
-
+  String title = "";
   @override
   void initState() {
     super.initState();
   }
 
+  Future<Map<String,dynamic>> getUserData() async {
+    DocumentReference docRef = Firestore.instance.collection('users').document(appState?.firebaseUserAuth?.uid);
+    return docRef.get().then((datasnapshot) async {
+      if (datasnapshot.exists) {
+        return datasnapshot.data;
+      } else {
+        return null;
+      }
+    });
+  }
+
+  @override
   Widget build(BuildContext context) {
     appState = StateWidget.of(context).state;
-    final signOutButton = Padding(
-      padding: EdgeInsets.symmetric(vertical: 16.0),
-      child: RaisedButton(
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(24),
-        ),
-        onPressed: () {
-          StateWidget.of(context).logOutUser();
-        },
-        padding: EdgeInsets.all(12),
-        color: Theme.of(context).primaryColor,
-        child: Text('SIGN OUT', style: TextStyle(color: Colors.white)),
-      ),
-    );
-
-    final userId = appState?.firebaseUserAuth?.uid ?? '';
-    final email = appState?.firebaseUserAuth?.email ?? '';
-
-    final userIdLabel = Text('User Id: ');
-    final emailLabel = Text('Email: ');
-
     return Scaffold(
-      body: Container(
-        decoration: BoxDecoration(
-            gradient: LinearGradient(
-                colors: [Colors.blue, Colors.blue[50]],
-                begin: Alignment.bottomCenter,
-                end: Alignment.topCenter)),
-        child: Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 48.0),
-          child: Center(
-            child: SingleChildScrollView(
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                crossAxisAlignment: CrossAxisAlignment.stretch,
-                children: <Widget>[
-                  Image(
-                    image: new AssetImage("assets/resizedLOGO.jpg"),
-                    alignment: Alignment.topCenter,
-                    fit: BoxFit.none,
-                    color: Colors.red,
-                    colorBlendMode: BlendMode.dst,
-                  ),
-                  SizedBox(height: 48.0),
-                  userIdLabel,
-                  Text(userId, style: TextStyle(fontWeight: FontWeight.bold)),
-                  SizedBox(height: 12.0),
-                  emailLabel,
-                  Text(email, style: TextStyle(fontWeight: FontWeight.bold)),
-                  SizedBox(height: 12.0),
-                  signOutButton
-                ],
-              ),
+        appBar: AppBar(
+            brightness: Brightness.light,
+            textTheme: TextTheme(
+                title: TextStyle(
+                  color: Colors.lightBlueAccent[700],
+                  fontWeight: FontWeight.bold,
+                )
             ),
-          ),
-        ),
-      ),
+            centerTitle: true,
+            title: FittedBox(fit:BoxFit.fitWidth,
+                child: Text("My Info")
+            ),
+            iconTheme: IconThemeData(color: Colors.lightBlueAccent[700]),
+            backgroundColor: Colors.white),
+        body:
+        Container(
+            padding: EdgeInsets.symmetric(vertical: 0, horizontal: 5),
+            child: FutureBuilder(
+                future: getUserData(),
+                builder: (context, AsyncSnapshot<Map<String,dynamic>> snapshot) {
+                  if (snapshot.connectionState == ConnectionState.waiting) {
+                    return Center(child: CircularProgressIndicator());
+                  } else {
+                    print(snapshot.data);
+                    return Center(
+                      child: ListView(
+                        children: <Widget>[
+                          SizedBox(height: 20.0),
+                          Text('Upcoming Procedures', style: TextStyle(fontWeight: FontWeight.w500)),
+                          //TODO remove hardcoded card
+                          Card(child: ListTile(
+                            leading: Icon(Icons.healing),
+                            title: Text('Surgery'),
+                            subtitle: Text('Coming up on 2/20/20'),
+                            onTap: () {
+                              print("clicked Row");
+                            },
+                          )
+                          ),
+
+                          SizedBox(height: 20.0),
+                          Text('Reminders', style: TextStyle(fontWeight: FontWeight.w500)),
+                          //TODO remove hardcoded card
+                          Card(child: ListTile(
+                            leading: Icon(Icons.alarm),
+                            title: Text('Take medication'),
+                            subtitle: Text('Every day at 5pm'),
+                            onTap: () {
+                              print("clicked Row");
+                            },
+                          )
+                          ),
+
+                          //Allergy information
+                          SizedBox(height: 20.0),
+                          Text('Allergies', style: TextStyle(fontWeight: FontWeight.w500)),
+                          Builder(builder: (BuildContext context) {
+                            var allergyList = snapshot.data["allergies"]?.toList() ?? [];
+                            if (allergyList.length > 0) {
+                              List<Widget> tiles = allergyList.fold(List<Widget>(), (total, el) {
+                                total.add(ListTile(title: Text(el, style: TextStyle(fontWeight: FontWeight.w500)), dense: true, onTap: () {
+                                  showDialog(
+                                      context: context,
+                                      builder: (context) {
+                                        return AlertTextbox("Edit Allergy", null, el, "Delete", "Cancel", "Save", (val) {
+                                          allergyList.removeAt(allergyList.indexOf(el));
+                                          Firestore.instance.collection('users').document(appState?.firebaseUserAuth?.uid ?? "").updateData({'allergies':allergyList}).then((_) {
+                                            setState(() {});
+                                          });
+                                          Navigator.of(context).pop();
+                                        }, (val) {
+                                          Navigator.of(context).pop();
+                                        }, (val) {
+                                          allergyList[allergyList.indexOf(el)] = val;
+                                          Firestore.instance.collection('users').document(appState?.firebaseUserAuth?.uid ?? "").updateData({'allergies':allergyList}).then((_) {
+                                            setState(() {});
+                                          });
+                                          Navigator.of(context).pop();
+                                        });
+                                      });
+                                }));
+                                total.add(Divider(thickness: 1, indent: 10, endIndent: 10, height: 1));
+                                return total;
+                              });
+                              tiles.add(ListTile(title: Text("+ Add New"), dense: true, onTap: () {
+                                showDialog(
+                                    context: context,
+                                    builder: (context) {
+                                      return AlertTextbox("Add Allergy", null, "", null, "Cancel", "Add", null, (val) {
+                                        Navigator.of(context).pop();
+                                      }, (val) {
+                                        Firestore.instance.collection('users').document(appState?.firebaseUserAuth?.uid ?? "").updateData({'allergies':FieldValue.arrayUnion([val])}).then((_) {
+                                          setState(() {});
+                                        });
+                                        Navigator.of(context).pop();
+                                      });
+                                    });
+                              }));
+                              return Card(child: Column(children: tiles.toList()));
+                            } else {
+                              return Card(child: ListTile(
+                                  title: Text("No Allergies (Click here to add)"),
+                                  onTap: () {
+                                    showDialog(
+                                        context: context,
+                                        builder: (context) {
+                                          return AlertTextbox("Add Allergy", null, "", null, "Cancel", "Add", null, (val) {
+                                            Navigator.of(context).pop();
+                                          }, (val) {
+                                            Firestore.instance.collection('users').document(appState?.firebaseUserAuth?.uid ?? "").updateData({'allergies':FieldValue.arrayUnion([val])}).then((_) {
+                                              setState(() {});
+                                            });
+                                            Navigator.of(context).pop();
+                                          });
+                                        });
+                                  },
+                                  dense: true
+                              )
+                              );
+                            }
+                          }),
+                        ],
+                      ),
+                    );
+                  }
+                }
+            )
+
+        )
     );
   }
+
 }

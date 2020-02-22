@@ -3,13 +3,13 @@ import 'package:flutter/material.dart';
 import '../../models/state.dart';
 import '../../util/state_widget.dart';
 
-class AdminHome extends StatefulWidget {
-  static const String id = 'admin_home';
+class PatientProfile extends StatefulWidget {
+  static const String id = 'patient_profile';
 
-  _AdminHomeState createState() => _AdminHomeState();
+  _PatientProfileState createState() => _PatientProfileState();
 }
 
-class _AdminHomeState extends State<AdminHome> {
+class _PatientProfileState extends State<PatientProfile> {
   StateModel appState;
 
   @override
@@ -41,31 +41,6 @@ class _AdminHomeState extends State<AdminHome> {
     final emailLabel = Text('Email: ');
 
     return Scaffold(
-      appBar: AppBar(
-          brightness: Brightness.light,
-          textTheme: TextTheme(
-              title: TextStyle(
-                color: Colors.lightBlueAccent[700],
-                fontSize: 20,
-                fontWeight: FontWeight.bold,
-              )),
-          title: Row(
-            mainAxisAlignment: MainAxisAlignment.start,
-            children: <Widget>[
-              Text("Home Page"),
-            ],
-          ),
-          actions: <Widget>[
-            IconButton(
-              icon: Image.asset('assets/appbar_logo.png'),
-              iconSize: 100.0,
-              highlightColor: Colors.red,
-              onPressed: () {
-                print('Click PCH');
-              },
-            ),
-          ],
-          backgroundColor: Colors.white),
       body: Container(
         decoration: BoxDecoration(
             gradient: LinearGradient(
@@ -94,7 +69,6 @@ class _AdminHomeState extends State<AdminHome> {
                   emailLabel,
                   Text(email, style: TextStyle(fontWeight: FontWeight.bold)),
                   SizedBox(height: 12.0),
-                  Text("(Signed in as an Admin)"),
                   signOutButton
                 ],
               ),

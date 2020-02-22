@@ -1,3 +1,4 @@
+import 'package:doctonomy_app/screens/patient/patientProfile.dart';
 import 'package:flutter/material.dart';
 
 import '../sign_in.dart';
@@ -32,30 +33,6 @@ class _PatientNavState extends State<PatientNav> {
       return AdminNav();
     } else {
       return Scaffold(
-        appBar: AppBar(
-            textTheme: TextTheme(
-                title: TextStyle(
-              color: Colors.lightBlueAccent[700],
-              fontSize: 20,
-              fontWeight: FontWeight.bold,
-            )),
-            title: Row(
-              mainAxisAlignment: MainAxisAlignment.start,
-              children: <Widget>[
-                Text("Home Page"),
-              ],
-            ),
-            actions: <Widget>[
-              IconButton(
-                icon: Image.asset('assets/appbar_logo.png'),
-                iconSize: 100.0,
-                highlightColor: Colors.red,
-                onPressed: () {
-                  print('Click PCH');
-                },
-              ),
-            ],
-            backgroundColor: Colors.white),
         bottomNavigationBar: new BottomNavigationBar(
             currentIndex: tab,
             onTap: (int index) {
@@ -71,8 +48,9 @@ class _PatientNavState extends State<PatientNav> {
                 title: new Text('Home'),
               ),
               new BottomNavigationBarItem(
-                icon: const Icon(Icons.star),
-                title: new Text('TODO'),
+                
+                icon: const Icon(Icons.person),
+                title: new Text('Profile'),
               ),
               new BottomNavigationBarItem(
                 icon: const Icon(Icons.settings),
@@ -81,18 +59,18 @@ class _PatientNavState extends State<PatientNav> {
             ]),
         body: new Stack(
           children: <Widget>[
-//            new Offstage(
-//              offstage: tab != 0,
-//              child: new TickerMode(
-//                enabled: tab == 0,
-//                child: new MaterialApp(home: new YourLeftPage()),
-//              ),
-//            ),
             new Offstage(
               offstage: tab != 0,
               child: new TickerMode(
                 enabled: tab == 0,
                 child: new PatientHome(),
+              ),
+            ),
+            new Offstage(
+              offstage: tab != 0,
+              child: new TickerMode(
+                enabled: tab == 1,
+                child: new PatientProfile(),
               ),
             ),
           ],
