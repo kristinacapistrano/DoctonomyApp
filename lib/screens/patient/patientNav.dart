@@ -59,7 +59,7 @@ class _PatientNavState extends State<PatientNav> {
             backgroundColor: Colors.white),
         bottomNavigationBar: new BottomNavigationBar(
           showSelectedLabels: true,
-          type: BottomNavigationBarType.shifting,
+          type: BottomNavigationBarType.fixed,
           currentIndex: tab,
           onTap: (int index) {
             print('Patient Tab: ' + index.toString());
