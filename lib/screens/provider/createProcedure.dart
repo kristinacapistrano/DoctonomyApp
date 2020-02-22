@@ -35,8 +35,31 @@ class _CreateProcedureState extends State{
         title: Text("Create a new procedure"),
         iconTheme: IconThemeData(color: Colors.lightBlueAccent[700]),
         backgroundColor: Colors.white,
-        
-    ),
+      ),
+      body: Form( 
+        child: ListView(
+          children: <Widget>[
+            TextFormField(
+              decoration: const InputDecoration(
+                hintText: 'Procedure Name',
+                ),
+            ),
+            TextFormField(
+              decoration: const InputDecoration(
+                hintText: 'Description',
+                ),
+            ),
+            Padding(
+              padding: const EdgeInsets.symmetric(vertical: 16.0),
+              child: RaisedButton(onPressed: (){
+                print('form submitted');
+                },
+                child: Text('Submit')
+              ),
+            )
+          ],
+        ),
+      ),
     );
   }
 }
