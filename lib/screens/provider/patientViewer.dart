@@ -60,75 +60,6 @@ class _PatientViewerState extends State<PatientViewer> {
             iconTheme: IconThemeData(color: Colors.lightBlueAccent[700]),
             backgroundColor: Colors.white),
         body:
-
-          ListView(
-            children: <Widget>[
-              SizedBox(height: 20.0),
-              Text(' Upcoming Procedures'),
-              Card(child: ListTile(
-                leading: Icon(Icons.healing),
-                title: Text('Surgery'),
-                subtitle: Text('Coming up on 2/20/20'),
-                onTap: () {
-                  print("clicked Row");
-                },
-              )
-              ),
-              Card(child: ListTile(
-                leading: Icon(Icons.healing),
-                title: Text('Procedure #2'),
-                subtitle: Text('Coming up on 5/05/20'),
-                onTap: () {
-                  print("clicked Row");
-                },
-              )
-              ),
-              SizedBox(height: 20.0),
-              Text(' Reminders'),
-              Card(child: ListTile(
-                leading: Icon(Icons.alarm),
-                title: Text('Take medication'),
-                subtitle: Text('Every day at 5pm'),
-                onTap: () {
-                  print("clicked Row");
-                  cron.schedule(new Schedule.parse('*/1 * * * *'), () async {
-                    print('every 1 minute');
-                  });
-/*                  CloudFunctions.instance.getHttpsCallable(
-                      functionName: "patientReminder",
-                      //no money for blaze upgrade
-                  );
-                  print ("reminding every 5pm");*/
-                },
-              )
-              ),
-              SizedBox(height: 20.0),
-              Text(' Actions'),
-              Card(child: ListTile(
-                trailing: Icon(Icons.send),
-                title: Text('Send a message'),
-                onTap: () {
-                  print("clicked Row");
-                },
-              )
-              ),
-              Card(child: ListTile(
-                trailing: Icon(Icons.healing),
-                title: Text('Schedule new procedure'),
-                onTap: () {
-                  print("clicked Row");
-                },
-              )
-              ),
-              Card(child: ListTile(
-                trailing: Icon(Icons.clear),
-                title: Text('Remove from my list'),
-                onTap: () {
-                  print("clicked Row");
-                },
-              )
-              ),
-            ],
           Container(
             padding: EdgeInsets.symmetric(vertical: 0, horizontal: 5),
             child: FutureBuilder(
@@ -154,6 +85,15 @@ class _PatientViewerState extends State<PatientViewer> {
                             },
                           )
                           ),
+                          Card(child: ListTile(
+                            leading: Icon(Icons.healing),
+                            title: Text('Procedure #2'),
+                            subtitle: Text('Coming up on 5/05/20'),
+                            onTap: () {
+                              print("clicked Row");
+                            },
+                          )
+                          ),
 
                           SizedBox(height: 20.0),
                           Text('Reminders', style: TextStyle(fontWeight: FontWeight.w500)),
@@ -164,6 +104,14 @@ class _PatientViewerState extends State<PatientViewer> {
                             subtitle: Text('Every day at 5pm'),
                             onTap: () {
                               print("clicked Row");
+                              cron.schedule(new Schedule.parse('*/1 * * * *'), () async {
+                                print('every 1 minute');
+                              });
+                              /*CloudFunctions.instance.getHttpsCallable(
+                                functionName: "patientReminder",
+                                //no money for blaze upgrade
+                                );
+                              print ("reminding every 5pm");*/
                             },
                           )
                           ),
