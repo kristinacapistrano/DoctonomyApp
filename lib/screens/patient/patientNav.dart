@@ -67,7 +67,7 @@ class _PatientNavState extends State<PatientNav> {
               ),
             ),
             new Offstage(
-              offstage: tab != 0,
+              offstage: tab != 1,
               child: new TickerMode(
                 enabled: tab == 1,
                 child: new PatientProfile(),
