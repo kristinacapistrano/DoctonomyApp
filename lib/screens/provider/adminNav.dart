@@ -45,16 +45,16 @@ class _AdminNavState extends State<AdminNav> {
             },
             items: [
               new BottomNavigationBarItem(
+                icon: const Icon(Icons.home),
+                title: new Text('Home'),
+              ),
+              new BottomNavigationBarItem(
                 icon: const Icon(Icons.people),
                 title: new Text('Patients'),
               ),
               new BottomNavigationBarItem(
                 icon: const Icon(Icons.healing),
                 title: new Text('Procedures'),
-              ),
-              new BottomNavigationBarItem(
-                icon: const Icon(Icons.home),
-                title: new Text('Home'),
               ),
 //              new BottomNavigationBarItem(
 //                icon: const Icon(Icons.settings),
@@ -67,21 +67,21 @@ class _AdminNavState extends State<AdminNav> {
               offstage: tab != 0,
               child: new TickerMode(
                 enabled: tab == 0,
-                child: new AdminPatients(),
+                child: new AdminHome(),
               ),
             ),
             new Offstage(
               offstage: tab != 1,
               child: new TickerMode(
                 enabled: tab == 1,
-                child: new AdminProcedures(),
+                child: new AdminPatients(),
               ),
             ),
             new Offstage(
               offstage: tab != 2,
               child: new TickerMode(
                 enabled: tab == 2,
-                child: new AdminHome(),
+                child: new AdminProcedures(),
               ),
             ),
           ],

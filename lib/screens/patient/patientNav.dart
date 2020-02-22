@@ -48,6 +48,7 @@ class _PatientNavState extends State<PatientNav> {
                 title: new Text('Home'),
               ),
               new BottomNavigationBarItem(
+                
                 icon: const Icon(Icons.person),
                 title: new Text('Profile'),
               ),
@@ -66,7 +67,7 @@ class _PatientNavState extends State<PatientNav> {
               ),
             ),
             new Offstage(
-              offstage: tab != 1,
+              offstage: tab != 0,
               child: new TickerMode(
                 enabled: tab == 1,
                 child: new PatientProfile(),
