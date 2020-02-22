@@ -23,6 +23,7 @@ class _PatientChooserState extends State<PatientChooser> {
     appState = StateWidget.of(context).state;
     return Scaffold(
         appBar: AppBar(
+            brightness: Brightness.light,
             textTheme: TextTheme(
                 title: TextStyle(
               color: Colors.lightBlueAccent[700],

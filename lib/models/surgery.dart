@@ -3,12 +3,29 @@ import 'package:doctonomy_app/models/provider.dart';
 class Surgery {
   String name;
   String type;
+  String description;
   List <Provider> performedBy;
   
   Surgery({name, type, teamSize}){
     this.name = name;
     this.type = type;
     performedBy = new List(teamSize);
+  }
+
+  String getName(){
+    return name;
+  }
+
+  void setName(String newName){
+    this.name = newName;
+  }
+
+  String getType(){
+    return type;
+  }
+
+  void setType(String newType){
+    this.type = newType;
   }
 
   void add(Provider provider){
