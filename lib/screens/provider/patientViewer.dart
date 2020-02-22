@@ -3,14 +3,17 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/cupertino.dart';
 import '../../models/state.dart';
 import '../../util/state_widget.dart';
+import '../../models/user.dart';
+//import 'package:cloud_functions/cloud_functions.dart';
+import 'package:cron/cron.dart';
 import '../../widgets/AlertTextbox.dart';
+
 
 class PatientViewer extends StatefulWidget {
   static const String id = 'patient_viewer';
   final String userId;
   final String title;
   PatientViewer({Key key, @required this.userId, @required this.title}) : super(key: key);
-
   @override
   _PatientViewerState createState() => _PatientViewerState(userId, title);
 }
@@ -20,6 +23,7 @@ class _PatientViewerState extends State<PatientViewer> {
   String userId;
   String title;
   _PatientViewerState(this.userId, this.title);
+  var cron = new Cron();
 
   @override
   void initState() {
@@ -56,6 +60,75 @@ class _PatientViewerState extends State<PatientViewer> {
             iconTheme: IconThemeData(color: Colors.lightBlueAccent[700]),
             backgroundColor: Colors.white),
         body:
+
+          ListView(
+            children: <Widget>[
+              SizedBox(height: 20.0),
+              Text(' Upcoming Procedures'),
+              Card(child: ListTile(
+                leading: Icon(Icons.healing),
+                title: Text('Surgery'),
+                subtitle: Text('Coming up on 2/20/20'),
+                onTap: () {
+                  print("clicked Row");
+                },
+              )
+              ),
+              Card(child: ListTile(
+                leading: Icon(Icons.healing),
+                title: Text('Procedure #2'),
+                subtitle: Text('Coming up on 5/05/20'),
+                onTap: () {
+                  print("clicked Row");
+                },
+              )
+              ),
+              SizedBox(height: 20.0),
+              Text(' Reminders'),
+              Card(child: ListTile(
+                leading: Icon(Icons.alarm),
+                title: Text('Take medication'),
+                subtitle: Text('Every day at 5pm'),
+                onTap: () {
+                  print("clicked Row");
+                  cron.schedule(new Schedule.parse('*/1 * * * *'), () async {
+                    print('every 1 minute');
+                  });
+/*                  CloudFunctions.instance.getHttpsCallable(
+                      functionName: "patientReminder",
+                      //no money for blaze upgrade
+                  );
+                  print ("reminding every 5pm");*/
+                },
+              )
+              ),
+              SizedBox(height: 20.0),
+              Text(' Actions'),
+              Card(child: ListTile(
+                trailing: Icon(Icons.send),
+                title: Text('Send a message'),
+                onTap: () {
+                  print("clicked Row");
+                },
+              )
+              ),
+              Card(child: ListTile(
+                trailing: Icon(Icons.healing),
+                title: Text('Schedule new procedure'),
+                onTap: () {
+                  print("clicked Row");
+                },
+              )
+              ),
+              Card(child: ListTile(
+                trailing: Icon(Icons.clear),
+                title: Text('Remove from my list'),
+                onTap: () {
+                  print("clicked Row");
+                },
+              )
+              ),
+            ],
           Container(
             padding: EdgeInsets.symmetric(vertical: 0, horizontal: 5),
             child: FutureBuilder(

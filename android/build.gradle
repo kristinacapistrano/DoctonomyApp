@@ -5,8 +5,9 @@ buildscript {
     }
 
     dependencies {
-        classpath 'com.android.tools.build:gradle:3.2.1'
-        classpath 'com.google.gms:google-services:4.3.2'
+        classpath 'com.android.tools.build:gradle:3.5.3'
+        classpath 'com.google.gms:google-services:4.3.3'
+
     }
 }
 
@@ -15,6 +16,14 @@ allprojects {
         google()
         jcenter()
     }
+}
+
+ext {
+    // The following are only a few examples of the types of properties you can define.
+    compileSdkVersion = 29
+    // You can also create properties to specify versions for dependencies.
+    // Having consistent versions between modules can avoid conflicts with behavior.
+    supportLibVersion = "29.0.0"
 }
 
 rootProject.buildDir = '../build'

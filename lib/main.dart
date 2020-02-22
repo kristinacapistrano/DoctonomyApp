@@ -3,11 +3,13 @@ import 'screens/patient/patientNav.dart';
 import './screens/sign_in.dart';
 import './util/state_widget.dart';
 
+
 void main() {
   StateWidget stateWidget = new StateWidget(
     child: new MyApp(),
   );
   runApp(stateWidget);
+
 }
 
 class MyApp extends StatelessWidget {
