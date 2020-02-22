@@ -92,13 +92,71 @@ class _PatientHomeState extends State<PatientHome> {
                           //Allergy information
                           SizedBox(height: 20.0),
                           Text('Allergies', style: TextStyle(fontWeight: FontWeight.w500)),
-                          Card(child: ListTile(
-                            title: Text('Allergy placeholder'),
-                            onTap: () {
-                              print("clicked Row");
-                            },
-                          )
-                          )
+                          Builder(builder: (BuildContext context) {
+                            var allergyList = snapshot.data["allergies"]?.toList() ?? [];
+                            if (allergyList.length > 0) {
+                              List<Widget> tiles = allergyList.fold(List<Widget>(), (total, el) {
+                                total.add(ListTile(title: Text(el, style: TextStyle(fontWeight: FontWeight.w500)), dense: true, onTap: () {
+                                  showDialog(
+                                      context: context,
+                                      builder: (context) {
+                                        return AlertTextbox("Edit Allergy", null, el, "Delete", "Cancel", "Save", (val) {
+                                          allergyList.removeAt(allergyList.indexOf(el));
+                                          Firestore.instance.collection('users').document(appState?.firebaseUserAuth?.uid ?? "").updateData({'allergies':allergyList}).then((_) {
+                                            setState(() {});
+                                          });
+                                          Navigator.of(context).pop();
+                                        }, (val) {
+                                          Navigator.of(context).pop();
+                                        }, (val) {
+                                          allergyList[allergyList.indexOf(el)] = val;
+                                          Firestore.instance.collection('users').document(appState?.firebaseUserAuth?.uid ?? "").updateData({'allergies':allergyList}).then((_) {
+                                            setState(() {});
+                                          });
+                                          Navigator.of(context).pop();
+                                        });
+                                      });
+                                }));
+                                total.add(Divider(thickness: 1, indent: 10, endIndent: 10, height: 1));
+                                return total;
+                              });
+                              tiles.add(ListTile(title: Text("+ Add New"), dense: true, onTap: () {
+                                showDialog(
+                                    context: context,
+                                    builder: (context) {
+                                      return AlertTextbox("Add Allergy", null, "", null, "Cancel", "Add", null, (val) {
+                                        Navigator.of(context).pop();
+                                      }, (val) {
+                                        Firestore.instance.collection('users').document(appState?.firebaseUserAuth?.uid ?? "").updateData({'allergies':FieldValue.arrayUnion([val])}).then((_) {
+                                          setState(() {});
+                                        });
+                                        Navigator.of(context).pop();
+                                      });
+                                    });
+                              }));
+                              return Card(child: Column(children: tiles.toList()));
+                            } else {
+                              return Card(child: ListTile(
+                                  title: Text("No Allergies (Click here to add)"),
+                                  onTap: () {
+                                    showDialog(
+                                        context: context,
+                                        builder: (context) {
+                                          return AlertTextbox("Add Allergy", null, "", null, "Cancel", "Add", null, (val) {
+                                            Navigator.of(context).pop();
+                                          }, (val) {
+                                            Firestore.instance.collection('users').document(appState?.firebaseUserAuth?.uid ?? "").updateData({'allergies':FieldValue.arrayUnion([val])}).then((_) {
+                                              setState(() {});
+                                            });
+                                            Navigator.of(context).pop();
+                                          });
+                                        });
+                                  },
+                                  dense: true
+                              )
+                              );
+                            }
+                          }),
                         ],
                       ),
                     );
