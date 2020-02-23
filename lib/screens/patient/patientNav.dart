@@ -1,3 +1,4 @@
+import 'package:doctonomy_app/screens/patient/patientReminders.dart';
 import 'package:flutter/material.dart';
 
 import './patientHome.dart';
@@ -107,7 +108,7 @@ class _PatientNavState extends State<PatientNav> {
               offstage: tab != 3,
               child: new TickerMode(
                 enabled: tab == 3,
-                child: new PatientHome(),
+                child: new PatientReminders(),
               ),
             )
           ],
