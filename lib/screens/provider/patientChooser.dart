@@ -6,13 +6,20 @@ import '../../models/user.dart';
 
 class PatientChooser extends StatefulWidget {
   static const String id = 'patient_chooser';
+  List<dynamic> myUsers;
+  PatientChooser({Key key, @required this.myUsers}) : super(key: key);
 
-  _PatientChooserState createState() => _PatientChooserState();
+  @override
+  _PatientChooserState createState() => _PatientChooserState(myUsers);
 }
 
 class _PatientChooserState extends State<PatientChooser> {
   StateModel appState;
   List<User> userList;
+  List<dynamic> myUsers;
+
+  _PatientChooserState(this.myUsers);
+
   TextEditingController editingController = TextEditingController();
 
   @override
@@ -66,7 +73,9 @@ class _PatientChooserState extends State<PatientChooser> {
                         var users = List<DocumentSnapshot>();
                         snapshot.data.documents.forEach((ds) {
                           if (ds.data["admin"] == null || !ds.data["admin"]) {
-                            users.add(ds);
+                            if (!myUsers.contains(ds.documentID)) {
+                              users.add(ds);
+                            }
                           }
                         });
                         // TODO: hide patients that are already on the list
