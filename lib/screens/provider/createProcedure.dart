@@ -20,6 +20,21 @@ class _CreateProcedureState extends State{
     super.initState();
   }
 
+  void add() async {
+    DocumentReference docRef = Firestore.instance.collection('procedures').document(
+      appState?.firebaseUserAuth?.uid??"");
+    CollectionReference colRef = Firestore.instance.collection('procedures');
+    print(colRef.id);
+    docRef.get().then((datasnapshot) async {
+      if (datasnapshot.exists) {
+        List<dynamic> info = datasnapshot.data['procedures'].toList();
+        for(var uid in info) {
+          print(info[uid]);
+        }
+      }
+    });
+  }
+
   Widget build(BuildContext context) {
     appState = StateWidget.of(context).state;
     return Scaffold(
@@ -52,7 +67,9 @@ class _CreateProcedureState extends State{
             Padding(
               padding: const EdgeInsets.symmetric(vertical: 16.0),
               child: RaisedButton(onPressed: (){
+                add();
                 print('form submitted');
+                return;
                 },
                 child: Text('Submit')
               ),
