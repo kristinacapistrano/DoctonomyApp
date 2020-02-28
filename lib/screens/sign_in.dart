@@ -121,7 +121,7 @@ class _SignInScreenState extends State<SignInScreen> {
         createResetDialog(context).then((onValue){
           String emailAddress = "$onValue";
             Auth.sendForgotPasswordEmail(emailAddress);
-
+            createSentEmailDialog();
         });
       },
     );
@@ -228,4 +228,16 @@ class _SignInScreenState extends State<SignInScreen> {
            );
          }});
     }
+  Future createSentEmailDialog(){
+    TextEditingController userController = TextEditingController();
+    return showDialog(context: context, builder: (context){
+      {
+        return AlertDialog(
+          title: Text("Reset email sent"),
+          actions: <Widget>[
+
+          ],
+        );
+      }});
+  }
   }
