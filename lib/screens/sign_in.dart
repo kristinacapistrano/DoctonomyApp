@@ -118,7 +118,11 @@ class _SignInScreenState extends State<SignInScreen> {
         style: TextStyle(color: Colors.black54),
       ),
       onPressed: () {
-        createResetDialog(context);
+        createResetDialog(context).then((onValue){
+          String emailAddress = "$onValue";
+            Auth.sendForgotPasswordEmail(emailAddress);
+
+        });
       },
     );
 
