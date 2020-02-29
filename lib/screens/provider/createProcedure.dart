@@ -14,26 +14,29 @@ class CreateProcedure extends StatefulWidget{
 
 class _CreateProcedureState extends State{
   StateModel appState;
+  final db = Firestore.instance;
+  TextEditingController _nameController = new TextEditingController();
+  TextEditingController _descController = new TextEditingController();
 
   @override
   void initState() {
     super.initState();
   }
 
-  void add() async {
-    DocumentReference docRef = Firestore.instance.collection('procedures').document(
-      appState?.firebaseUserAuth?.uid??"");
-    CollectionReference colRef = Firestore.instance.collection('procedures');
-    print(colRef.id);
-    docRef.get().then((datasnapshot) async {
-      if (datasnapshot.exists) {
-        List<dynamic> info = datasnapshot.data['procedures'].toList();
-        for(var uid in info) {
-          print(info[uid]);
-        }
-      }
-    });
-  }
+  // void add() async {
+  //   DocumentReference docRef = Firestore.instance.collection('procedures').document(
+  //     appState?.firebaseUserAuth?.uid??"");
+  //   CollectionReference colRef = Firestore.instance.collection('procedures');
+  //   print(colRef.id);
+  //   docRef.get().then((datasnapshot) async {
+  //     if (datasnapshot.exists) {
+  //       List<dynamic> info = datasnapshot.data['procedures'].toList();
+  //       for(var uid in info) {
+  //         print(info[uid]);
+  //       }
+  //     }
+  //   });
+  // }
 
   Widget build(BuildContext context) {
     appState = StateWidget.of(context).state;
@@ -55,19 +58,22 @@ class _CreateProcedureState extends State{
         child: ListView(
           children: <Widget>[
             TextFormField(
+              controller: _nameController,
               decoration: const InputDecoration(
-                hintText: 'Procedure Name',
+                hintText: 'Procedure Name', 
                 ),
             ),
             TextFormField(
+              controller: _descController,
               decoration: const InputDecoration(
                 hintText: 'Description',
                 ),
             ),
             Padding(
               padding: const EdgeInsets.symmetric(vertical: 16.0),
-              child: RaisedButton(onPressed: (){
-                add();
+              child: RaisedButton(onPressed: () async {
+                //add();
+                db.collection("procedures").add({'name': _nameController.text, 'description': _descController.text});
                 print('form submitted');
                 return;
                 },
