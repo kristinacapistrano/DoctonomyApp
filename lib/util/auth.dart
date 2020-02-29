@@ -7,7 +7,7 @@ import '../models/user.dart';
 import 'package:flutter/services.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
-enum authProblems { UserNotFound, PasswordNotValid, NetworkError, UnknownError }
+enum authProblems { UserNotFound, PasswordNotValid, NetworkError, UnknownError, reset}
 
 class Auth {
   static Future<String> signUp(String email, String password) async {
@@ -141,7 +141,7 @@ class Auth {
     FirebaseAuth.instance.signOut();
   }
 
-  static Future<void> forgotPasswordEmail(String email) async {
+  static Future<void> sendForgotPasswordEmail(String email) async {
     await FirebaseAuth.instance.sendPasswordResetEmail(email: email);
   }
 

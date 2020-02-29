@@ -118,7 +118,11 @@ class _SignInScreenState extends State<SignInScreen> {
         style: TextStyle(color: Colors.black54),
       ),
       onPressed: () {
-        Navigator.pushNamed(context, '/forgot-password');
+        createResetDialog(context).then((onValue){
+          String emailAddress = "$onValue";
+            Auth.sendForgotPasswordEmail(emailAddress);
+            createSentEmailDialog();
+        });
       },
     );
 
@@ -201,4 +205,39 @@ class _SignInScreenState extends State<SignInScreen> {
       setState(() => _autoValidate = true);
     }
   }
-}
+
+  Future<String> createResetDialog(BuildContext context){
+    TextEditingController userController = TextEditingController();
+     return showDialog(context: context, builder: (context){
+         {
+           return AlertDialog(
+             title: Text("Email"),
+             content: TextField(
+               controller: userController,
+             ),
+             actions: <Widget>[
+               MaterialButton(
+                 elevation: 5.0,
+                 child: Text('Reset password'),
+                 onPressed: (){
+                   Navigator.of(context).pop(userController.text.toString());
+
+                 },
+               )
+             ],
+           );
+         }});
+    }
+  Future createSentEmailDialog(){
+    TextEditingController userController = TextEditingController();
+    return showDialog(context: context, builder: (context){
+      {
+        return AlertDialog(
+          title: Text("Reset email sent"),
+          actions: <Widget>[
+
+          ],
+        );
+      }});
+  }
+  }
