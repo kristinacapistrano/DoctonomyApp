@@ -13,7 +13,7 @@ class AdminPatients extends StatefulWidget {
 
 class _AdminPatientsState extends State<AdminPatients> {
   StateModel appState;
-
+  List<dynamic> info;
   @override
   void initState() {
     super.initState();
@@ -26,7 +26,7 @@ class _AdminPatientsState extends State<AdminPatients> {
     // TODO: add a way to remove patients from the list
     return docRef.get().then((datasnapshot) async {
       if (datasnapshot.exists) {
-        List<dynamic> info = datasnapshot.data['patients'].toList();
+        info = datasnapshot.data['patients'].toList();
         List<dynamic> list = new List();
         for(var uid in info) {
           DocumentReference dr = Firestore.instance.collection('users').document(uid);
@@ -61,7 +61,7 @@ class _AdminPatientsState extends State<AdminPatients> {
                   print('Add patient');
                   Navigator.of(context).push(
                       new MaterialPageRoute(builder: (BuildContext context) {
-                        return new PatientChooser();
+                        return new PatientChooser(myUsers: info);
                       },
                           fullscreenDialog: true
                       )

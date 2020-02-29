@@ -207,7 +207,8 @@ class _PatientViewerState extends State<PatientViewer> {
                             trailing: Icon(Icons.clear),
                             title: Text('Remove from my list'),
                             onTap: () {
-                              print("clicked Row");
+                              Firestore.instance.document("users/${appState?.firebaseUserAuth?.uid}").updateData({'patients': FieldValue.arrayRemove([userId])});
+                              Navigator.pop(context);
                             },
                           )
                           )
