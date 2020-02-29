@@ -47,7 +47,10 @@ class _PatientChooserState extends State<PatientChooser> {
           Padding(
               padding: const EdgeInsets.all(8.0),
               child: TextField(
-                onChanged: (value) {},
+                onChanged: (value) {
+                  setState(() {});
+                },
+                autofocus: true,
                 controller: editingController,
                 decoration: InputDecoration(
                     labelText: "Search",
@@ -60,7 +63,7 @@ class _PatientChooserState extends State<PatientChooser> {
               child: StreamBuilder<QuerySnapshot>(
                   stream: Firestore.instance
                       .collection("users")
-                      //.where("firstName", isGreaterThanOrEqualTo: "")
+                      .where("firstName", isGreaterThanOrEqualTo: "")
                       .snapshots(),
                   builder: (BuildContext context,
                       AsyncSnapshot<QuerySnapshot> snapshot) {
@@ -74,7 +77,12 @@ class _PatientChooserState extends State<PatientChooser> {
                         snapshot.data.documents.forEach((ds) {
                           if (ds.data["admin"] == null || !ds.data["admin"]) {
                             if (!myUsers.contains(ds.documentID)) {
-                              users.add(ds);
+                              var fName = ds.data["firstName"] ?? "";
+                              var lName = ds.data["lastName"] ?? "";
+                              var name = fName + " " + lName;
+                              if (editingController.text == "" || name.toLowerCase().contains(editingController.text.toLowerCase())) {
+                                users.add(ds);
+                              }
                             }
                           }
                         });
