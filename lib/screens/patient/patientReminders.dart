@@ -40,7 +40,16 @@ class PatientReminders extends StatelessWidget {
           )),
           title: Text("Reminders"),
           backgroundColor: Colors.white),
-      body: Container(),
+      body: FutureBuilder(
+        future: getList(),
+        builder: (context, AsyncSnapshot<List<dynamic>> snapshot) {
+          if (snapshot.connectionState == ConnectionState.waiting) {
+            return Center(child: CircularProgressIndicator());
+          } else {
+            return Container();
+          }
+        },
+      ),
     );
   }
 }
