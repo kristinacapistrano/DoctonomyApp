@@ -1,3 +1,4 @@
+import 'package:doctonomy_app/screens/register.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flushbar/flushbar.dart';
@@ -132,7 +133,14 @@ class _SignInScreenState extends State<SignInScreen> {
         style: TextStyle(color: Colors.black54),
       ),
       onPressed: () {
-        Navigator.pushNamed(context, '/signup');
+        Navigator.of(context).push(
+            new MaterialPageRoute(builder: (BuildContext context) {
+              return new RegisterScreen();
+            },
+                fullscreenDialog: true
+            )
+        );
+//        Navigator.pushNamed(context, '/register');
       },
     );
 
