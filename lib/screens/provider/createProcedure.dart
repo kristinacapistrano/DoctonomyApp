@@ -15,6 +15,7 @@ class CreateProcedure extends StatefulWidget{
 class _CreateProcedureState extends State{
   StateModel appState;
   final db = Firestore.instance;
+  Surgery procedure = new Surgery();
   TextEditingController _nameController = new TextEditingController();
   TextEditingController _descController = new TextEditingController();
 
@@ -60,8 +61,9 @@ class _CreateProcedureState extends State{
                 Padding(
                   padding: const EdgeInsets.symmetric(vertical: 16.0),
                   child: RaisedButton(onPressed: () async {
-                    //add();
-                    db.collection("procedures").add({'name': _nameController.text, 'description': _descController.text});
+                    procedure.setName(_nameController.text);
+                    procedure.setDescription(_descController.text);
+                    db.collection("procedures").add(procedure.toJson());
                     print('form submitted');
                     return;
                     },
