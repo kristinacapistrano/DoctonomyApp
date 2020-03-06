@@ -46,7 +46,20 @@ class PatientReminders extends StatelessWidget {
           if (snapshot.connectionState == ConnectionState.waiting) {
             return Center(child: CircularProgressIndicator());
           } else {
-            return Container();
+            return Center(
+              child: ListView.builder(
+                itemCount: snapshot.data.length,
+                itemBuilder: (context, index) {
+                  final dynamic reminder = snapshot.data[index];
+                  return new Card(
+                    child: ListTile(
+                      leading: Icon(Icons.timeline),
+                      title: Text(reminder),
+                    ),
+                  );
+                },
+              ),
+            );
           }
         },
       ),
