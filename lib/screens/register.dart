@@ -12,10 +12,25 @@ class RegisterScreen extends StatefulWidget {
 
 class _RegisterScreenState extends State<RegisterScreen> {
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
+  final focus = FocusNode();
+  final focus2 = FocusNode();
+  final focus3 = FocusNode();
+  final focus4 = FocusNode();
+
+  bool _autoValidate = false;
+
+  final TextEditingController _fname = new TextEditingController();
+  final TextEditingController _lname = new TextEditingController();
+  final TextEditingController _email = new TextEditingController();
+  final TextEditingController _pswd = new TextEditingController();
+  final TextEditingController _pswd2 = new TextEditingController();
+
+  final globalKey = GlobalKey<ScaffoldState>();
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+        key: globalKey,
         appBar: AppBar(
             brightness: Brightness.light,
             textTheme: TextTheme(
@@ -31,6 +46,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
             padding: EdgeInsets.symmetric(vertical: 20, horizontal: 20),
             child: Form(
               key: _formKey,
+              autovalidate: _autoValidate,
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.stretch,
                 children: <Widget>[
@@ -38,8 +54,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
                     key: new Key('firstname'),
                     textInputAction: TextInputAction.next,
                     autofocus: false,
-//                    controller: _email,
-//                    validator: Validator.validateEmail,
+                    controller: _fname,
                     validator: (String value) {
                       if (value.trim().isEmpty) {
                         return 'First name is required';
@@ -50,12 +65,11 @@ class _RegisterScreenState extends State<RegisterScreen> {
                     style: TextStyle(
                       color: Colors.black,
                     ),
-//                    onFieldSubmitted: (v){
-//                      FocusScope.of(context).requestFocus(focus);
-//                    },
+                    onFieldSubmitted: (v){
+                      FocusScope.of(context).requestFocus(focus);
+                    },
                     decoration: InputDecoration(
-                      errorStyle: TextStyle(fontSize: 16.0, color: Colors.black),
-                      hintText: 'First Name',
+                      labelText: 'First Name',
                       contentPadding: EdgeInsets.fromLTRB(20.0, 10.0, 20.0, 10.0),
                       border: OutlineInputBorder(borderRadius: BorderRadius.circular(32.0)),
                     ),
@@ -65,8 +79,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
                     key: new Key('lastname'),
                     textInputAction: TextInputAction.next,
                     autofocus: false,
-//                    controller: _email,
-//                    validator: Validator.validateEmail,
+                    controller: _lname,
                     validator: (String value) {
                       if (value.trim().isEmpty) {
                         return 'Last name is required';
@@ -77,12 +90,12 @@ class _RegisterScreenState extends State<RegisterScreen> {
                     style: TextStyle(
                       color: Colors.black,
                     ),
-//                    onFieldSubmitted: (v){
-//                      FocusScope.of(context).requestFocus(focus);
-//                    },
+                    onFieldSubmitted: (v){
+                      FocusScope.of(context).requestFocus(focus2);
+                    },
+                    focusNode: focus,
                     decoration: InputDecoration(
-                      errorStyle: TextStyle(fontSize: 16.0, color: Colors.black),
-                      hintText: 'Last Name',
+                      labelText: 'Last Name',
                       contentPadding: EdgeInsets.fromLTRB(20.0, 10.0, 20.0, 10.0),
                       border: OutlineInputBorder(borderRadius: BorderRadius.circular(32.0)),
                     ),
@@ -93,18 +106,17 @@ class _RegisterScreenState extends State<RegisterScreen> {
                     keyboardType: TextInputType.emailAddress,
                     textInputAction: TextInputAction.next,
                     autofocus: false,
-//                    controller: _email,
-//                    validator: Validator.validateEmail,
+                    controller: _email,
                     validator: Validator.validateEmail,
                     style: TextStyle(
                       color: Colors.black,
                     ),
-//                    onFieldSubmitted: (v){
-//                      FocusScope.of(context).requestFocus(focus);
-//                    },
+                    onFieldSubmitted: (v){
+                      FocusScope.of(context).requestFocus(focus3);
+                    },
+                    focusNode: focus2,
                     decoration: InputDecoration(
-                      errorStyle: TextStyle(fontSize: 16.0, color: Colors.black),
-                      hintText: 'Email',
+                      labelText: 'Email',
                       contentPadding: EdgeInsets.fromLTRB(20.0, 10.0, 20.0, 10.0),
                       border: OutlineInputBorder(borderRadius: BorderRadius.circular(32.0)),
                     ),
@@ -114,11 +126,10 @@ class _RegisterScreenState extends State<RegisterScreen> {
                     key: new Key('password'),
                     textInputAction: TextInputAction.next,
                     autofocus: false,
-//                    controller: _email,
-//                    validator: Validator.validateEmail,
+                    controller: _pswd,
                     validator: (String value) {
-                      if (value.trim().isEmpty) {
-                        return 'Password is required';
+                      if (value.trim().length < 6) {
+                        return 'Password must be 6 or more characters';
                       } else {
                         return null;
                       }
@@ -126,12 +137,12 @@ class _RegisterScreenState extends State<RegisterScreen> {
                     style: TextStyle(
                       color: Colors.black,
                     ),
-//                    onFieldSubmitted: (v){
-//                      FocusScope.of(context).requestFocus(focus);
-//                    },
+                    onFieldSubmitted: (v){
+                      FocusScope.of(context).requestFocus(focus4);
+                    },
+                    focusNode: focus3,
                     decoration: InputDecoration(
-                      errorStyle: TextStyle(fontSize: 16.0, color: Colors.black),
-                      hintText: 'Password',
+                      labelText: 'Password',
                       contentPadding: EdgeInsets.fromLTRB(20.0, 10.0, 20.0, 10.0),
                       border: OutlineInputBorder(borderRadius: BorderRadius.circular(32.0)),
                     ),
@@ -141,10 +152,9 @@ class _RegisterScreenState extends State<RegisterScreen> {
                     key: new Key('confirm password'),
                     textInputAction: TextInputAction.next,
                     autofocus: false,
-//                    controller: _email,
-//                    validator: Validator.validateEmail,
+                    controller: _pswd2,
                     validator: (String value) {
-                      if (value.trim().isEmpty) {
+                      if (value != _pswd.text || value.trim().isEmpty) {
                         return 'Passwords do not match';
                       } else {
                         return null;
@@ -153,12 +163,13 @@ class _RegisterScreenState extends State<RegisterScreen> {
                     style: TextStyle(
                       color: Colors.black,
                     ),
-//                    onFieldSubmitted: (v){
-//                      FocusScope.of(context).requestFocus(focus);
-//                    },
+                    onFieldSubmitted: (v){
+                      focus4.unfocus();
+                      _submit();
+                    },
+                    focusNode: focus4,
                     decoration: InputDecoration(
-                      errorStyle: TextStyle(fontSize: 16.0, color: Colors.black),
-                      hintText: 'Confirm Passwords',
+                      labelText: 'Confirm Passwords',
                       contentPadding: EdgeInsets.fromLTRB(20.0, 10.0, 20.0, 10.0),
                       border: OutlineInputBorder(borderRadius: BorderRadius.circular(32.0)),
                     ),
@@ -169,8 +180,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
                       borderRadius: BorderRadius.circular(24),
                     ),
                     onPressed: () {
-//                        _emailLogin(
-//                            email: _email.text, password: _password.text, context: context);
+                      _submit();
                     },
                     padding: EdgeInsets.all(12),
                     color: Colors.amber,
@@ -181,15 +191,13 @@ class _RegisterScreenState extends State<RegisterScreen> {
             )));
   }
 
-  bool _submittable() {
-    return true;
-  }
-
   void _submit() {
     if (_formKey.currentState.validate()) {
-      const SnackBar snackBar = SnackBar(content: Text('Form submitted'));
-
-      Scaffold.of(context).showSnackBar(snackBar);
+      globalKey.currentState.showSnackBar(const SnackBar(
+        content: Text('Create Account Successfully (placeholder)'),
+      ));
+    } else {
+      setState(() => _autoValidate = true);
     }
   }
 }
