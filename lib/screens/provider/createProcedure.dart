@@ -64,7 +64,7 @@ class _CreateProcedureState extends State{
                     procedure.setName(_nameController.text);
                     procedure.setDescription(_descController.text);
                     db.collection("procedures").add(procedure.toJson());
-                    print('form submitted');
+                    Navigator.of(context).popUntil((route) => route.isFirst);
                     return;
                     },
                     child: Text('Submit')
