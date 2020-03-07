@@ -4,7 +4,7 @@ import '../../util/state_widget.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/cupertino.dart';
 import '../../widgets/AlertTextbox.dart';
-
+import 'package:cron/cron.dart';
 
 
 class PatientHome extends StatefulWidget {
@@ -14,6 +14,7 @@ class PatientHome extends StatefulWidget {
 }
 
 class _PatientHomeState extends State<PatientHome> {
+  var cron = new Cron();
   StateModel appState;
   String title = "";
   @override
@@ -85,6 +86,10 @@ class _PatientHomeState extends State<PatientHome> {
                             subtitle: Text('Every day at 5pm'),
                             onTap: () {
                               print("clicked Row");
+                              String time = "*/1 * * * *"; // use flutter_datetime_picker 1.3.4
+                              cron.schedule(new Schedule.parse(time), () async {
+                                print('every 1 minute');
+                              });
                             },
                           )
                           ),
