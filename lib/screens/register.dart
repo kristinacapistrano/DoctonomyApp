@@ -1,5 +1,7 @@
 import 'package:doctonomy_app/util/validator.dart';
 import 'package:flutter/material.dart';
+import 'package:firebase_auth/firebase_auth.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 
 class RegisterScreen extends StatefulWidget {
   static const String id = 'register';
@@ -65,13 +67,15 @@ class _RegisterScreenState extends State<RegisterScreen> {
                     style: TextStyle(
                       color: Colors.black,
                     ),
-                    onFieldSubmitted: (v){
+                    onFieldSubmitted: (v) {
                       FocusScope.of(context).requestFocus(focus);
                     },
                     decoration: InputDecoration(
                       labelText: 'First Name',
-                      contentPadding: EdgeInsets.fromLTRB(20.0, 10.0, 20.0, 10.0),
-                      border: OutlineInputBorder(borderRadius: BorderRadius.circular(32.0)),
+                      contentPadding:
+                          EdgeInsets.fromLTRB(20.0, 10.0, 20.0, 10.0),
+                      border: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(32.0)),
                     ),
                   ),
                   const SizedBox(height: 16.0),
@@ -90,14 +94,16 @@ class _RegisterScreenState extends State<RegisterScreen> {
                     style: TextStyle(
                       color: Colors.black,
                     ),
-                    onFieldSubmitted: (v){
+                    onFieldSubmitted: (v) {
                       FocusScope.of(context).requestFocus(focus2);
                     },
                     focusNode: focus,
                     decoration: InputDecoration(
                       labelText: 'Last Name',
-                      contentPadding: EdgeInsets.fromLTRB(20.0, 10.0, 20.0, 10.0),
-                      border: OutlineInputBorder(borderRadius: BorderRadius.circular(32.0)),
+                      contentPadding:
+                          EdgeInsets.fromLTRB(20.0, 10.0, 20.0, 10.0),
+                      border: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(32.0)),
                     ),
                   ),
                   const SizedBox(height: 16.0),
@@ -111,14 +117,16 @@ class _RegisterScreenState extends State<RegisterScreen> {
                     style: TextStyle(
                       color: Colors.black,
                     ),
-                    onFieldSubmitted: (v){
+                    onFieldSubmitted: (v) {
                       FocusScope.of(context).requestFocus(focus3);
                     },
                     focusNode: focus2,
                     decoration: InputDecoration(
                       labelText: 'Email',
-                      contentPadding: EdgeInsets.fromLTRB(20.0, 10.0, 20.0, 10.0),
-                      border: OutlineInputBorder(borderRadius: BorderRadius.circular(32.0)),
+                      contentPadding:
+                          EdgeInsets.fromLTRB(20.0, 10.0, 20.0, 10.0),
+                      border: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(32.0)),
                     ),
                   ),
                   const SizedBox(height: 16.0),
@@ -126,6 +134,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
                     key: new Key('password'),
                     textInputAction: TextInputAction.next,
                     autofocus: false,
+                    obscureText: true,
                     controller: _pswd,
                     validator: (String value) {
                       if (value.trim().length < 6) {
@@ -137,14 +146,16 @@ class _RegisterScreenState extends State<RegisterScreen> {
                     style: TextStyle(
                       color: Colors.black,
                     ),
-                    onFieldSubmitted: (v){
+                    onFieldSubmitted: (v) {
                       FocusScope.of(context).requestFocus(focus4);
                     },
                     focusNode: focus3,
                     decoration: InputDecoration(
                       labelText: 'Password',
-                      contentPadding: EdgeInsets.fromLTRB(20.0, 10.0, 20.0, 10.0),
-                      border: OutlineInputBorder(borderRadius: BorderRadius.circular(32.0)),
+                      contentPadding:
+                          EdgeInsets.fromLTRB(20.0, 10.0, 20.0, 10.0),
+                      border: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(32.0)),
                     ),
                   ),
                   const SizedBox(height: 16.0),
@@ -152,6 +163,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
                     key: new Key('confirm password'),
                     textInputAction: TextInputAction.next,
                     autofocus: false,
+                    obscureText: true,
                     controller: _pswd2,
                     validator: (String value) {
                       if (value != _pswd.text || value.trim().isEmpty) {
@@ -163,15 +175,17 @@ class _RegisterScreenState extends State<RegisterScreen> {
                     style: TextStyle(
                       color: Colors.black,
                     ),
-                    onFieldSubmitted: (v){
+                    onFieldSubmitted: (v) {
                       focus4.unfocus();
                       _submit();
                     },
                     focusNode: focus4,
                     decoration: InputDecoration(
                       labelText: 'Confirm Passwords',
-                      contentPadding: EdgeInsets.fromLTRB(20.0, 10.0, 20.0, 10.0),
-                      border: OutlineInputBorder(borderRadius: BorderRadius.circular(32.0)),
+                      contentPadding:
+                          EdgeInsets.fromLTRB(20.0, 10.0, 20.0, 10.0),
+                      border: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(32.0)),
                     ),
                   ),
                   const SizedBox(height: 16.0),
@@ -184,7 +198,8 @@ class _RegisterScreenState extends State<RegisterScreen> {
                     },
                     padding: EdgeInsets.all(12),
                     color: Colors.amber,
-                    child: Text('Register', style: TextStyle(color: Colors.white)),
+                    child:
+                        Text('Register', style: TextStyle(color: Colors.white)),
                   ),
                 ],
               ),
@@ -193,9 +208,24 @@ class _RegisterScreenState extends State<RegisterScreen> {
 
   void _submit() {
     if (_formKey.currentState.validate()) {
-      globalKey.currentState.showSnackBar(const SnackBar(
-        content: Text('Create Account Successfully (placeholder)'),
-      ));
+      FirebaseAuth.instance
+        .createUserWithEmailAndPassword(
+            email: _email.text, password: _pswd.text)
+        .then((currentUser) => Firestore.instance
+          .collection("users")
+          .document(currentUser.user.uid)
+          .setData({
+            "firstName": _fname.text,
+            "lastName": _lname.text,
+            "email": _email.text,
+          }).then((result) {
+            Navigator.of(globalKey.currentContext).pop('Account Created. Please check your email to validate your account.');
+          }).catchError((err) {
+            globalKey.currentState.showSnackBar(SnackBar(content: Text(err.message)));
+          }))
+        .catchError((err) {
+          globalKey.currentState.showSnackBar(SnackBar(content: Text(err.message)));
+        });
     } else {
       setState(() => _autoValidate = true);
     }

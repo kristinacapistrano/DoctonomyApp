@@ -17,6 +17,7 @@ class _SignInScreenState extends State<SignInScreen> {
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
   final TextEditingController _email = new TextEditingController();
   final TextEditingController _password = new TextEditingController();
+  final globalKey = GlobalKey<ScaffoldState>();
 
   bool _autoValidate = false;
   bool _loadingVisible = false;
@@ -127,25 +128,9 @@ class _SignInScreenState extends State<SignInScreen> {
       },
     );
 
-    final signUpLabel = FlatButton(
-      child: Text(
-        'Create an Account',
-        style: TextStyle(color: Colors.black54),
-      ),
-      onPressed: () {
-        Navigator.of(context).push(
-            new MaterialPageRoute(builder: (BuildContext context) {
-              return new RegisterScreen();
-            },
-                fullscreenDialog: true
-            )
-        );
-//        Navigator.pushNamed(context, '/register');
-      },
-    );
 
     return Scaffold(
-
+      key: globalKey,
       backgroundColor: Colors.white,
       body: LoadingScreen(
           child: Form(
@@ -166,15 +151,22 @@ class _SignInScreenState extends State<SignInScreen> {
                       children: <Widget>[
 
                         logo,
-                          SizedBox(height: 15.0),
+                        SizedBox(height: 15.0),
                         email,
                         SizedBox(height: 24.0),
                         password,
                         SizedBox(height: 12.0),
                         loginButton,
                         forgotLabel,
-                        signUpLabel,
-
+                        FlatButton(
+                          child: Text('Create an Account', style: TextStyle(color: Colors.black54)),
+                          onPressed: () async {
+                            final result = await Navigator.push(context, MaterialPageRoute(builder: (context) => new RegisterScreen()));
+                            if (result != null) {
+                              globalKey.currentState.showSnackBar(SnackBar(content: Text("$result")));
+                            }
+                          },
+                        )
                       ],
                     ),
                   ),
