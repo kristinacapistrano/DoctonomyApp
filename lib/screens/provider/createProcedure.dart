@@ -14,12 +14,16 @@ class CreateProcedure extends StatefulWidget{
 
 class _CreateProcedureState extends State{
   StateModel appState;
+  final db = Firestore.instance;
+  Surgery procedure = new Surgery();
+  TextEditingController _nameController = new TextEditingController();
+  TextEditingController _descController = new TextEditingController();
 
   @override
   void initState() {
     super.initState();
   }
-
+  
   Widget build(BuildContext context) {
     appState = StateWidget.of(context).state;
     return Scaffold(
@@ -36,28 +40,39 @@ class _CreateProcedureState extends State{
         iconTheme: IconThemeData(color: Colors.lightBlueAccent[700]),
         backgroundColor: Colors.white,
       ),
-      body: Form( 
-        child: ListView(
-          children: <Widget>[
-            TextFormField(
-              decoration: const InputDecoration(
-                hintText: 'Procedure Name',
+      body: Center(
+        child: Padding(
+          padding: const EdgeInsets.all(30.0),
+          child: Form( 
+            child: ListView(
+              children: <Widget>[
+                TextFormField(
+                  controller: _nameController,
+                  decoration: const InputDecoration(
+                    hintText: 'Procedure Name', 
+                    ),
                 ),
-            ),
-            TextFormField(
-              decoration: const InputDecoration(
-                hintText: 'Description',
+                TextFormField(
+                  controller: _descController,
+                  decoration: const InputDecoration(
+                    hintText: 'Description',
+                    ),
                 ),
+                Padding(
+                  padding: const EdgeInsets.symmetric(vertical: 16.0),
+                  child: RaisedButton(onPressed: () async {
+                    procedure.setName(_nameController.text);
+                    procedure.setDescription(_descController.text);
+                    db.collection("procedures").add(procedure.toJson());
+                    Navigator.of(context).popUntil((route) => route.isFirst);
+                    return;
+                    },
+                    child: Text('Submit')
+                  ),
+                )
+              ],
             ),
-            Padding(
-              padding: const EdgeInsets.symmetric(vertical: 16.0),
-              child: RaisedButton(onPressed: (){
-                print('form submitted');
-                },
-                child: Text('Submit')
-              ),
-            )
-          ],
+          ),
         ),
       ),
     );
