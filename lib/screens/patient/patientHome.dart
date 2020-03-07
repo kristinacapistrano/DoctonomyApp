@@ -5,6 +5,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/cupertino.dart';
 import '../../widgets/AlertTextbox.dart';
 import 'package:cron/cron.dart';
+import 'package:flutter_datetime_picker/flutter_datetime_picker.dart';
 
 
 class PatientHome extends StatefulWidget {
@@ -85,11 +86,14 @@ class _PatientHomeState extends State<PatientHome> {
                             title: Text('Take medication'),
                             subtitle: Text('Every day at 5pm'),
                             onTap: () {
-                              print("clicked Row");
-                              String time = "*/1 * * * *"; // use flutter_datetime_picker 1.3.4
-                              cron.schedule(new Schedule.parse(time), () async {
-                                print('every 1 minute');
-                              });
+                              /*createSetReminderDialog(context).then((onValue){
+                                print("clicked Row");
+                                String time = "$onValue";
+                                cron.schedule(new Schedule.parse(time), () async {
+                                  print('every 1 minute');
+                                });
+                              }); */
+                              selectDate(context);
                             },
                           )
                           ),
@@ -173,4 +177,38 @@ class _PatientHomeState extends State<PatientHome> {
     );
   }
 
+  /*Method is for setting reminder ,  patients will be able to use this*/
+  Future<String> createSetReminderDialog(BuildContext context){
+    TextEditingController userController = TextEditingController();
+    return showDialog(context: context, builder: (context){
+      {
+        return AlertDialog(
+          title: Text("Set date and time"),
+          content: TextField(
+            controller: userController,
+          ),
+          actions: <Widget>[
+            MaterialButton(
+              elevation: 5.0,
+              child: Text('Set'),
+              onPressed: (){
+                Navigator.of(context).pop(userController.text.toString());
+
+              },
+            )
+          ],
+        );
+      }});
+  }
+  Future<Null> selectDate(BuildContext context) async {
+    DateTime date = DateTime.now();
+    final DateTime picked = await showDatePicker(context: context, initialDate: date, firstDate: DateTime(2020), lastDate: DateTime(2021));
+    if (picked != null && picked != date){
+      setState(() {
+        date = picked;
+        print(date.toString());
+
+      });
+    }
+  }
 }

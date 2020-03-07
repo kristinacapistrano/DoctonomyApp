@@ -39,27 +39,5 @@ class AlertTextbox extends AlertDialog {
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.all(Radius.circular(20.0)))
     );
   }
-  /*Method is for setting reminder ,  patients will be able to use this*/
-  Future<String> createSetReminderDialog(BuildContext context){
-    TextEditingController userController = TextEditingController();
-    return showDialog(context: context, builder: (context){
-      {
-        return AlertDialog(
-          title: Text("Set Reminder"),
-          content: TextField(
-            controller: userController,
-          ),
-          actions: <Widget>[
-            MaterialButton(
-              elevation: 5.0,
-              child: Text('Set'),
-              onPressed: (){
-                Navigator.of(context).pop(userController.text.toString());
 
-              },
-            )
-          ],
-        );
-      }});
-  }
 }
