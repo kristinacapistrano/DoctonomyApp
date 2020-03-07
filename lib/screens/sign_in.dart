@@ -120,8 +120,12 @@ class _SignInScreenState extends State<SignInScreen> {
       onPressed: () {
         createResetDialog(context).then((onValue){
           String emailAddress = "$onValue";
+          if (onValue != null ){
             Auth.sendForgotPasswordEmail(emailAddress);
-            createSentEmailDialog();
+             createSentEmailDialog();
+          }
+
+
         });
       },
     );
