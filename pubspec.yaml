@@ -33,7 +33,7 @@ dependencies:
   cloud_functions: ^0.4.1+9
   cron: ^0.2.2
   flutter_datetime_picker: ^1.3.4
-
+  datetime_picker_formfield: ^1.0.0
 
 
 

@@ -6,6 +6,9 @@ import 'package:flutter/cupertino.dart';
 import '../../widgets/AlertTextbox.dart';
 import 'package:cron/cron.dart';
 import 'package:flutter_datetime_picker/flutter_datetime_picker.dart';
+import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
+import 'package:datetime_picker_formfield/datetime_picker_formfield.dart';
 
 
 class PatientHome extends StatefulWidget {
@@ -93,7 +96,15 @@ class _PatientHomeState extends State<PatientHome> {
                                   print('every 1 minute');
                                 });
                               }); */
-                              selectDate(context);
+                              selectDate(context).then((onValue){
+                                String _datestring = "$onValue";
+                                print(_datestring);
+                                });
+                              _selectTime(context).then((onValue){
+                                String _timestring = "$onValue";
+                                print(_timestring);
+                              });
+
                             },
                           )
                           ),
@@ -200,7 +211,7 @@ class _PatientHomeState extends State<PatientHome> {
         );
       }});
   }
-  Future<Null> selectDate(BuildContext context) async {
+  Future<String> selectDate(BuildContext context) async {
     DateTime date = DateTime.now();
     final DateTime picked = await showDatePicker(context: context, initialDate: date, firstDate: DateTime(2020), lastDate: DateTime(2021));
     if (picked != null && picked != date){
@@ -210,5 +221,23 @@ class _PatientHomeState extends State<PatientHome> {
 
       });
     }
+  }
+  Future<Null> _selectTime(BuildContext context) async {
+    TimeOfDay selectedTime =TimeOfDay.now();
+
+    final TimeOfDay picked_s = await showTimePicker(
+        context: context,
+        initialTime: selectedTime, builder: (BuildContext context, Widget child) {
+      return MediaQuery(
+        data: MediaQuery.of(context).copyWith(alwaysUse24HourFormat: false),
+        child: child,
+      );});
+
+    if (picked_s != null && picked_s != selectedTime )
+      setState(() {
+
+        selectedTime = picked_s;
+        print(selectedTime.toString());
+      });
   }
 }
