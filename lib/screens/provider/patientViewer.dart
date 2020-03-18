@@ -41,6 +41,17 @@ class _PatientViewerState extends State<PatientViewer> {
     });
   }
 
+  Future<Map<String,dynamic>> getUserReminders() async {
+    DocumentReference docRef = Firestore.instance.collection('reminders').document(userId ?? "");
+    return docRef.get().then((datasnapshot) async {
+      if (datasnapshot.exists) {
+        return datasnapshot.data;
+      } else {
+        return null;
+      }
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     appState = StateWidget.of(context).state;
@@ -94,26 +105,37 @@ class _PatientViewerState extends State<PatientViewer> {
                             },
                           )
                           ),
-
                           SizedBox(height: 20.0),
                           Text('Reminders', style: TextStyle(fontWeight: FontWeight.w500)),
                           //TODO remove hardcoded card
-                          Card(child: ListTile(
-                            leading: Icon(Icons.alarm),
-                            title: Text('Take medication'),
-                            subtitle: Text('Every day at 5pm'),
-                            onTap: () {
-                              print("clicked Row");
-                              cron.schedule(new Schedule.parse('*/1 * * * *'), () async {
-                                print('every 1 minute');
-                              });
-                              /*CloudFunctions.instance.getHttpsCallable(
-                                functionName: "patientReminder",
-                                //no money for blaze upgrade
-                                );
-                              print ("reminding every 5pm");*/
-                            },
-                          )
+                          FutureBuilder(
+                              future: getUserReminders(),
+                              builder: (context, AsyncSnapshot<Map<String,dynamic>> snapshot) {
+                                if (snapshot.connectionState == ConnectionState.waiting) {
+                                  return Center(child: CircularProgressIndicator());
+                                } else {
+                                  print(snapshot.data);
+                                  return Builder(builder: (BuildContext context) {
+                                    var reminderList = snapshot?.data?.entries?.toList() ?? [];
+                                    if (reminderList.length > 0) {
+                                      List<Widget> tiles = reminderList.fold(List<Widget>(), (total, el) {
+                                        total.add(ListTile(title: Text(el.key, style: TextStyle(fontWeight: FontWeight.w500)), dense: true, onTap: () {}));
+                                        total.add(Divider(thickness: 1, indent: 10, endIndent: 10, height: 1));
+                                        return total;
+                                      });
+                                      tiles.add(ListTile(title: Text("See All"), onTap: () {}, dense: true));
+                                      return Card(child: Column(children: tiles.toList()));
+                                    } else {
+                                      return Card(child: ListTile(
+                                          title: Text("No Reminders (Click here to add)"),
+                                          onTap: () {},
+                                          dense: true
+                                      )
+                                      );
+                                    }
+                                  });
+                                }
+                              }
                           ),
 
                           //Allergy information
