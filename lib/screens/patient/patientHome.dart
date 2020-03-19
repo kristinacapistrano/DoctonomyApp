@@ -1,3 +1,5 @@
+import 'dart:math';
+
 import 'package:flutter/material.dart';
 import '../../models/state.dart';
 import '../../util/state_widget.dart';
@@ -21,6 +23,7 @@ class _PatientHomeState extends State<PatientHome> {
   var cron = new Cron();
   StateModel appState;
   String title = "";
+
   @override
   void initState() {
     super.initState();
@@ -96,14 +99,9 @@ class _PatientHomeState extends State<PatientHome> {
                                   print('every 1 minute');
                                 });
                               }); */
-                              selectDate(context).then((onValue){
-                                String _datestring = "$onValue";
-                                print(_datestring);
-                                });
-                              _selectTime(context).then((onValue){
-                                String _timestring = "$onValue";
-                                print(_timestring);
-                              });
+                              selectDate(context);
+                              selectTime(context);
+
 
                             },
                           )
@@ -211,7 +209,9 @@ class _PatientHomeState extends State<PatientHome> {
         );
       }});
   }
-  Future<String> selectDate(BuildContext context) async {
+
+
+  Future<Null> selectDate(BuildContext context) async {
     DateTime date = DateTime.now();
     final DateTime picked = await showDatePicker(context: context, initialDate: date, firstDate: DateTime(2020), lastDate: DateTime(2021));
     if (picked != null && picked != date){
@@ -222,22 +222,18 @@ class _PatientHomeState extends State<PatientHome> {
       });
     }
   }
-  Future<Null> _selectTime(BuildContext context) async {
-    TimeOfDay selectedTime =TimeOfDay.now();
-
-    final TimeOfDay picked_s = await showTimePicker(
-        context: context,
-        initialTime: selectedTime, builder: (BuildContext context, Widget child) {
-      return MediaQuery(
-        data: MediaQuery.of(context).copyWith(alwaysUse24HourFormat: false),
-        child: child,
-      );});
-
-    if (picked_s != null && picked_s != selectedTime )
+  Future<Null> selectTime(BuildContext context) async {
+    TimeOfDay time = TimeOfDay.now();
+    final TimeOfDay picked = await showTimePicker(context: context,
+        initialTime: time);
+    if ( picked != null && picked != time)
       setState(() {
+        time = picked;
+        print(time.toString());
 
-        selectedTime = picked_s;
-        print(selectedTime.toString());
       });
+
   }
+
+
 }
