@@ -3,6 +3,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/cupertino.dart';
 import '../../models/state.dart';
 import '../../util/state_widget.dart';
+import 'package:intl/intl.dart';
 import '../../models/user.dart';
 //import 'package:cloud_functions/cloud_functions.dart';
 import 'package:cron/cron.dart';
@@ -80,7 +81,6 @@ class _PatientViewerState extends State<PatientViewer> {
                   return Center(child: CircularProgressIndicator());
                 } else {
                   print(snapshot.data);
-  //                {firstName: Testname2, lastName: Testlastname, allergies: [peanuts], phone: (480) 123-4567}
                     return Center(
                       child: ListView(
                         children: <Widget>[
@@ -105,6 +105,14 @@ class _PatientViewerState extends State<PatientViewer> {
                             },
                           )
                           ),
+                          Card(child: ListTile(
+                            trailing: Icon(Icons.healing),
+                            title: Text('Schedule new procedure'),
+                            onTap: () {
+                              print("clicked Row");
+                            },
+                          )
+                          ),
                           SizedBox(height: 20.0),
                           Text('Reminders', style: TextStyle(fontWeight: FontWeight.w500)),
                           //TODO remove hardcoded card
@@ -116,10 +124,14 @@ class _PatientViewerState extends State<PatientViewer> {
                                 } else {
                                   print(snapshot.data);
                                   return Builder(builder: (BuildContext context) {
-                                    var reminderList = snapshot?.data?.entries?.toList() ?? [];
+                                    var reminderList = snapshot?.data["reminders"].toList() ?? [];
                                     if (reminderList.length > 0) {
                                       List<Widget> tiles = reminderList.fold(List<Widget>(), (total, el) {
-                                        total.add(ListTile(title: Text(el.key, style: TextStyle(fontWeight: FontWeight.w500)), dense: true, onTap: () {}));
+                                        total.add(ListTile(
+                                            title: Text(el["name"], style: TextStyle(fontWeight: FontWeight.w500)),
+                                            subtitle: Text(el["frequency"] + " at " + DateFormat("h:mm a").format(DateFormat("HH:mm").parse(el["time"]))),
+                                            dense: true,
+                                            onTap: () {}));
                                         total.add(Divider(thickness: 1, indent: 10, endIndent: 10, height: 1));
                                         return total;
                                       });
@@ -212,14 +224,6 @@ class _PatientViewerState extends State<PatientViewer> {
                           Card(child: ListTile(
                             trailing: Icon(Icons.send),
                             title: Text('Send a message'),
-                            onTap: () {
-                              print("clicked Row");
-                            },
-                          )
-                          ),
-                          Card(child: ListTile(
-                            trailing: Icon(Icons.healing),
-                            title: Text('Schedule new procedure'),
                             onTap: () {
                               print("clicked Row");
                             },
