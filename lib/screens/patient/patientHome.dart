@@ -24,7 +24,9 @@ class _PatientHomeState extends State<PatientHome> {
   var cron = new Cron();
   StateModel appState;
   String title = "";
-
+  DateTime _setDate = DateTime.now();
+  Duration initialtimer = new Duration();
+  int selectitem = 1;
   @override
   void initState() {
     super.initState();
@@ -93,7 +95,7 @@ class _PatientHomeState extends State<PatientHome> {
                             title: Text('Take medication'),
                             subtitle: Text('Every day at 5pm'),
                             onTap: () {
-                              String _time = ""; //need the string value from selectTime
+                              /*String _time = ""; //need the string value from selectTime
                               String _date = "";
                              createSetReminderDialog(context).then((onValue){
                                print("clicked Row"); //---- probably not needed at all in this
@@ -103,9 +105,14 @@ class _PatientHomeState extends State<PatientHome> {
                               //selectTime(context);
                                cron.schedule(new Schedule.parse(_time), () async {
                                     //send notification everytime selectedtime is now
-                               });
-
-
+                               });*/
+                              showModalBottomSheet(
+                                  context: context,
+                                  builder: (BuildContext builder) {
+                                    return Container(
+                                      height: MediaQuery.of(context).copyWith().size.height / 3,
+                                    );
+                                  });
                             },
 
                           )
@@ -240,6 +247,33 @@ class _PatientHomeState extends State<PatientHome> {
       });
 
   }
+  Widget datetime() {
+    return CupertinoDatePicker(
+      initialDateTime: DateTime.now(),
+      onDateTimeChanged: (DateTime newdate) {
+        print(newdate);
+      },
+      use24hFormat: true,
+      maximumDate: new DateTime(2018, 12, 30),
+      minimumYear: 2010,
+      maximumYear: 2018,
+      minuteInterval: 1,
+      mode: CupertinoDatePickerMode.dateAndTime,
+    );
+  }
 
+  Widget time() {
+    return CupertinoTimerPicker(
+      mode: CupertinoTimerPickerMode.hms,
+      minuteInterval: 1,
+      secondInterval: 1,
+      initialTimerDuration: initialtimer,
+      onTimerDurationChanged: (Duration changedtimer) {
+        setState(() {
+          initialtimer = changedtimer;
+        });
+      },
+    );
+  }
 
 }
