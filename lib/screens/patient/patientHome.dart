@@ -11,6 +11,7 @@ import 'package:flutter_datetime_picker/flutter_datetime_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:datetime_picker_formfield/datetime_picker_formfield.dart';
+import 'package:calendarro/calendarro.dart';
 
 
 class PatientHome extends StatefulWidget {
@@ -92,18 +93,21 @@ class _PatientHomeState extends State<PatientHome> {
                             title: Text('Take medication'),
                             subtitle: Text('Every day at 5pm'),
                             onTap: () {
-                              /*createSetReminderDialog(context).then((onValue){
-                                print("clicked Row");
-                                String time = "$onValue";
-                                cron.schedule(new Schedule.parse(time), () async {
-                                  print('every 1 minute');
-                                });
-                              }); */
-                              selectDate(context);
-                              selectTime(context);
+                              String _time = ""; //need the string value from selectTime
+                              String _date = "";
+                             createSetReminderDialog(context).then((onValue){
+                               print("clicked Row"); //---- probably not needed at all in this
+
+                              });
+                              //selectDate(context);
+                              //selectTime(context);
+                               cron.schedule(new Schedule.parse(_time), () async {
+                                    //send notification everytime selectedtime is now
+                               });
 
 
                             },
+
                           )
                           ),
 
@@ -187,6 +191,7 @@ class _PatientHomeState extends State<PatientHome> {
   }
 
   /*Method is for setting reminder ,  patients will be able to use this*/
+  /*method not used yet*/
   Future<String> createSetReminderDialog(BuildContext context){
     TextEditingController userController = TextEditingController();
     return showDialog(context: context, builder: (context){
@@ -214,13 +219,14 @@ class _PatientHomeState extends State<PatientHome> {
   Future<Null> selectDate(BuildContext context) async {
     DateTime date = DateTime.now();
     final DateTime picked = await showDatePicker(context: context, initialDate: date, firstDate: DateTime(2020), lastDate: DateTime(2021));
-    if (picked != null && picked != date){
-      setState(() {
-        date = picked;
-        print(date.toString());
 
-      });
-    }
+      if (picked != null && picked != date) {
+        setState(() {
+          date = picked;
+          print(date.toString());
+        });
+      }
+
   }
   Future<Null> selectTime(BuildContext context) async {
     TimeOfDay time = TimeOfDay.now();
