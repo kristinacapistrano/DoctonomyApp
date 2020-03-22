@@ -1,3 +1,4 @@
+import 'package:doctonomy_app/screens/patient/reminderViewer.dart';
 import 'package:flutter/material.dart';
 import '../../models/state.dart';
 import '../../util/state_widget.dart';
@@ -85,6 +86,14 @@ class _PatientHomeState extends State<PatientHome> {
                             subtitle: Text('Every day at 5pm'),
                             onTap: () {
                               print("clicked Row");
+                              Navigator.of(context).push(
+                                new MaterialPageRoute(builder: (BuildContext context) {
+                                  //TODO pass patient info to display reminders on page.
+                                  return new ReminderViewer();
+                                },
+                                      fullscreenDialog: true
+                                  )
+                              );
                             },
                           )
                           ),

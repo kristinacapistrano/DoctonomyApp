@@ -1,4 +1,5 @@
 import 'package:doctonomy_app/screens/patient/patientProfile.dart';
+import 'package:doctonomy_app/screens/patient/reminderViewer.dart';
 import 'package:flutter/material.dart';
 
 import '../sign_in.dart';
@@ -54,7 +55,7 @@ class _PatientNavState extends State<PatientNav> {
               ),
               new BottomNavigationBarItem(
                 icon: const Icon(Icons.settings),
-                title: new Text('Options'),
+                title: new Text(''),
               )
             ]),
         body: new Stack(
@@ -73,6 +74,13 @@ class _PatientNavState extends State<PatientNav> {
                 child: new PatientProfile(),
               ),
             ),
+            // new Offstage(
+            //   offstage: tab != 2,
+            //   child: new TickerMode(
+            //     enabled: tab == 2,
+            //     child:,
+            //   ),
+            // ),
           ],
         ),
       );
