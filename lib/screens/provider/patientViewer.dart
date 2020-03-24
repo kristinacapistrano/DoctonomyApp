@@ -53,6 +53,24 @@ class _PatientViewerState extends State<PatientViewer> {
     });
   }
 
+  String timesToString(times) {
+    var tempTimes = times.toList();
+    if (tempTimes.length == 0) {
+      return "";
+    }
+    var timeStr = timeToString(tempTimes.removeLast());
+    if (times.length > 2) {
+      return " at " + tempTimes.map((t) => timeToString(t)).join(', ') + ', and ' + timeStr;
+    } else if (times.length > 1) {
+      return " at " + timeToString(tempTimes.removeLast())+ ' and ' + timeStr;
+    }
+    return " at " + timeStr;
+  }
+
+  String timeToString(date) {
+    return DateFormat("h:mm a").format(DateFormat("H:mm").parse(date));
+  }
+
   @override
   Widget build(BuildContext context) {
     appState = StateWidget.of(context).state;
@@ -127,9 +145,22 @@ class _PatientViewerState extends State<PatientViewer> {
                                     var reminderList = snapshot?.data["reminders"].toList() ?? [];
                                     if (reminderList.length > 0) {
                                       List<Widget> tiles = reminderList.fold(List<Widget>(), (total, el) {
+                                        int interval = el["interval"];
+                                        var intervalText = "Every day";
+                                        if (interval > 1) {
+                                          intervalText = "Every " + interval.toString() + " days";
+                                        }
+
+                                        var times = el["times"];
+                                        var timesText = "";
+                                        if (interval == 1) {
+                                          timesText = timesToString(times);
+                                        } else if (interval > 1 && times.length == 1) {
+                                          timesText = " at " + timeToString(times[0]);
+                                        }
                                         total.add(ListTile(
                                             title: Text(el["name"], style: TextStyle(fontWeight: FontWeight.w500)),
-                                            subtitle: Text(el["frequency"] + " at " + DateFormat("h:mm a").format(DateFormat("HH:mm").parse(el["time"]))),
+                                            subtitle: Text(intervalText + timesText),
                                             dense: true,
                                             onTap: () {}));
                                         total.add(Divider(thickness: 1, indent: 10, endIndent: 10, height: 1));
