@@ -7,11 +7,14 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/cupertino.dart';
 import '../../widgets/AlertTextbox.dart';
 import 'package:cron/cron.dart';
+import 'package:doctonomy_app/screens/patient/reminderDateTimePicker.dart';
+
 import 'package:flutter_datetime_picker/flutter_datetime_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:datetime_picker_formfield/datetime_picker_formfield.dart';
 import 'package:calendarro/calendarro.dart';
+import 'package:flutter/cupertino.dart';
 
 
 class PatientHome extends StatefulWidget {
@@ -24,9 +27,8 @@ class _PatientHomeState extends State<PatientHome> {
   var cron = new Cron();
   StateModel appState;
   String title = "";
-  DateTime _setDate = DateTime.now();
-  Duration initialtimer = new Duration();
-  int selectitem = 1;
+  DateTime _dateTime = DateTime.now();
+
   @override
   void initState() {
     super.initState();
@@ -95,6 +97,14 @@ class _PatientHomeState extends State<PatientHome> {
                             title: Text('Take medication'),
                             subtitle: Text('Every day at 5pm'),
                             onTap: () {
+                              Navigator.of(context).push(
+                                  new MaterialPageRoute(builder: (BuildContext context){
+                                    return new ReminderDateTimePicker();
+                                  },
+                                      fullscreenDialog: true
+                                  )
+                              );
+
                               /*String _time = ""; //need the string value from selectTime
                               String _date = "";
                              createSetReminderDialog(context).then((onValue){
@@ -106,13 +116,7 @@ class _PatientHomeState extends State<PatientHome> {
                                cron.schedule(new Schedule.parse(_time), () async {
                                     //send notification everytime selectedtime is now
                                });*/
-                              showModalBottomSheet(
-                                  context: context,
-                                  builder: (BuildContext builder) {
-                                    return Container(
-                                      height: MediaQuery.of(context).copyWith().size.height / 3,
-                                    );
-                                  });
+
                             },
 
                           )
@@ -246,34 +250,6 @@ class _PatientHomeState extends State<PatientHome> {
 
       });
 
-  }
-  Widget datetime() {
-    return CupertinoDatePicker(
-      initialDateTime: DateTime.now(),
-      onDateTimeChanged: (DateTime newdate) {
-        print(newdate);
-      },
-      use24hFormat: true,
-      maximumDate: new DateTime(2018, 12, 30),
-      minimumYear: 2010,
-      maximumYear: 2018,
-      minuteInterval: 1,
-      mode: CupertinoDatePickerMode.dateAndTime,
-    );
-  }
-
-  Widget time() {
-    return CupertinoTimerPicker(
-      mode: CupertinoTimerPickerMode.hms,
-      minuteInterval: 1,
-      secondInterval: 1,
-      initialTimerDuration: initialtimer,
-      onTimerDurationChanged: (Duration changedtimer) {
-        setState(() {
-          initialtimer = changedtimer;
-        });
-      },
-    );
   }
 
 }
