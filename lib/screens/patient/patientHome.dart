@@ -1,4 +1,3 @@
-import 'dart:math';
 
 import 'package:flutter/material.dart';
 import '../../models/state.dart';
@@ -9,12 +8,6 @@ import '../../widgets/AlertTextbox.dart';
 import 'package:cron/cron.dart';
 import 'package:doctonomy_app/screens/patient/reminderDateTimePicker.dart';
 
-import 'package:flutter_datetime_picker/flutter_datetime_picker.dart';
-import 'package:flutter/material.dart';
-import 'package:intl/intl.dart';
-import 'package:datetime_picker_formfield/datetime_picker_formfield.dart';
-import 'package:calendarro/calendarro.dart';
-import 'package:flutter/cupertino.dart';
 
 
 class PatientHome extends StatefulWidget {
@@ -27,8 +20,6 @@ class _PatientHomeState extends State<PatientHome> {
   var cron = new Cron();
   StateModel appState;
   String title = "";
-  DateTime _dateTime = DateTime.now();
-
   @override
   void initState() {
     super.initState();
@@ -95,7 +86,7 @@ class _PatientHomeState extends State<PatientHome> {
                           Card(child: ListTile(
                             leading: Icon(Icons.alarm),
                             title: Text('Take medication'),
-                            subtitle: Text('Every day at 5pm'),
+                            subtitle: Text('testing'),
                             onTap: () {
                               Navigator.of(context).push(
                                   new MaterialPageRoute(builder: (BuildContext context){

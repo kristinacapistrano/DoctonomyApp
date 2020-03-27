@@ -34,7 +34,10 @@ dependencies:
   cron: ^0.2.2
   flutter_datetime_picker: ^1.3.4
   datetime_picker_formfield: ^1.0.0
-  calendarro: ^1.2.0
+  intl: ^0.16.1
+  date_format: ^1.0.8
+
+
 
 
 
