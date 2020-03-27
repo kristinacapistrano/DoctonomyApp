@@ -71,6 +71,10 @@ class _PatientViewerState extends State<PatientViewer> {
     return DateFormat("h:mm a").format(DateFormat("H:mm").parse(date));
   }
 
+  String dtToString(date) {
+    return DateFormat("MM/dd/yyyy").format(date);
+  }
+
   @override
   Widget build(BuildContext context) {
     appState = StateWidget.of(context).state;
@@ -158,9 +162,16 @@ class _PatientViewerState extends State<PatientViewer> {
                                         } else if (interval > 1 && times.length == 1) {
                                           timesText = " at " + timeToString(times[0]);
                                         }
+
+                                        String start = dtToString(el["startDateTime"].toDate());
+                                        String end = dtToString(el["endDateTime"].toDate());
+
                                         total.add(ListTile(
-                                            title: Text(el["name"], style: TextStyle(fontWeight: FontWeight.w500)),
-                                            subtitle: Text(intervalText + timesText),
+                                            title: ListTile(title: Text(el["name"], style: TextStyle(fontWeight: FontWeight.w500)),
+                                              subtitle: Text(intervalText + timesText),
+                                              dense: true,
+                                              contentPadding: EdgeInsets.symmetric(horizontal: 0.0, vertical: 0.0)),
+                                            subtitle: Text("From " + start + " until " + end.toString()),
                                             dense: true,
                                             onTap: () {}));
                                         total.add(Divider(thickness: 1, indent: 10, endIndent: 10, height: 1));
