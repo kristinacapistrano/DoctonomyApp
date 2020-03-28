@@ -1,12 +1,16 @@
 import 'dart:io';
 
+import 'package:doctonomy_app/models/user.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
+import 'package:flutter/cupertino.dart';
 
 class FirebaseNotifications {
   FirebaseMessaging _firebaseMessaging;
+  User user;
 
-  void setUpFirebase() {
+  void setUpFirebase({@required User user}) {
     _firebaseMessaging = FirebaseMessaging();
+    this.user = user;
     firebaseCloudMessagingListeners();
   }
 
@@ -32,6 +36,7 @@ class FirebaseNotifications {
     });
     _firebaseMessaging.getToken().then((String token) {
       print(token);
+      this.user.devTokens = [token];
     });
   }
 
