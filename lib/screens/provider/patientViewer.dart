@@ -8,6 +8,8 @@ import '../../models/user.dart';
 //import 'package:cloud_functions/cloud_functions.dart';
 import 'package:cron/cron.dart';
 import '../../widgets/AlertTextbox.dart';
+import './patientReminderViewer.dart';
+import 'dart:math';
 
 
 class PatientViewer extends StatefulWidget {
@@ -137,7 +139,6 @@ class _PatientViewerState extends State<PatientViewer> {
                           ),
                           SizedBox(height: 20.0),
                           Text('Reminders', style: TextStyle(fontWeight: FontWeight.w500)),
-                          //TODO remove hardcoded card
                           FutureBuilder(
                               future: getUserReminders(),
                               builder: (context, AsyncSnapshot<Map<String,dynamic>> snapshot) {
@@ -146,9 +147,9 @@ class _PatientViewerState extends State<PatientViewer> {
                                 } else {
                                   print(snapshot.data);
                                   return Builder(builder: (BuildContext context) {
-                                    var reminderList = snapshot?.data["reminders"].toList() ?? [];
+                                    List reminderList = (snapshot?.data ?? Map())["reminders"]?.toList() ?? [];
                                     if (reminderList.length > 0) {
-                                      List<Widget> tiles = reminderList.fold(List<Widget>(), (total, el) {
+                                      List<Widget> tiles = reminderList.sublist(0, min(3, reminderList.length)).fold(List<Widget>(), (total, el) {
                                         int interval = el["interval"];
                                         var intervalText = "Every day";
                                         if (interval > 1) {
@@ -167,17 +168,24 @@ class _PatientViewerState extends State<PatientViewer> {
                                         String end = dtToString(el["endDateTime"].toDate());
 
                                         total.add(ListTile(
-                                            title: ListTile(title: Text(el["name"], style: TextStyle(fontWeight: FontWeight.w500)),
-                                              subtitle: Text(intervalText + timesText),
-                                              dense: true,
-                                              contentPadding: EdgeInsets.symmetric(horizontal: 0.0, vertical: 0.0)),
-                                            subtitle: Text("From " + start + " until " + end.toString()),
+                                            title: Text(el["name"], style: TextStyle(fontWeight: FontWeight.w500)),
+                                            subtitle: Text(intervalText + timesText + "\nFrom " + start + " until " + end.toString()),
                                             dense: true,
+                                            contentPadding: EdgeInsets.symmetric(horizontal: 10.0, vertical: 10.0),
                                             onTap: () {}));
                                         total.add(Divider(thickness: 1, indent: 10, endIndent: 10, height: 1));
                                         return total;
                                       });
-                                      tiles.add(ListTile(title: Text("See All"), onTap: () {}, dense: true));
+                                      tiles.add(ListTile(title: Text("See All"), onTap: () {
+
+                                        Navigator.of(context).push(
+                                            new MaterialPageRoute(builder: (BuildContext context) {
+                                              return new PatientReminderViewer(reminderList: reminderList, title: title);
+                                            },
+                                                fullscreenDialog: true
+                                        ));
+
+                                      }, dense: true));
                                       return Card(child: Column(children: tiles.toList()));
                                     } else {
                                       return Card(child: ListTile(
