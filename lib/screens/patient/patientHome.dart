@@ -1,13 +1,14 @@
 
 import 'package:flutter/material.dart';
+import 'package:flutter/painting.dart';
 import '../../models/state.dart';
 import '../../util/state_widget.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/cupertino.dart';
 import '../../widgets/AlertTextbox.dart';
 import 'package:cron/cron.dart';
-import 'package:doctonomy_app/screens/patient/reminderDateTimePicker.dart';
-
+import 'package:doctonomy_app/models/reminder.dart';
+import 'package:doctonomy_app/models/constants.dart';
 
 
 class PatientHome extends StatefulWidget {
@@ -48,10 +49,11 @@ class _PatientHomeState extends State<PatientHome> {
                   fontWeight: FontWeight.bold,
                 )
             ),
-            centerTitle: true,
+            centerTitle: false,
             title: FittedBox(fit:BoxFit.fitWidth,
-                child: Text("My Info")
+                child: Text("My Information"),
             ),
+
             iconTheme: IconThemeData(color: Colors.lightBlueAccent[700]),
             backgroundColor: Colors.white),
         body:
@@ -71,7 +73,7 @@ class _PatientHomeState extends State<PatientHome> {
                           Text('Upcoming Procedures', style: TextStyle(fontWeight: FontWeight.w500)),
                           //TODO remove hardcoded card
                           Card(child: ListTile(
-                            leading: Icon(Icons.healing),
+                            leading: Icon(Icons.healing, color: Colors.red),
                             title: Text('Surgery'),
                             subtitle: Text('Coming up on 2/20/20'),
                             onTap: () {
@@ -83,31 +85,29 @@ class _PatientHomeState extends State<PatientHome> {
                           SizedBox(height: 20.0),
                           Text('Reminders', style: TextStyle(fontWeight: FontWeight.w500)),
                           //TODO remove hardcoded card
-                          Card(child: ListTile(
-                            leading: Icon(Icons.alarm),
+                        Card(child: ListTile(
+                            leading: PopupMenuButton(
+                              onSelected: choiceAction,
+                                icon: Icon(
+                                    Icons.alarm_add,
+                                    color: Colors.blue,
+                                    ),
+
+                                itemBuilder: (BuildContext context){
+                                return Constants.choices.map((String choice){
+                                  return PopupMenuItem<String>(
+                                    value: choice,
+                                    child: Text(choice),
+                                  );
+                                }).toList();
+                              }),
                             title: Text('Take medication'),
                             subtitle: Text('testing'),
                             onTap: () {
-                              Navigator.of(context).push(
-                                  new MaterialPageRoute(builder: (BuildContext context){
-                                    return new ReminderDateTimePicker();
-                                  },
-                                      fullscreenDialog: true
-                                  )
-                              );
-
-                              /*String _time = ""; //need the string value from selectTime
-                              String _date = "";
-                             createSetReminderDialog(context).then((onValue){
-                               print("clicked Row"); //---- probably not needed at all in this
-
-                              });
-                              //selectDate(context);
-                              //selectTime(context);
-                               cron.schedule(new Schedule.parse(_time), () async {
+                              /* cron.schedule(new Schedule.parse(_time), () async {
                                     //send notification everytime selectedtime is now
-                               });*/
-
+                               });
+                                */
                             },
 
                           )
@@ -182,7 +182,9 @@ class _PatientHomeState extends State<PatientHome> {
                             }
                           }),
                         ],
+
                       ),
+
                     );
                   }
                 }
@@ -191,32 +193,6 @@ class _PatientHomeState extends State<PatientHome> {
         )
     );
   }
-
-  /*Method is for setting reminder ,  patients will be able to use this*/
-  /*method not used yet*/
-  Future<String> createSetReminderDialog(BuildContext context){
-    TextEditingController userController = TextEditingController();
-    return showDialog(context: context, builder: (context){
-      {
-        return AlertDialog(
-          title: Text("Set date and time"),
-          content: TextField(
-            controller: userController,
-          ),
-          actions: <Widget>[
-            MaterialButton(
-              elevation: 5.0,
-              child: Text('Set'),
-              onPressed: (){
-                Navigator.of(context).pop(userController.text.toString());
-
-              },
-            )
-          ],
-        );
-      }});
-  }
-
 
   Future<Null> selectDate(BuildContext context) async {
     DateTime date = DateTime.now();
@@ -230,6 +206,32 @@ class _PatientHomeState extends State<PatientHome> {
       }
 
   }
+
+  void _showMultiSelect(BuildContext context) async {
+    final items = <Reminder<int>>[
+      Reminder(1, 'Monday'),
+      Reminder(2, 'Tuesday'),
+      Reminder(3, 'Wednesday'),
+      Reminder(4, 'Thursday'),
+      Reminder(5, 'Friday'),
+      Reminder(6, 'Saturday'),
+      Reminder(7, 'Sunday'),
+    ];
+
+    final selectedValues = await showDialog<Set<int>>(
+      context: context,
+      builder: (BuildContext context) {
+        return ReminderMultiSelectDialog(
+          items: items,
+          //initialSelectedValues: [1, 3].toSet(), this is if you want something to be preselected
+        );
+      },
+    );
+
+    print(selectedValues);
+  }
+
+
   Future<Null> selectTime(BuildContext context) async {
     TimeOfDay time = TimeOfDay.now();
     final TimeOfDay picked = await showTimePicker(context: context,
@@ -242,5 +244,14 @@ class _PatientHomeState extends State<PatientHome> {
       });
 
   }
+  void choiceAction(String choice){
+    if(choice == Constants.selectDay){
+      print('Selecting Day');
+      _showMultiSelect(context);
+    }else if(choice == Constants.selectTime){
+      print('Selecting Time');
+      selectTime(context);
 
+    }
+  }
 }

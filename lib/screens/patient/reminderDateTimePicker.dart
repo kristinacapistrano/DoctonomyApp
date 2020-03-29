@@ -5,7 +5,7 @@ import '../../models/state.dart';
 import '../../util/state_widget.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 
-
+/*class may not be needed */
 
 class ReminderDateTimePicker extends StatefulWidget{
   static const String id = 'create_reminderDateTime';
@@ -71,7 +71,7 @@ class _ReminderDateTimePicker extends State {
             children: <Widget>[
 
               SizedBox(
-                height: 500.0,
+                height: 200.0,
                 child: CupertinoDatePicker(
                   initialDateTime: _datetime,
                   onDateTimeChanged: (dateTime) {
