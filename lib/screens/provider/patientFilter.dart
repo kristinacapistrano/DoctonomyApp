@@ -36,6 +36,9 @@ class _PatientFilterState extends State<PatientFilter> {
 
   Widget build(BuildContext context) {
     appState = StateWidget.of(context).state;
+    var size = MediaQuery.of(context).size;
+    final double itemHeight = (size.height - kToolbarHeight - 24) / 8;
+    final double itemWidth = size.width / 2;
     return Scaffold(
       appBar: AppBar(
         brightness: Brightness.light,
@@ -54,41 +57,52 @@ class _PatientFilterState extends State<PatientFilter> {
       body: Container(
         padding: EdgeInsets.symmetric(vertical: 0, horizontal: 10),
         child: Column(
-            crossAxisAlignment: CrossAxisAlignment.center,
-            children: <Widget>[
-              DropdownButton(
-                isExpanded: true,
-                hint: Text("Please choose criteria to filter by"),
-                value: _selectedCriteria1,
-                onChanged: (newValue) {
-                  setState(() {
-                    _selectedCriteria1 = newValue;
-                  });
-                },
-                items: _criteria.map((criteria){
-                  return DropdownMenuItem(
-                    child: new Text(criteria),
-                    value: criteria,
-                  );
-                }).toList(),
+          crossAxisAlignment: CrossAxisAlignment.center,
+          children: <Widget>[
+            SizedBox(
+              height: 50, // constrain height
+              child: GridView.count(
+                primary: false,
+                crossAxisSpacing: 0.0,
+                crossAxisCount: 2,
+                children: <Widget>[
+                  DropdownButton(
+                    isExpanded: true,
+                    hint: Text("Please choose criteria to filter by"),
+                    value: _selectedCriteria1,
+                    onChanged: (newValue) {
+                      setState(() {
+                        _selectedCriteria1 = newValue;
+                      });
+                    },
+                    items: _criteria.map((criteria){
+                      return DropdownMenuItem(
+                        child: new Text(criteria),
+                        value: criteria,
+                      );
+                    }).toList(),
+                  ),
+                  DropdownButton(
+                    isExpanded: true,
+                    hint: Text("Please choose criteria 2 to filter by"),
+                    value: _selectedCriteria2,
+                    onChanged: (newValue) {
+                      setState(() {
+                        _selectedCriteria2 = newValue;
+                      });
+                    },
+                    items: _criteria.map((criteria2){
+                      return DropdownMenuItem(
+                        child: new Text(criteria2),
+                        value: criteria2,
+                      );
+                    }).toList(),
+                  ),
+                ],
               ),
-              DropdownButton(
-                isExpanded: true,
-                hint: Text("Please choose criteria 2 to filter by"),
-                value: _selectedCriteria2,
-                onChanged: (newValue) {
-                  setState(() {
-                    _selectedCriteria2 = newValue;
-                  });
-                },
-                items: _criteria.map((criteria2){
-                  return DropdownMenuItem(
-                    child: new Text(criteria2),
-                    value: criteria2,
-                  );
-                }).toList(),
-              ),
-            ]
+            ),
+            Text("The rest of the content can go below these dropdowns")
+          ]
         )
       )
     );
