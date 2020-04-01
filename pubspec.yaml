@@ -36,6 +36,8 @@ dependencies:
   datetime_picker_formfield: ^1.0.0
   intl: ^0.16.1
   date_format: ^1.0.8
+  firebase_messaging: ^6.0.13
+
 
 
 
