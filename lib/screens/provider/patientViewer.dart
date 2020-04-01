@@ -1,3 +1,4 @@
+import 'package:doctonomy_app/widgets/CreateReminder.dart';
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/cupertino.dart';
@@ -9,6 +10,7 @@ import '../../models/user.dart';
 import 'package:cron/cron.dart';
 import '../../widgets/AlertTextbox.dart';
 import './patientReminderViewer.dart';
+import '../../widgets/CreateReminder.dart';
 import 'dart:math';
 
 
@@ -181,8 +183,7 @@ class _PatientViewerState extends State<PatientViewer> {
                                         Navigator.of(context).push(
                                             new MaterialPageRoute(builder: (BuildContext context) {
                                               return new PatientReminderViewer(reminderList: reminderList, title: title);
-                                            },
-                                                fullscreenDialog: true
+                                            }, fullscreenDialog: true
                                         ));
 
                                       }, dense: true));
@@ -190,7 +191,17 @@ class _PatientViewerState extends State<PatientViewer> {
                                     } else {
                                       return Card(child: ListTile(
                                           title: Text("No Reminders (Click here to add)"),
-                                          onTap: () {},
+                                          onTap: () {
+                                            showDialog(
+                                            context: context,
+                                            builder: (context) {
+                                              return CreateReminder(userId);
+                                            }).then((val) {
+                                              if (val != null) {
+                                                print("Reminder Created");
+                                              }
+                                            });
+                                          },
                                           dense: true
                                       )
                                       );
