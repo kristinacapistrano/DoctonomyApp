@@ -1,3 +1,4 @@
+import 'package:doctonomy_app/screens/provider/patientViewer.dart';
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import '../../models/state.dart';
@@ -15,15 +16,15 @@ class PatientFilter extends StatefulWidget {
 
 class _PatientFilterState extends State<PatientFilter> {
   StateModel appState;
-  List<User> userList;
+  List<dynamic> userList;
   List<dynamic> myUsers;
   List <String> _criteria = ['a', 'b', 'c', 'd'];
   List <String> _criteria2 = ['1', '2', '3', '4'];
-  // List<String> _allergies;
-  // List<String> _procedures;
-  // List<String> _medications;
   String _selectedCriteria1;
   String _selectedCriteria2;
+  List<String> _allergies;
+  List<String> _procedures;
+  List<String> _medications;
 
   _PatientFilterState(this.myUsers);
 
@@ -33,6 +34,29 @@ class _PatientFilterState extends State<PatientFilter> {
   void initState() {
     super.initState();
   }
+
+  Future<List<dynamic>> getUserList() async {
+    DocumentReference docRef = Firestore.instance.collection('users').document(
+        appState?.firebaseUserAuth?.uid ?? "");
+    return docRef.get().then((datasnapshot) async {
+      if (datasnapshot.exists) {
+        userList = datasnapshot.data['patients'].toList();
+        List<dynamic> list = new List();
+        for(var uid in userList) {
+          DocumentReference dr = Firestore.instance.collection('users').document(uid);
+          DocumentSnapshot ds = await dr.get();
+          list.add(ds);
+        }
+        return list;
+      } else {
+        return [];
+      }
+    });
+  }
+  
+  // Future<List<dynamic>> getListFromMedications() async {
+    
+  // }
 
   Widget build(BuildContext context) {
     appState = StateWidget.of(context).state;
@@ -68,7 +92,7 @@ class _PatientFilterState extends State<PatientFilter> {
                 children: <Widget>[
                   DropdownButton(
                     isExpanded: true,
-                    hint: Text("Please choose criteria to filter by"),
+                    hint: Text("Allergies"),
                     value: _selectedCriteria1,
                     onChanged: (newValue) {
                       setState(() {
@@ -84,14 +108,14 @@ class _PatientFilterState extends State<PatientFilter> {
                   ),
                   DropdownButton(
                     isExpanded: true,
-                    hint: Text("Please choose criteria 2 to filter by"),
+                    hint: Text("Medications"),
                     value: _selectedCriteria2,
                     onChanged: (newValue) {
                       setState(() {
                         _selectedCriteria2 = newValue;
                       });
                     },
-                    items: _criteria.map((criteria2){
+                    items: _criteria2.map((criteria2){
                       return DropdownMenuItem(
                         child: new Text(criteria2),
                         value: criteria2,
@@ -101,7 +125,48 @@ class _PatientFilterState extends State<PatientFilter> {
                 ],
               ),
             ),
-            Text("The rest of the content can go below these dropdowns")
+            Text("The rest of the content can go below these dropdowns"),
+            FutureBuilder(
+            future: getUserList(),
+            builder: (context, AsyncSnapshot<List<dynamic>> snapshot) {
+              if (snapshot.connectionState == ConnectionState.waiting) {
+                return Center(child: CircularProgressIndicator());
+              } else {
+                return Center(
+                  child: ListView.builder(
+                      itemCount: snapshot.data.length,
+                      itemBuilder: (context, index) {
+                        final dynamic document = snapshot.data[index];
+                        var name = "(No Name) " + document.documentID;
+                        if (document.data != null) {
+                          var fName = document.data["firstName"] ?? "";
+                          var lName = document.data["lastName"] ?? "";
+                          name = fName + " " + lName;
+                        }
+                        if (name == " ") {
+                          name = "(No Name) " + document.documentID;
+                        }
+                        return new Card(
+                            child: ListTile(
+                              leading: Icon(Icons.face),
+                              title: Text(name),
+                              onTap: () {
+                                print("Clicked Patient: " + document.documentID);
+                                Navigator.of(context).push(
+                                    new MaterialPageRoute(builder: (BuildContext context) {
+                                      return new PatientViewer(userId: document.documentID, title: name);
+                                    },
+                                        fullscreenDialog: true
+                                    )
+                                );
+                              }
+                            )
+                        );
+                      }),
+                  );
+                }
+              }
+            )
           ]
         )
       )
