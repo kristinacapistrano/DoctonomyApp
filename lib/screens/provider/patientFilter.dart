@@ -134,6 +134,7 @@ class _PatientFilterState extends State<PatientFilter> {
               } else {
                 return Center(
                   child: ListView.builder(
+                      shrinkWrap: true,
                       itemCount: snapshot.data.length,
                       itemBuilder: (context, index) {
                         final dynamic document = snapshot.data[index];
