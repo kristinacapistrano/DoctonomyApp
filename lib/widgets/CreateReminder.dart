@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
+import 'dart:math';
 
 class CreateReminder extends AlertDialog {
   final String userId;
+
 //  final String name;
 //  final String startDate;
 //  final String endDate;
@@ -10,9 +12,13 @@ class CreateReminder extends AlertDialog {
 
   CreateReminder(this.userId);
 
+//  int days = 1;
+
   @override
   Widget build(BuildContext context) {
     TextEditingController name = new TextEditingController();
+    TextEditingController days = new TextEditingController();
+    days.text = "1";
     name.text = "";
 
 //    List<Widget> buttons = [];
@@ -38,13 +44,44 @@ class CreateReminder extends AlertDialog {
                 hintStyle: TextStyle(color: Colors.grey),
               ),
             ),
-            TextField(
-              controller: name,
-              decoration: new InputDecoration(
-                hintText: 'Every _ days',
-                hintStyle: TextStyle(color: Colors.grey),
-              ),
-            )
+            SizedBox(height: 20.0),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: <Widget>[
+                Text("Every"),
+                IconButton(
+                  icon: Icon(Icons.remove_circle_outline),
+                  onPressed: () {
+                    int d = int.parse(days.text) - 1;
+                    days.text = max(d,1).toString();
+                  },
+                ),
+//                Text(days.text),
+                Container(
+                    width: 50.0,
+                    child: TextField(
+                      controller: days,
+                      textAlign: TextAlign.center,
+                      enabled: false
+                    )
+                ),
+                IconButton(
+                  icon: Icon(Icons.add_circle_outline),
+                  onPressed: () {
+                    days.text = (int.parse(days.text) + 1).toString();
+                  },
+                ),
+                Text("Day(s)"),
+              ],
+            ),
+//            Text("Every Day"),
+//            TextField(
+//              controller: name,
+//              decoration: new InputDecoration(
+//                hintText: 'Every _ days',
+//                hintStyle: TextStyle(color: Colors.grey),
+//              ),
+//            )
             //Todo add fields for startDate, endDate, and times
           ],
         ),
