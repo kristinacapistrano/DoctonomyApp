@@ -33,6 +33,7 @@ dependencies:
   cloud_functions: ^0.4.2+3
   cron: ^0.2.2
   firebase_messaging: ^6.0.13
+  fluttertoast: ^4.0.0
 
 
 
