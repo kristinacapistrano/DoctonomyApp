@@ -1,36 +1,39 @@
 import 'package:flutter/material.dart';
+import '../util/state_widget.dart';
+import '../models/state.dart';
 import 'dart:math';
 
-class CreateReminder extends AlertDialog {
+class CreateReminder extends StatefulWidget {
+  static const String id = 'create_reminder';
   final String userId;
+  CreateReminder({Key key, @required this.userId}) : super(key: key);
+
+  @override
+  _CreateReminderState createState() => _CreateReminderState(userId);
+}
+
+class _CreateReminderState extends State<CreateReminder> {
+  StateModel appState;
+  String userId;
+  _CreateReminderState(this.userId);
+  TextEditingController name = new TextEditingController();
+  TextEditingController days = new TextEditingController();
 
 //  final String name;
 //  final String startDate;
 //  final String endDate;
 //  final int interval;
 //  final List<String> times;
-
-  CreateReminder(this.userId);
-
-//  int days = 1;
+  @override
+  void initState() {
+    super.initState();
+    days.text = "1";
+    name.text = "";
+  }
 
   @override
   Widget build(BuildContext context) {
-    TextEditingController name = new TextEditingController();
-    TextEditingController days = new TextEditingController();
-    days.text = "1";
-    name.text = "";
-
-//    List<Widget> buttons = [];
-//    if (leftText != null && leftAction != null) {
-//      buttons.add(FlatButton(child: new Text(leftText), onPressed: () => leftAction(_alertInput.text)));
-//    }
-//    if (middleText != null && middleAction != null) {
-//      buttons.add(FlatButton(child: new Text(middleText), onPressed: () => middleAction(_alertInput.text)));
-//    }
-//    if (rightText != null && rightAction != null) {
-//      buttons.add(FlatButton(child: new Text(rightText), onPressed: () => rightAction(_alertInput.text)));
-//    }
+    appState = StateWidget.of(context).state;
 
     return AlertDialog(
         title: Text("New Reminder"),
@@ -69,6 +72,7 @@ class CreateReminder extends AlertDialog {
                   icon: Icon(Icons.add_circle_outline),
                   onPressed: () {
                     days.text = (int.parse(days.text) + 1).toString();
+                    setState(() {});
                   },
                 ),
                 Text("Day(s)"),

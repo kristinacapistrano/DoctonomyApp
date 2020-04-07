@@ -195,7 +195,7 @@ class _PatientViewerState extends State<PatientViewer> {
                                             showDialog(
                                             context: context,
                                             builder: (context) {
-                                              return CreateReminder(userId);
+                                              return CreateReminder(userId: userId);
                                             }).then((val) {
                                               if (val != null) {
                                                 print("Reminder Created");
