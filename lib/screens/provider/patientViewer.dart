@@ -57,20 +57,6 @@ class _PatientViewerState extends State<PatientViewer> {
     });
   }
 
-  String timesToString(times) {
-    var tempTimes = times.toList();
-    if (tempTimes.length == 0) {
-      return "";
-    }
-    var timeStr = timeToString(tempTimes.removeLast());
-    if (times.length > 2) {
-      return " at " + tempTimes.map((t) => timeToString(t)).join(', ') + ', and ' + timeStr;
-    } else if (times.length > 1) {
-      return " at " + timeToString(tempTimes.removeLast())+ ' and ' + timeStr;
-    }
-    return " at " + timeStr;
-  }
-
   String timeToString(date) {
     return DateFormat("h:mm a").format(DateFormat("H:mm").parse(date));
   }
@@ -158,13 +144,8 @@ class _PatientViewerState extends State<PatientViewer> {
                                           intervalText = "Every " + interval.toString() + " days";
                                         }
 
-                                        var times = el["times"];
-                                        var timesText = "";
-                                        if (interval == 1) {
-                                          timesText = timesToString(times);
-                                        } else if (interval > 1 && times.length == 1) {
-                                          timesText = " at " + timeToString(times[0]);
-                                        }
+                                        var time = el["time"];
+                                        var timesText = " at " + timeToString(time);
 
                                         String start = dtToString(el["startDateTime"].toDate());
                                         String end = dtToString(el["endDateTime"].toDate());

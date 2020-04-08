@@ -16,9 +16,9 @@ class _CreateReminderState extends State<CreateReminder> {
   StateModel appState;
   String userId;
   _CreateReminderState(this.userId);
-  TextEditingController name = new TextEditingController();
-  TextEditingController days = new TextEditingController();
-
+  TextEditingController name = new TextEditingController(text: "");
+  TextEditingController days = new TextEditingController(text: "1");
+  TextEditingController time = new TextEditingController(text: "12:00");
 //  final String name;
 //  final String startDate;
 //  final String endDate;
@@ -27,8 +27,6 @@ class _CreateReminderState extends State<CreateReminder> {
   @override
   void initState() {
     super.initState();
-    days.text = "1";
-    name.text = "";
   }
 
   @override
@@ -78,15 +76,14 @@ class _CreateReminderState extends State<CreateReminder> {
                 Text("Day(s)"),
               ],
             ),
-//            Text("Every Day"),
-//            TextField(
-//              controller: name,
-//              decoration: new InputDecoration(
-//                hintText: 'Every _ days',
-//                hintStyle: TextStyle(color: Colors.grey),
-//              ),
-//            )
-            //Todo add fields for startDate, endDate, and times
+            TextField(
+              controller: time,
+              decoration: new InputDecoration(
+                hintText: 'Time',
+                hintStyle: TextStyle(color: Colors.grey),
+              ),
+            ),
+            //Todo add fields for startDate and endDate
           ],
         ),
         actions: [
