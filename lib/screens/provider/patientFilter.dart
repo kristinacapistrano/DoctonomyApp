@@ -22,8 +22,7 @@ class _PatientFilterState extends State<PatientFilter> {
   List <String> _criteria2 = ['1', '2', '3', '4'];
   String _selectedCriteria1;
   String _selectedCriteria2;
-  List<String> _allergies;
-  List<String> _procedures;
+  Future<List<String>> _allergies;
   List<String> _medications;
 
   _PatientFilterState(this.myUsers);
@@ -54,9 +53,19 @@ class _PatientFilterState extends State<PatientFilter> {
     });
   }
   
-  // Future<List<dynamic>> getListFromMedications() async {
-    
-  // }
+  Future<List<String>> getCriteriaList(String criteria) async {
+    DocumentReference docRef = Firestore.instance.collection(criteria).document(
+        appState?.firebaseUserAuth?.uid ?? "");
+        return docRef.get().then((datasnapshot) {
+          if(datasnapshot.exists){
+            List<String> _list;
+            datasnapshot.data.forEach((key, value){
+              if(key == "name") _list.add(value);
+            });
+            return _list;
+          } else return [];
+        });
+  }
 
   Widget build(BuildContext context) {
     appState = StateWidget.of(context).state;
@@ -90,38 +99,66 @@ class _PatientFilterState extends State<PatientFilter> {
                 crossAxisSpacing: 0.0,
                 crossAxisCount: 2,
                 children: <Widget>[
-                  DropdownButton(
-                    isExpanded: true,
-                    hint: Text("Allergies"),
-                    value: _selectedCriteria1,
-                    onChanged: (newValue) {
-                      setState(() {
-                        _selectedCriteria1 = newValue;
-                      });
+                  StreamBuilder<QuerySnapshot>(
+                    stream: Firestore.instance.collection("allergies").snapshots(),
+                    builder: (context, snapshot){
+                      if(!snapshot.hasData){
+                        Text("Loading");
+                      } else {
+                        List <DropdownMenuItem> names = [];
+                        for(var i = 0; i < snapshot.data.documents.length; i++){
+                          DocumentSnapshot data = snapshot.data.documents[i];
+                          names.add(
+                            DropdownMenuItem(
+                              child: Text(data.documentID),
+                              value: "${data.documentID}",
+                            )
+                          );
+                        }
+                        return DropdownButton(
+                          isExpanded: true,
+                          hint: Text("Allergies"),
+                          value: _selectedCriteria1, 
+                          onChanged: (newName){
+                            setState(() {
+                              _selectedCriteria1 = newName;
+                            });
+                          },
+                          items: names,
+                          );
+                      }
                     },
-                    items: _criteria.map((criteria){
-                      return DropdownMenuItem(
-                        child: new Text(criteria),
-                        value: criteria,
-                      );
-                    }).toList(),
                   ),
-                  DropdownButton(
-                    isExpanded: true,
-                    hint: Text("Medications"),
-                    value: _selectedCriteria2,
-                    onChanged: (newValue) {
-                      setState(() {
-                        _selectedCriteria2 = newValue;
-                      });
+                  StreamBuilder<QuerySnapshot>(
+                    stream: Firestore.instance.collection("medications").snapshots(),
+                    builder:(context, snapshot){
+                      if(!snapshot.hasData){
+                        Text("Loading");
+                      } else {
+                        List <DropdownMenuItem> names = [];
+                        for(var i = 0; i < snapshot.data.documents.length; i++){
+                          DocumentSnapshot data = snapshot.data.documents[i];
+                          names.add(
+                            DropdownMenuItem(
+                              child: Text(data.documentID),
+                              value: "${data.documentID}",
+                            )
+                          );
+                        }
+                        return DropdownButton(
+                          isExpanded: true,
+                          hint: Text("Medications"),
+                          value: _selectedCriteria2, 
+                          onChanged: (newName){
+                            setState(() {
+                              _selectedCriteria2 = newName;
+                            });
+                          },
+                          items: names,
+                        );
+                      }
                     },
-                    items: _criteria2.map((criteria2){
-                      return DropdownMenuItem(
-                        child: new Text(criteria2),
-                        value: criteria2,
-                      );
-                    }).toList(),
-                  ),
+                  )
                 ],
               ),
             ),
