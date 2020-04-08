@@ -3,7 +3,6 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/cupertino.dart';
 import '../../models/state.dart';
 import '../../util/state_widget.dart';
-import '../../models/user.dart';
 //import 'package:cloud_functions/cloud_functions.dart';
 import 'package:cron/cron.dart';
 import '../../widgets/AlertTextbox.dart';

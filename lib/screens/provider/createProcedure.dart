@@ -1,8 +1,4 @@
-import 'package:doctonomy_app/screens/provider/adminProcedures.dart';
 import 'package:flutter/material.dart';
-import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:flutter/semantics.dart';
-import '../../models/surgery.dart';
 import '../../models/state.dart';
 import '../../util/state_widget.dart';
 
