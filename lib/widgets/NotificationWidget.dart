@@ -15,22 +15,25 @@ class _NotificationWidget extends State<NotificationWidget> {
   void initState() {
     super.initState();
     _firebaseMessaging.configure(
+
+      //user is using the app when the message is received
       onMessage: (Map<String, dynamic> message) async {
-        print("messaging: $message");
+        print("onMessage: $message");
         final notification = message['notification'];
         setState(() {
           messages.add(Message(
               title: notification['title'], body: notification['body']));
         });
       },
+      //executes when app is closed
       onLaunch: (Map<String, dynamic> message) async {
         print("launching: $message");
 
-        final notification = message['data'];
+        final notification = message['this is data coming from code note firebase'];
         setState(() {
           messages.add(Message(
-            title: '${notification['title']}',
-            body: '${notification['body']}',
+            title: '${notification['title on code ']}',
+            body: '${notification['body on code ']}',
           ));
         });
       },
