@@ -103,15 +103,15 @@ class _PatientFilterState extends State<PatientFilter> {
                     stream: Firestore.instance.collection("allergies").snapshots(),
                     builder: (context, snapshot){
                       if(!snapshot.hasData){
-                        Text("Loading");
+                        Text("Loading...");
                       } else {
                         List <DropdownMenuItem> names = [];
                         for(var i = 0; i < snapshot.data.documents.length; i++){
-                          DocumentSnapshot data = snapshot.data.documents[i];
+                          String data = snapshot.data.documents[i]["name"];
                           names.add(
                             DropdownMenuItem(
-                              child: Text(data.documentID),
-                              value: "${data.documentID}",
+                              child: Text(data),
+                              value: data,
                             )
                           );
                         }
@@ -133,15 +133,15 @@ class _PatientFilterState extends State<PatientFilter> {
                     stream: Firestore.instance.collection("medications").snapshots(),
                     builder:(context, snapshot){
                       if(!snapshot.hasData){
-                        Text("Loading");
+                        Text("Loading...");
                       } else {
                         List <DropdownMenuItem> names = [];
                         for(var i = 0; i < snapshot.data.documents.length; i++){
-                          DocumentSnapshot data = snapshot.data.documents[i];
+                          String data = snapshot.data.documents[i]["name"];
                           names.add(
                             DropdownMenuItem(
-                              child: Text(data.documentID),
-                              value: "${data.documentID}",
+                              child: Text(data),
+                              value: data,
                             )
                           );
                         }
