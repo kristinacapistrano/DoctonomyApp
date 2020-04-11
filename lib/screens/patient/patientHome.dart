@@ -1,17 +1,17 @@
 
-import 'package:doctonomy_app/widgets/NotificationWidget.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/painting.dart';
-import '../../models/state.dart';
-import '../../util/state_widget.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/cupertino.dart';
-import '../../widgets/AlertTextbox.dart';
 import 'package:cron/cron.dart';
 import 'package:doctonomy_app/models/reminder.dart';
 import 'package:doctonomy_app/models/constants.dart';
 
+//import 'package:doctonomy_app/widgets/NotificationWidget.dart';
+import '../../widgets/AlertTextbox.dart';
+import '../../models/state.dart';
+import '../../util/state_widget.dart';
 
 
 class PatientHome extends StatefulWidget {
@@ -21,7 +21,7 @@ class PatientHome extends StatefulWidget {
 }
 
 class _PatientHomeState extends State<PatientHome> {
-  final Firestore _firestore = Firestore.instance; //_db
+  //final Firestore _firestore = Firestore.instance; //_db
   final FirebaseMessaging _firebaseMessaging = FirebaseMessaging(); //fcm
 
   var cron = new Cron();
@@ -30,7 +30,12 @@ class _PatientHomeState extends State<PatientHome> {
   @override
   void initState() {
     super.initState();
-    //use alert dialog
+    /**
+     * uses alert text box for notification to let users know they have to
+     * give attention to notification
+     * uses firebase console to control notifications at the moment.
+     * notification cannot yet be controlled by code from the app.
+     */
     _firebaseMessaging.configure(
       onMessage: (Map<String, dynamic> message) async {
         print("onMessage: $message");

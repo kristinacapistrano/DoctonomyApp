@@ -37,6 +37,7 @@ dependencies:
   intl: ^0.16.1
   date_format: ^1.0.8
   firebase_messaging: ^6.0.13
+  flutter_local_notifications: ^1.4.1
 
 
 
