@@ -22,6 +22,7 @@ class _CreateReminderState extends State<CreateReminder> {
   TextEditingController name = new TextEditingController(text: "");
   TextEditingController days = new TextEditingController(text: "1");
   TextEditingController time = new TextEditingController(text: DateFormat("h:mm a").format(DateTime.now()));
+  TextEditingController enddate = new TextEditingController(text: DateFormat("MM/dd/yyyy").format(DateTime.now()));
 
 //  String timeToString(date) {
 //    return DateFormat("h:mm a").format(DateFormat("H:mm").parse(date));
@@ -90,14 +91,11 @@ class _CreateReminderState extends State<CreateReminder> {
                 Text("Day(s)"),
               ],
             ),
-
-
-
             Row(
               mainAxisAlignment: MainAxisAlignment.center,
               children: <Widget>[
                 Text("At"),
-
+                SizedBox(width: 20.0),
                 Container(
                     width: 100.0,
                     child: TextField(
@@ -119,11 +117,34 @@ class _CreateReminderState extends State<CreateReminder> {
                 ),
               ],
             ),
-
-
-
-
-
+            Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: <Widget>[
+                Text("Until"),
+                SizedBox(width: 20.0),
+                Container(
+                  width: 100.0,
+                  child: TextField(
+                    controller: enddate,
+                    textAlign: TextAlign.center,
+                    decoration: new InputDecoration(
+                      hintText: 'Date',
+                      hintStyle: TextStyle(color: Colors.grey),
+                    ),
+                    onTap: () {
+                      DateTime now = new DateTime.now();
+                      DateTime morning = new DateTime(now.year, now.month, now.day);
+                      showDatePicker(context: context, initialDate: DateFormat("MM/dd/yyyy").parse(enddate.text), firstDate: morning, lastDate: DateTime(2100)).then((value) {
+                        FocusScope.of(context).requestFocus(new FocusNode());
+                        if (value != null) {
+                          enddate.text = DateFormat("MM/dd/yyyy").format(value);
+                        }
+                      });
+                    },
+                  ),
+                ),
+              ],
+            ),
             //Todo add fields for startDate and endDate
           ],
         ),
