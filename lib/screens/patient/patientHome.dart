@@ -11,7 +11,13 @@ import 'package:doctonomy_app/models/constants.dart';
 //import 'package:doctonomy_app/widgets/NotificationWidget.dart';
 import '../../widgets/AlertTextbox.dart';
 import '../../models/state.dart';
+import '../../widgets/LocalNoti.dart';
 import '../../util/state_widget.dart';
+
+import 'dart:async';
+import 'dart:ui';
+import 'package:flutter/services.dart';
+
 
 
 class PatientHome extends StatefulWidget {
@@ -23,13 +29,13 @@ class PatientHome extends StatefulWidget {
 class _PatientHomeState extends State<PatientHome> {
   //final Firestore _firestore = Firestore.instance; //_db
   final FirebaseMessaging _firebaseMessaging = FirebaseMessaging(); //fcm
-
   var cron = new Cron();
   StateModel appState;
   String title = "";
   @override
   void initState() {
     super.initState();
+
     /**
      * uses alert text box for notification to let users know they have to
      * give attention to notification
@@ -146,7 +152,8 @@ class _PatientHomeState extends State<PatientHome> {
                               }),
                             title: Text('Take medication'),
                             subtitle: Text('Medicine101'),
-                            onTap: () {
+                            onTap: () async{
+
                               /* cron.schedule(new Schedule.parse(_time), () async {
                                     //send notification everytime selectedtime is now
                                });
@@ -236,6 +243,7 @@ class _PatientHomeState extends State<PatientHome> {
         )
     );
   }
+
 
   Future<Null> selectDate(BuildContext context) async {
     DateTime date = DateTime.now();
