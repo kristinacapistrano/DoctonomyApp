@@ -20,8 +20,8 @@ class _PatientFilterState extends State<PatientFilter> {
   StateModel appState;
   List<dynamic> userList;
   List<dynamic> myUsers;
-  List<dynamic> allergies;
-  List<dynamic> medications;
+  Map<String, String> allergies = new Map();
+  Map<String, String> medications = new Map();
   String _selectedAllergy;
   String _selectedMedication;
 
@@ -54,12 +54,8 @@ class _PatientFilterState extends State<PatientFilter> {
   }
 
    getAllergyRef() {
-    String uid;
-    Query collection = Firestore.instance.collection("allergies").where("name", isEqualTo: _selectedAllergy);
-    print(collection);
-    // test.forEach((key, value){
-    //   print(key);
-    // });
+    print(allergies);
+    print(myUsers);
   }
   // List<dynamic> getUsersWithAllergy(){
   //   DocumentReference docRef;
@@ -111,6 +107,7 @@ class _PatientFilterState extends State<PatientFilter> {
                         List <DropdownMenuItem> names = [];
                         for(var i = 0; i < snapshot.data.documents.length; i ++){
                           String data = snapshot.data.documents[i]["name"];
+                          allergies.putIfAbsent(data, () => snapshot.data.documents[i].documentID);
                           names.add(
                             DropdownMenuItem(
                               child: Text(data),
@@ -143,6 +140,7 @@ class _PatientFilterState extends State<PatientFilter> {
                         List <DropdownMenuItem> names = [];
                         for(var i = 0; i < snapshot.data.documents.length; i++){
                           String data = snapshot.data.documents[i]["name"];
+                          medications.putIfAbsent(data, () => snapshot.data.documents[i].documentID);
                           names.add(
                             DropdownMenuItem(
                               child: Text(data),
