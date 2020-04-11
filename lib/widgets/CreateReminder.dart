@@ -2,6 +2,9 @@ import 'package:flutter/material.dart';
 import '../util/state_widget.dart';
 import '../models/state.dart';
 import 'dart:math';
+import 'package:intl/intl.dart';
+import '../screens/patient/reminderDateTimePicker.dart';
+import 'package:flutter/cupertino.dart';
 
 class CreateReminder extends StatefulWidget {
   static const String id = 'create_reminder';
@@ -18,7 +21,11 @@ class _CreateReminderState extends State<CreateReminder> {
   _CreateReminderState(this.userId);
   TextEditingController name = new TextEditingController(text: "");
   TextEditingController days = new TextEditingController(text: "1");
-  TextEditingController time = new TextEditingController(text: "12:00");
+  TextEditingController time = new TextEditingController(text: DateFormat("h:mm a").format(DateTime.now()));
+
+//  String timeToString(date) {
+//    return DateFormat("h:mm a").format(DateFormat("H:mm").parse(date));
+//  }
 //  final String name;
 //  final String startDate;
 //  final String endDate;
@@ -27,6 +34,13 @@ class _CreateReminderState extends State<CreateReminder> {
   @override
   void initState() {
     super.initState();
+  }
+
+  String formatTimeOfDay(TimeOfDay tod) {
+    final now = new DateTime.now();
+    final dt = DateTime(now.year, now.month, now.day, tod.hour, tod.minute);
+    final format = DateFormat("h:mm a");
+    return format.format(dt);
   }
 
   @override
@@ -76,13 +90,40 @@ class _CreateReminderState extends State<CreateReminder> {
                 Text("Day(s)"),
               ],
             ),
-            TextField(
-              controller: time,
-              decoration: new InputDecoration(
-                hintText: 'Time',
-                hintStyle: TextStyle(color: Colors.grey),
-              ),
+
+
+
+            Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: <Widget>[
+                Text("At"),
+
+                Container(
+                    width: 100.0,
+                    child: TextField(
+                      controller: time,
+                      textAlign: TextAlign.center,
+                      decoration: new InputDecoration(
+                        hintText: 'Time',
+                        hintStyle: TextStyle(color: Colors.grey),
+                      ),
+                      onTap: () {
+                        showTimePicker(context: context, initialTime: TimeOfDay.fromDateTime(DateFormat("h:mm a").parse(time.text))).then((value) {
+                          FocusScope.of(context).requestFocus(new FocusNode());
+                          if (value != null) {
+                            time.text = formatTimeOfDay(value);
+                          }
+                        });
+                      },
+                    ),
+                ),
+              ],
             ),
+
+
+
+
+
             //Todo add fields for startDate and endDate
           ],
         ),
