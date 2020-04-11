@@ -1,3 +1,5 @@
+import 'dart:ffi';
+
 import 'package:doctonomy_app/screens/provider/patientViewer.dart';
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
@@ -18,12 +20,10 @@ class _PatientFilterState extends State<PatientFilter> {
   StateModel appState;
   List<dynamic> userList;
   List<dynamic> myUsers;
-  List <String> _criteria = ['a', 'b', 'c', 'd'];
-  List <String> _criteria2 = ['1', '2', '3', '4'];
-  String _selectedCriteria1;
-  String _selectedCriteria2;
-  Future<List<String>> _allergies;
-  List<String> _medications;
+  List<dynamic> allergies;
+  List<dynamic> medications;
+  String _selectedAllergy;
+  String _selectedMedication;
 
   _PatientFilterState(this.myUsers);
 
@@ -52,20 +52,23 @@ class _PatientFilterState extends State<PatientFilter> {
       }
     });
   }
-  
-  Future<List<String>> getCriteriaList(String criteria) async {
-    DocumentReference docRef = Firestore.instance.collection(criteria).document(
-        appState?.firebaseUserAuth?.uid ?? "");
-        return docRef.get().then((datasnapshot) {
-          if(datasnapshot.exists){
-            List<String> _list;
-            datasnapshot.data.forEach((key, value){
-              if(key == "name") _list.add(value);
-            });
-            return _list;
-          } else return [];
-        });
+
+   getAllergyRef() {
+    String uid;
+    Query collection = Firestore.instance.collection("allergies").where("name", isEqualTo: _selectedAllergy);
+    print(collection);
+    // test.forEach((key, value){
+    //   print(key);
+    // });
   }
+  // List<dynamic> getUsersWithAllergy(){
+  //   DocumentReference docRef;
+  //   String allergyRef;
+  //   for(var i = 0; i < userList.length; i++){
+  //     docRef = Firestore.instance.collection("users").document(userList[i]);
+  //     List<dynamic>  docRef.get();
+      
+  //   }
 
   Widget build(BuildContext context) {
     appState = StateWidget.of(context).state;
@@ -106,7 +109,7 @@ class _PatientFilterState extends State<PatientFilter> {
                         Text("Loading...");
                       } else {
                         List <DropdownMenuItem> names = [];
-                        for(var i = 0; i < snapshot.data.documents.length; i++){
+                        for(var i = 0; i < snapshot.data.documents.length; i ++){
                           String data = snapshot.data.documents[i]["name"];
                           names.add(
                             DropdownMenuItem(
@@ -118,10 +121,12 @@ class _PatientFilterState extends State<PatientFilter> {
                         return DropdownButton(
                           isExpanded: true,
                           hint: Text("Allergies"),
-                          value: _selectedCriteria1, 
+                          value: _selectedAllergy, 
                           onChanged: (newName){
                             setState(() {
-                              _selectedCriteria1 = newName;
+                              _selectedAllergy = newName;
+                              //TODO: add a function to grab list of patients with selected allergies
+                              print(userList);
                             });
                           },
                           items: names,
@@ -148,10 +153,11 @@ class _PatientFilterState extends State<PatientFilter> {
                         return DropdownButton(
                           isExpanded: true,
                           hint: Text("Medications"),
-                          value: _selectedCriteria2, 
+                          value: _selectedMedication, 
                           onChanged: (newName){
                             setState(() {
-                              _selectedCriteria2 = newName;
+                              //TODO: add a function to grab list of patients with selected medication
+                              _selectedMedication = newName;
                             });
                           },
                           items: names,
@@ -162,7 +168,7 @@ class _PatientFilterState extends State<PatientFilter> {
                 ],
               ),
             ),
-            Text("The rest of the content can go below these dropdowns"),
+            SizedBox(height: 20,),
             FutureBuilder(
             future: getUserList(),
             builder: (context, AsyncSnapshot<List<dynamic>> snapshot) {
@@ -204,7 +210,12 @@ class _PatientFilterState extends State<PatientFilter> {
                   );
                 }
               }
-            )
+            ),
+            FlatButton(
+              child: Text("Print user list"),
+              onPressed: ()=> {
+                getAllergyRef()
+              }),
           ]
         )
       )
