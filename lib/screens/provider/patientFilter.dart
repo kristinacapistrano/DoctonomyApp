@@ -1,11 +1,9 @@
-import 'dart:ffi';
-
 import 'package:doctonomy_app/screens/provider/patientViewer.dart';
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import '../../models/state.dart';
 import '../../util/state_widget.dart';
-import '../../models/user.dart';
+//import '../../models/user.dart';
 
 class PatientFilter extends StatefulWidget {
   static const String id = 'patient_filter';
@@ -53,18 +51,48 @@ class _PatientFilterState extends State<PatientFilter> {
     });
   }
 
-   getAllergyRef() {
-    print(allergies);
-    print(myUsers);
+  Future<List<dynamic>> getCriteriaList() async {
+    if (_selectedAllergy == null && _selectedMedication == null) return getUserList();
+    String allergyID = allergies[_selectedAllergy];
+    for (var uid in userList){
+      DocumentReference docRef = Firestore.instance.collection('users').document(uid);
+      return docRef.get().then((datasnapshot) async {
+        if (datasnapshot.exists) {
+          List patientAllergies = datasnapshot.data['allergies'].toList();
+          //List patientMedications = datasnapshot.data['medications'].toList();
+          List <dynamic> filterList = new List();
+          for(var allergy in patientAllergies){
+            if (allergy == allergyID){
+              DocumentReference dr = Firestore.instance.collection('users').document(uid);
+              DocumentSnapshot ds = await docRef.get();
+              filterList.add(ds);
+            }
+          }
+          return filterList;
+        } else return [];
+      });
+    }
   }
-  // List<dynamic> getUsersWithAllergy(){
-  //   DocumentReference docRef;
-  //   String allergyRef;
-  //   for(var i = 0; i < userList.length; i++){
-  //     docRef = Firestore.instance.collection("users").document(userList[i]);
-  //     List<dynamic>  docRef.get();
-      
-  //   }
+
+  removeDupes (List list) {
+    for(var i = list.length; i > 1; i --) {
+      for (var j = i - 1; j > 0; j --){
+        if(list[i] == list[j]){
+          list.removeAt(i);
+        }
+      }
+    }
+  }
+
+  printStuff() {
+    print(userList);
+    // print(allergies);
+    // print(medications);
+    print(myUsers);
+    // if(_selectedAllergy == null && _selectedMedication == null){
+    //   print("true");
+    // }
+  }
 
   Widget build(BuildContext context) {
     appState = StateWidget.of(context).state;
@@ -123,7 +151,7 @@ class _PatientFilterState extends State<PatientFilter> {
                             setState(() {
                               _selectedAllergy = newName;
                               //TODO: add a function to grab list of patients with selected allergies
-                              print(userList);
+                              //print(userList);
                             });
                           },
                           items: names,
@@ -168,7 +196,7 @@ class _PatientFilterState extends State<PatientFilter> {
             ),
             SizedBox(height: 20,),
             FutureBuilder(
-            future: getUserList(),
+            future: getCriteriaList(),
             builder: (context, AsyncSnapshot<List<dynamic>> snapshot) {
               if (snapshot.connectionState == ConnectionState.waiting) {
                 return Center(child: CircularProgressIndicator());
@@ -209,11 +237,11 @@ class _PatientFilterState extends State<PatientFilter> {
                 }
               }
             ),
-            FlatButton(
-              child: Text("Print user list"),
-              onPressed: ()=> {
-                getAllergyRef()
-              }),
+            // FlatButton(
+            //   child: Text("Print User List"),
+            //   onPressed: ()=> {
+            //    printStuff()
+            //   }),
           ]
         )
       )
