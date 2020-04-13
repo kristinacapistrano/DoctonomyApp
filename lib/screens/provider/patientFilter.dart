@@ -21,7 +21,9 @@ class _PatientFilterState extends State<PatientFilter> {
   Map<String, String> allergies = new Map();
   Map<String, String> medications = new Map();
   String _selectedAllergy;
+  String _allergyID;
   String _selectedMedication;
+  String _medicationID;
 
   _PatientFilterState(this.myUsers);
 
@@ -53,45 +55,48 @@ class _PatientFilterState extends State<PatientFilter> {
 
   Future<List<dynamic>> getCriteriaList() async {
     if (_selectedAllergy == null && _selectedMedication == null) return getUserList();
-    String allergyID = allergies[_selectedAllergy];
-    for (var uid in userList){
-      DocumentReference docRef = Firestore.instance.collection('users').document(uid);
-      return docRef.get().then((datasnapshot) async {
-        if (datasnapshot.exists) {
-          List patientAllergies = datasnapshot.data['allergies'].toList();
-          //List patientMedications = datasnapshot.data['medications'].toList();
-          List <dynamic> filterList = new List();
-          for(var allergy in patientAllergies){
-            if (allergy == allergyID){
-              DocumentReference dr = Firestore.instance.collection('users').document(uid);
-              DocumentSnapshot ds = await docRef.get();
-              filterList.add(ds);
-            }
-          }
-          return filterList;
-        } else return [];
+    _allergyID = allergies[_selectedAllergy];
+    _medicationID = medications[_selectedMedication];
+    return Firestore.instance.collection("users")
+      .where("allergies",arrayContains: _allergyID)
+      .where("medications",arrayContains: _medicationID)
+      .getDocuments().then((doc){
+        if (doc.documents.isEmpty) return [];
+        return doc.documents.toList();
       });
-    }
-  }
-
-  removeDupes (List list) {
-    for(var i = list.length; i > 1; i --) {
-      for (var j = i - 1; j > 0; j --){
-        if(list[i] == list[j]){
-          list.removeAt(i);
-        }
-      }
-    }
-  }
-
-  printStuff() {
-    print(userList);
-    // print(allergies);
-    // print(medications);
-    print(myUsers);
-    // if(_selectedAllergy == null && _selectedMedication == null){
-    //   print("true");
+    
+    // List<DocumentSnapshot> allergyList = getCollectionList("allergies", _allergyID);
+    // List<DocumentSnapshot> medicationList = getCollectionList("medications", _medicationID);
+    // List<DocumentSnapshot> retList = new List();
+    // for(var doc in allergyList){
+    //   if(!medicationList.contains(doc)){
+    //     retList.add(doc);
+    //   }
     // }
+    // for(var doc in medicationList){
+    //   retList.add(doc);
+    // }
+    // return retList;
+  }
+
+  List<DocumentSnapshot> getCollectionList(String collection, String id){
+    Firestore.instance.collection("users")
+      .where(collection,arrayContains: id)
+      .getDocuments().then((doc){
+        if (doc.documents.isEmpty) return [];
+        return doc.documents.toList();
+      });
+  }
+
+  bool checkID (String id) {
+    return userList.contains(id);
+  }
+
+  reset(){
+    setState(() {
+    _selectedAllergy = null;
+    _selectedMedication = null;
+    });
   }
 
   Widget build(BuildContext context) {
@@ -150,7 +155,8 @@ class _PatientFilterState extends State<PatientFilter> {
                           onChanged: (newName){
                             setState(() {
                               _selectedAllergy = newName;
-                              //TODO: add a function to grab list of patients with selected allergies
+                              _allergyID = allergies[_selectedAllergy];
+                              _selectedMedication = null;
                               //print(userList);
                             });
                           },
@@ -182,8 +188,9 @@ class _PatientFilterState extends State<PatientFilter> {
                           value: _selectedMedication, 
                           onChanged: (newName){
                             setState(() {
-                              //TODO: add a function to grab list of patients with selected medication
                               _selectedMedication = newName;
+                              _medicationID = allergies[_selectedMedication];
+                              _selectedAllergy = null;
                             });
                           },
                           items: names,
@@ -208,7 +215,7 @@ class _PatientFilterState extends State<PatientFilter> {
                       itemBuilder: (context, index) {
                         final dynamic document = snapshot.data[index];
                         var name = "(No Name) " + document.documentID;
-                        if (document.data != null) {
+                        if (document.data != null && checkID(document.documentID)) {
                           var fName = document.data["firstName"] ?? "";
                           var lName = document.data["lastName"] ?? "";
                           name = fName + " " + lName;
@@ -237,11 +244,14 @@ class _PatientFilterState extends State<PatientFilter> {
                 }
               }
             ),
-            // FlatButton(
-            //   child: Text("Print User List"),
-            //   onPressed: ()=> {
-            //    printStuff()
-            //   }),
+            FlatButton(
+              child: Text("Reset Filter"),
+              textColor: Colors.white,
+              color: Colors.lightBlueAccent[700],
+              onPressed: ()=> {
+                reset()
+              },
+              ),
           ]
         )
       )
