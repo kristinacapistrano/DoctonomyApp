@@ -4,6 +4,7 @@ import '../../models/state.dart';
 import '../../util/state_widget.dart';
 import './patientChooser.dart';
 import './patientViewer.dart';
+import'./patientFilter.dart';
 
 class AdminPatients extends StatefulWidget {
   static const String id = 'admin_home';
@@ -65,6 +66,19 @@ class _AdminPatientsState extends State<AdminPatients> {
                       },
                           fullscreenDialog: true
                       )
+                  );
+                },
+              ),
+              IconButton(
+                icon: Icon(Icons.filter_list),
+                color: Colors.blue,
+                onPressed: () {
+                  print('filter patients');
+                  Navigator.of(context).push(
+                    new MaterialPageRoute(builder: (BuildContext context) {
+                      return new PatientFilter(myUsers:info); //myUsers:info
+                    },
+                    )
                   );
                 },
               ),

@@ -1,10 +1,7 @@
-import 'package:doctonomy_app/screens/provider/adminProcedures.dart';
 import 'package:flutter/material.dart';
-import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:flutter/semantics.dart';
-import '../../models/surgery.dart';
 import '../../models/state.dart';
 import '../../util/state_widget.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 
 class CreateProcedure extends StatefulWidget{
   static const String id = 'create_procedure';
@@ -15,7 +12,6 @@ class CreateProcedure extends StatefulWidget{
 class _CreateProcedureState extends State{
   StateModel appState;
   final db = Firestore.instance;
-  Surgery procedure = new Surgery();
   TextEditingController _nameController = new TextEditingController();
   TextEditingController _descController = new TextEditingController();
 
@@ -61,9 +57,8 @@ class _CreateProcedureState extends State{
                 Padding(
                   padding: const EdgeInsets.symmetric(vertical: 16.0),
                   child: RaisedButton(onPressed: () async {
-                    procedure.setName(_nameController.text);
-                    procedure.setDescription(_descController.text);
-                    db.collection("procedures").add(procedure.toJson());
+                    var procedure = { "name":_nameController.text, "description": _descController.text };
+                    db.collection("procedures").add(procedure);
                     Navigator.of(context).popUntil((route) => route.isFirst);
                     return;
                     },

@@ -39,4 +39,5 @@ class AlertTextbox extends AlertDialog {
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.all(Radius.circular(20.0)))
     );
   }
+
 }
