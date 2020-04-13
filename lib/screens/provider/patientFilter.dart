@@ -1,11 +1,9 @@
-import 'dart:ffi';
-
 import 'package:doctonomy_app/screens/provider/patientViewer.dart';
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import '../../models/state.dart';
 import '../../util/state_widget.dart';
-import '../../models/user.dart';
+//import '../../models/user.dart';
 
 class PatientFilter extends StatefulWidget {
   static const String id = 'patient_filter';
@@ -20,10 +18,12 @@ class _PatientFilterState extends State<PatientFilter> {
   StateModel appState;
   List<dynamic> userList;
   List<dynamic> myUsers;
-  List<dynamic> allergies;
-  List<dynamic> medications;
+  Map<String, String> allergies = new Map();
+  Map<String, String> medications = new Map();
   String _selectedAllergy;
+  String _allergyID;
   String _selectedMedication;
+  String _medicationID;
 
   _PatientFilterState(this.myUsers);
 
@@ -53,22 +53,51 @@ class _PatientFilterState extends State<PatientFilter> {
     });
   }
 
-   getAllergyRef() {
-    String uid;
-    Query collection = Firestore.instance.collection("allergies").where("name", isEqualTo: _selectedAllergy);
-    print(collection);
-    // test.forEach((key, value){
-    //   print(key);
-    // });
+  Future<List<dynamic>> getCriteriaList() async {
+    if (_selectedAllergy == null && _selectedMedication == null) return getUserList();
+    _allergyID = allergies[_selectedAllergy];
+    _medicationID = medications[_selectedMedication];
+    return Firestore.instance.collection("users")
+      .where("allergies",arrayContains: _allergyID)
+      .where("medications",arrayContains: _medicationID)
+      .getDocuments().then((doc){
+        if (doc.documents.isEmpty) return [];
+        return doc.documents.toList();
+      });
+    
+    // List<DocumentSnapshot> allergyList = getCollectionList("allergies", _allergyID);
+    // List<DocumentSnapshot> medicationList = getCollectionList("medications", _medicationID);
+    // List<DocumentSnapshot> retList = new List();
+    // for(var doc in allergyList){
+    //   if(!medicationList.contains(doc)){
+    //     retList.add(doc);
+    //   }
+    // }
+    // for(var doc in medicationList){
+    //   retList.add(doc);
+    // }
+    // return retList;
   }
-  // List<dynamic> getUsersWithAllergy(){
-  //   DocumentReference docRef;
-  //   String allergyRef;
-  //   for(var i = 0; i < userList.length; i++){
-  //     docRef = Firestore.instance.collection("users").document(userList[i]);
-  //     List<dynamic>  docRef.get();
-      
-  //   }
+
+  List<DocumentSnapshot> getCollectionList(String collection, String id){
+    Firestore.instance.collection("users")
+      .where(collection,arrayContains: id)
+      .getDocuments().then((doc){
+        if (doc.documents.isEmpty) return [];
+        return doc.documents.toList();
+      });
+  }
+
+  bool checkID (String id) {
+    return userList.contains(id);
+  }
+
+  reset(){
+    setState(() {
+    _selectedAllergy = null;
+    _selectedMedication = null;
+    });
+  }
 
   Widget build(BuildContext context) {
     appState = StateWidget.of(context).state;
@@ -111,6 +140,7 @@ class _PatientFilterState extends State<PatientFilter> {
                         List <DropdownMenuItem> names = [];
                         for(var i = 0; i < snapshot.data.documents.length; i ++){
                           String data = snapshot.data.documents[i]["name"];
+                          allergies.putIfAbsent(data, () => snapshot.data.documents[i].documentID);
                           names.add(
                             DropdownMenuItem(
                               child: Text(data),
@@ -125,8 +155,9 @@ class _PatientFilterState extends State<PatientFilter> {
                           onChanged: (newName){
                             setState(() {
                               _selectedAllergy = newName;
-                              //TODO: add a function to grab list of patients with selected allergies
-                              print(userList);
+                              _allergyID = allergies[_selectedAllergy];
+                              _selectedMedication = null;
+                              //print(userList);
                             });
                           },
                           items: names,
@@ -143,6 +174,7 @@ class _PatientFilterState extends State<PatientFilter> {
                         List <DropdownMenuItem> names = [];
                         for(var i = 0; i < snapshot.data.documents.length; i++){
                           String data = snapshot.data.documents[i]["name"];
+                          medications.putIfAbsent(data, () => snapshot.data.documents[i].documentID);
                           names.add(
                             DropdownMenuItem(
                               child: Text(data),
@@ -156,8 +188,9 @@ class _PatientFilterState extends State<PatientFilter> {
                           value: _selectedMedication, 
                           onChanged: (newName){
                             setState(() {
-                              //TODO: add a function to grab list of patients with selected medication
                               _selectedMedication = newName;
+                              _medicationID = allergies[_selectedMedication];
+                              _selectedAllergy = null;
                             });
                           },
                           items: names,
@@ -170,7 +203,7 @@ class _PatientFilterState extends State<PatientFilter> {
             ),
             SizedBox(height: 20,),
             FutureBuilder(
-            future: getUserList(),
+            future: getCriteriaList(),
             builder: (context, AsyncSnapshot<List<dynamic>> snapshot) {
               if (snapshot.connectionState == ConnectionState.waiting) {
                 return Center(child: CircularProgressIndicator());
@@ -182,7 +215,7 @@ class _PatientFilterState extends State<PatientFilter> {
                       itemBuilder: (context, index) {
                         final dynamic document = snapshot.data[index];
                         var name = "(No Name) " + document.documentID;
-                        if (document.data != null) {
+                        if (document.data != null && checkID(document.documentID)) {
                           var fName = document.data["firstName"] ?? "";
                           var lName = document.data["lastName"] ?? "";
                           name = fName + " " + lName;
@@ -212,10 +245,13 @@ class _PatientFilterState extends State<PatientFilter> {
               }
             ),
             FlatButton(
-              child: Text("Print user list"),
+              child: Text("Reset Filter"),
+              textColor: Colors.white,
+              color: Colors.lightBlueAccent[700],
               onPressed: ()=> {
-                getAllergyRef()
-              }),
+                reset()
+              },
+              ),
           ]
         )
       )
