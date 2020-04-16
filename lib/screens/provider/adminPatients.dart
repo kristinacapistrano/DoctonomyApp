@@ -24,10 +24,9 @@ class _AdminPatientsState extends State<AdminPatients> {
     DocumentReference docRef = Firestore.instance.collection('users').document(
         appState?.firebaseUserAuth?.uid ?? "");
 
-    // TODO: add a way to remove patients from the list
     return docRef.get().then((datasnapshot) async {
       if (datasnapshot.exists) {
-        info = datasnapshot.data['patients'].toList();
+        info = datasnapshot.data['patients']?.toList() ?? [];
         List<dynamic> list = new List();
         for(var uid in info) {
           DocumentReference dr = Firestore.instance.collection('users').document(uid);
@@ -91,6 +90,9 @@ class _AdminPatientsState extends State<AdminPatients> {
               if (snapshot.connectionState == ConnectionState.waiting) {
                 return Center(child: CircularProgressIndicator());
               } else {
+                if (snapshot.data.length == 0) {
+                  return Center(child: Text("Press + to add patients to your list"));
+                }
                 return Center(
                   child: ListView.builder(
                       itemCount: snapshot.data.length,
