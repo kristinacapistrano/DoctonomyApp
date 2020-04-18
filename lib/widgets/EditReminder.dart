@@ -7,19 +7,22 @@ import 'package:flutter/cupertino.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 
 
-class CreateReminder extends StatefulWidget {
+class EditReminder extends StatefulWidget {
   static const String id = 'create_reminder';
   final String userId;
-  CreateReminder({Key key, @required this.userId}) : super(key: key);
+  final Map<String, dynamic> reminder;
+  EditReminder({Key key, @required this.userId, @required this.reminder}) : super(key: key);
 
   @override
-  _CreateReminderState createState() => _CreateReminderState(userId);
+  _EditReminderState createState() => _EditReminderState(userId, reminder);
 }
 
-class _CreateReminderState extends State<CreateReminder> {
+class _EditReminderState extends State<EditReminder> {
   StateModel appState;
   String userId;
-  _CreateReminderState(this.userId);
+
+  Map<String, dynamic> reminder;
+  _EditReminderState(this.userId, this.reminder);
   TextEditingController name = new TextEditingController(text: "");
   TextEditingController days = new TextEditingController(text: "1");
   TextEditingController time = new TextEditingController(text: DateFormat("h:mm a").format(DateTime.now()));
@@ -29,7 +32,11 @@ class _CreateReminderState extends State<CreateReminder> {
   @override
   void initState() {
     super.initState();
-    _isButtonDisabled = true;
+    _isButtonDisabled = false;
+    name.text = reminder["name"];
+    days.text = reminder["interval"].toString();
+    time.text = DateFormat("h:mm a").format(DateFormat("H:mm").parse(reminder["time"]));
+    enddate.text = DateFormat("MM/dd/yyyy").format(reminder["endDateTime"].toDate());
   }
 
   String formatTimeOfDay(TimeOfDay tod) {
@@ -44,7 +51,7 @@ class _CreateReminderState extends State<CreateReminder> {
     appState = StateWidget.of(context).state;
 
     return AlertDialog(
-        title: Text("New Reminder"),
+        title: Text("Edit Reminder"),
         content: Column(
           mainAxisSize: MainAxisSize.min,
           children: <Widget>[
@@ -152,13 +159,24 @@ class _CreateReminderState extends State<CreateReminder> {
         ),
         actions: [
           FlatButton(child: new Text("Cancel"), onPressed: () => Navigator.of(context).pop()),
-          FlatButton(child: new Text("Done"),
+          FlatButton(child: new Text("Delete"), onPressed: () {
+            Firestore.instance.collection('reminders').document(userId).setData(
+                {'reminders': FieldValue.arrayRemove([reminder])}, merge: true
+            ).then((_) {
+              Navigator.of(context).pop(true);
+            });
+          }),
+          FlatButton(child: new Text("Save"),
               onPressed: _isButtonDisabled ? null : () {
-                var myReminder = { 'endDateTime': DateFormat("MM/dd/yyyy").parse(enddate.text), 'startDateTime': DateTime.now(), 'time': DateFormat("H:mm").format(DateFormat("h:mm a").parse(time.text)), 'name': name.text, 'interval':  int.parse(days.text), 'checklist' : []};
                 Firestore.instance.collection('reminders').document(userId).setData(
-                    {'reminders': FieldValue.arrayUnion([myReminder])}, merge: true
-                    ).then((_) {
-                      Navigator.of(context).pop(true);
+                    {'reminders': FieldValue.arrayRemove([reminder])}, merge: true
+                ).then((_) {
+                  var myReminder = { 'endDateTime': DateFormat("MM/dd/yyyy").parse(enddate.text), 'startDateTime': DateTime.now(), 'time': DateFormat("H:mm").format(DateFormat("h:mm a").parse(time.text)), 'name': name.text, 'interval':  int.parse(days.text), 'checklist' : []};
+                  Firestore.instance.collection('reminders').document(userId).setData(
+                      {'reminders': FieldValue.arrayUnion([myReminder])}, merge: true
+                  ).then((_) {
+                    Navigator.of(context).pop(true);
+                  });
                 });
               }
           )

@@ -11,6 +11,7 @@ import 'package:cron/cron.dart';
 import '../../widgets/AlertTextbox.dart';
 import './patientReminderViewer.dart';
 import '../../widgets/CreateReminder.dart';
+import '../../widgets/EditReminder.dart';
 import 'dart:math';
 
 
@@ -155,18 +156,24 @@ class _PatientViewerState extends State<PatientViewer> {
                                             subtitle: Text(intervalText + timesText + "\nFrom " + start + " until " + end.toString()),
                                             dense: true,
                                             contentPadding: EdgeInsets.symmetric(horizontal: 10.0, vertical: 10.0),
-                                            onTap: () {}));
+                                            onTap: () {
+                                              showDialog(
+                                                  context: context,
+                                                  builder: (context) {
+                                                    return EditReminder(userId: userId, reminder: Map<String, dynamic>.from(el));
+                                                  }).then((val) {
+                                                setState(() {});
+                                              });
+                                            }));
                                         total.add(Divider(thickness: 1, indent: 10, endIndent: 10, height: 1));
                                         return total;
                                       });
                                       tiles.add(ListTile(title: Text("See All"), onTap: () {
-
                                         Navigator.of(context).push(
                                             new MaterialPageRoute(builder: (BuildContext context) {
-                                              return new PatientReminderViewer(reminderList: reminderList, title: title, userId: userId);
+                                              return new PatientReminderViewer(title: title, userId: userId);
                                             }, fullscreenDialog: true
                                         ));
-
                                       }, dense: true));
                                       return Card(child: Column(children: tiles.toList()));
                                     } else {
