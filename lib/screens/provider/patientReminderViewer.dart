@@ -8,6 +8,7 @@ import '../../models/user.dart';
 //import 'package:cloud_functions/cloud_functions.dart';
 import 'package:cron/cron.dart';
 import '../../widgets/AlertTextbox.dart';
+import '../../widgets/CreateReminder.dart';
 import 'dart:math';
 
 
@@ -15,16 +16,18 @@ class PatientReminderViewer extends StatefulWidget {
   static const String id = 'patient_viewer';
   final List reminderList;
   final String title;
-  PatientReminderViewer({Key key, @required this.reminderList, @required this.title}) : super(key: key);
+  final String userId;
+  PatientReminderViewer({Key key, @required this.reminderList, @required this.title, @required this.userId}) : super(key: key);
   @override
-  _PatientReminderViewerState createState() => _PatientReminderViewerState(reminderList, title);
+  _PatientReminderViewerState createState() => _PatientReminderViewerState(reminderList, title, userId);
 }
 
 class _PatientReminderViewerState extends State<PatientReminderViewer> {
   StateModel appState;
   List reminderList;
   String title;
-  _PatientReminderViewerState(this.reminderList, this.title);
+  String userId;
+  _PatientReminderViewerState(this.reminderList, this.title, this.userId);
   var cron = new Cron();
 
   @override
@@ -88,7 +91,17 @@ class _PatientReminderViewerState extends State<PatientReminderViewer> {
                     total.add(Divider(thickness: 1, indent: 10, endIndent: 10, height: 1));
                     return total;
                   });
-                  tiles.add(ListTile(title: Text("Add a reminder"), onTap: () {}, dense: true));
+                  tiles.add(ListTile(title: Text("Add a reminder"), onTap: () {
+                    showDialog(
+                        context: context,
+                        builder: (context) {
+                          return CreateReminder(userId: userId);
+                        }).then((val) {
+                      if (val != null) {
+                        Navigator.of(context).pop(true);
+                      }
+                    });
+                  }, dense: true));
                   return Card(child: Column(children: tiles.toList()));
               })
             ]))

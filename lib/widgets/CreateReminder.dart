@@ -3,8 +3,9 @@ import '../util/state_widget.dart';
 import '../models/state.dart';
 import 'dart:math';
 import 'package:intl/intl.dart';
-import '../screens/patient/reminderDateTimePicker.dart';
 import 'package:flutter/cupertino.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
+
 
 class CreateReminder extends StatefulWidget {
   static const String id = 'create_reminder';
@@ -23,6 +24,7 @@ class _CreateReminderState extends State<CreateReminder> {
   TextEditingController days = new TextEditingController(text: "1");
   TextEditingController time = new TextEditingController(text: DateFormat("h:mm a").format(DateTime.now()));
   TextEditingController enddate = new TextEditingController(text: DateFormat("MM/dd/yyyy").format(DateTime.now()));
+  bool _isButtonDisabled;
 
 //  String timeToString(date) {
 //    return DateFormat("h:mm a").format(DateFormat("H:mm").parse(date));
@@ -35,6 +37,7 @@ class _CreateReminderState extends State<CreateReminder> {
   @override
   void initState() {
     super.initState();
+    _isButtonDisabled = true;
   }
 
   String formatTimeOfDay(TimeOfDay tod) {
@@ -59,6 +62,14 @@ class _CreateReminderState extends State<CreateReminder> {
                 hintText: 'Reminder',
                 hintStyle: TextStyle(color: Colors.grey),
               ),
+              onChanged: (val) {
+                if (val.isEmpty) {
+                  _isButtonDisabled = true;
+                } else {
+                  _isButtonDisabled = false;
+                }
+                setState(() {});
+              },
             ),
             SizedBox(height: 20.0),
             Row(
@@ -150,7 +161,16 @@ class _CreateReminderState extends State<CreateReminder> {
         ),
         actions: [
           FlatButton(child: new Text("Cancel"), onPressed: () => Navigator.of(context).pop()),
-          FlatButton(child: new Text("Done"), onPressed: () => Navigator.of(context).pop("something"))
+          FlatButton(child: new Text("Done"),
+              onPressed: _isButtonDisabled ? null : () {
+                var myReminder = { 'endDateTime': DateFormat("MM/dd/yyyy").parse(enddate.text), 'startDateTime': DateTime.now(), 'time': DateFormat("H:mm").format(DateFormat("h:mm a").parse(time.text)), 'name': name.text, 'interval':  int.parse(days.text), 'checklist' : []};
+                Firestore.instance.collection('reminders').document(userId).setData(
+                    {'reminders': FieldValue.arrayUnion([myReminder])}, merge: true
+                    ).then((_) {
+                      Navigator.of(context).pop(true);
+                });
+              }
+          )
         ],
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.all(Radius.circular(20.0)))
     );

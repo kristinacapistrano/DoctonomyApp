@@ -163,7 +163,7 @@ class _PatientViewerState extends State<PatientViewer> {
 
                                         Navigator.of(context).push(
                                             new MaterialPageRoute(builder: (BuildContext context) {
-                                              return new PatientReminderViewer(reminderList: reminderList, title: title);
+                                              return new PatientReminderViewer(reminderList: reminderList, title: title, userId: userId);
                                             }, fullscreenDialog: true
                                         ));
 
@@ -179,7 +179,7 @@ class _PatientViewerState extends State<PatientViewer> {
                                               return CreateReminder(userId: userId);
                                             }).then((val) {
                                               if (val != null) {
-                                                print("Reminder Created");
+                                                setState(() {});
                                               }
                                             });
                                           },
