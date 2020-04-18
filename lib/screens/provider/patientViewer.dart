@@ -1,11 +1,18 @@
+import 'package:doctonomy_app/widgets/CreateReminder.dart';
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/cupertino.dart';
 import '../../models/state.dart';
 import '../../util/state_widget.dart';
+import 'package:intl/intl.dart';
+import '../../models/user.dart';
 //import 'package:cloud_functions/cloud_functions.dart';
 import 'package:cron/cron.dart';
 import '../../widgets/AlertTextbox.dart';
+import './patientReminderViewer.dart';
+import '../../widgets/CreateReminder.dart';
+import '../../widgets/EditReminder.dart';
+import 'dart:math';
 
 
 class PatientViewer extends StatefulWidget {
@@ -40,6 +47,25 @@ class _PatientViewerState extends State<PatientViewer> {
     });
   }
 
+  Future<Map<String,dynamic>> getUserReminders() async {
+    DocumentReference docRef = Firestore.instance.collection('reminders').document(userId ?? "");
+    return docRef.get().then((datasnapshot) async {
+      if (datasnapshot.exists) {
+        return datasnapshot.data;
+      } else {
+        return null;
+      }
+    });
+  }
+
+  String timeToString(date) {
+    return DateFormat("h:mm a").format(DateFormat("H:mm").parse(date));
+  }
+
+  String dtToString(date) {
+    return DateFormat("MM/dd/yyyy").format(date);
+  }
+
   @override
   Widget build(BuildContext context) {
     appState = StateWidget.of(context).state;
@@ -68,7 +94,6 @@ class _PatientViewerState extends State<PatientViewer> {
                   return Center(child: CircularProgressIndicator());
                 } else {
                   print(snapshot.data);
-  //                {firstName: Testname2, lastName: Testlastname, allergies: [peanuts], phone: (480) 123-4567}
                     return Center(
                       child: ListView(
                         children: <Widget>[
@@ -93,26 +118,85 @@ class _PatientViewerState extends State<PatientViewer> {
                             },
                           )
                           ),
-
-                          SizedBox(height: 20.0),
-                          Text('Reminders', style: TextStyle(fontWeight: FontWeight.w500)),
-                          //TODO remove hardcoded card
                           Card(child: ListTile(
-                            leading: Icon(Icons.alarm),
-                            title: Text('Take medication'),
-                            subtitle: Text('Every day at 5pm'),
+                            trailing: Icon(Icons.healing),
+                            title: Text('Schedule new procedure'),
                             onTap: () {
                               print("clicked Row");
-                              cron.schedule(new Schedule.parse('*/1 * * * *'), () async {
-                                print('every 1 minute');
-                              });
-                              /*CloudFunctions.instance.getHttpsCallable(
-                                functionName: "patientReminder",
-                                //no money for blaze upgrade
-                                );
-                              print ("reminding every 5pm");*/
                             },
                           )
+                          ),
+                          SizedBox(height: 20.0),
+                          Text('Reminders', style: TextStyle(fontWeight: FontWeight.w500)),
+                          FutureBuilder(
+                              future: getUserReminders(),
+                              builder: (context, AsyncSnapshot<Map<String,dynamic>> snapshot) {
+                                if (snapshot.connectionState == ConnectionState.waiting) {
+                                  return Center(child: CircularProgressIndicator());
+                                } else {
+                                  print(snapshot.data);
+                                  return Builder(builder: (BuildContext context) {
+                                    List reminderList = (snapshot?.data ?? Map())["reminders"]?.toList() ?? [];
+                                    if (reminderList.length > 0) {
+                                      List<Widget> tiles = reminderList.sublist(0, min(3, reminderList.length)).fold(List<Widget>(), (total, el) {
+                                        int interval = el["interval"];
+                                        var intervalText = "Every day";
+                                        if (interval > 1) {
+                                          intervalText = "Every " + interval.toString() + " days";
+                                        }
+
+                                        var time = el["time"];
+                                        var timesText = " at " + timeToString(time);
+
+                                        String start = dtToString(el["startDateTime"].toDate());
+                                        String end = dtToString(el["endDateTime"].toDate());
+
+                                        total.add(ListTile(
+                                            title: Text(el["name"], style: TextStyle(fontWeight: FontWeight.w500)),
+                                            subtitle: Text(intervalText + timesText + "\nFrom " + start + " until " + end.toString()),
+                                            dense: true,
+                                            contentPadding: EdgeInsets.symmetric(horizontal: 10.0, vertical: 10.0),
+                                            onTap: () {
+                                              showDialog(
+                                                  context: context,
+                                                  builder: (context) {
+                                                    return EditReminder(userId: userId, reminder: Map<String, dynamic>.from(el));
+                                                  }).then((val) {
+                                                setState(() {});
+                                              });
+                                            }));
+                                        total.add(Divider(thickness: 1, indent: 10, endIndent: 10, height: 1));
+                                        return total;
+                                      });
+                                      tiles.add(ListTile(title: Text("See All"), onTap: () {
+                                        Navigator.of(context).push(
+                                            new MaterialPageRoute(builder: (BuildContext context) {
+                                              return new PatientReminderViewer(title: title, userId: userId);
+                                            }, fullscreenDialog: true
+                                        ));
+                                      }, dense: true));
+                                      return Card(child: Column(children: tiles.toList()));
+                                    } else {
+                                      return Card(child: ListTile(
+                                          title: Text("No Reminders (Click here to add)"),
+                                          onTap: () {
+                                            showDialog(
+                                            context: context,
+                                            builder: (context) {
+                                              return CreateReminder(userId: userId);
+                                            }).then((val) {
+                                              if (val != null) {
+                                                setState(() {});
+                                              }
+                                            });
+                                          },
+                                          dense: true
+                                      )
+                                      );
+                                    }
+                                  });
+                                }
+                              }
                           ),
 
                           //Allergy information
@@ -189,14 +273,6 @@ class _PatientViewerState extends State<PatientViewer> {
                           Card(child: ListTile(
                             trailing: Icon(Icons.send),
                             title: Text('Send a message'),
-                            onTap: () {
-                              print("clicked Row");
-                            },
-                          )
-                          ),
-                          Card(child: ListTile(
-                            trailing: Icon(Icons.healing),
-                            title: Text('Schedule new procedure'),
                             onTap: () {
                               print("clicked Row");
                             },

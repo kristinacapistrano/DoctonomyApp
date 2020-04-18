@@ -1,4 +1,6 @@
 
+import 'package:doctonomy_app/widgets/NotificationWidget.dart';
+import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/painting.dart';
 import '../../models/state.dart';
@@ -19,12 +21,47 @@ class PatientHome extends StatefulWidget {
 }
 
 class _PatientHomeState extends State<PatientHome> {
+  final Firestore _firestore = Firestore.instance; //_db
+  final FirebaseMessaging _firebaseMessaging = FirebaseMessaging(); //fcm
+
   var cron = new Cron();
   StateModel appState;
   String title = "";
   @override
   void initState() {
     super.initState();
+    //use alert dialog
+    _firebaseMessaging.configure(
+      onMessage: (Map<String, dynamic> message) async {
+        print("onMessage: $message");
+        showDialog(
+            context: context,
+          builder: (context)=> AlertDialog(
+            content: ListTile(
+              //will display notification title from firebase console
+              title: Text(message['this is title']['title']),
+              //will display notification text from firebase console
+              subtitle: Text(message['this is body']['body']),
+            ),
+            actions: <Widget>[
+              FlatButton(
+                child: Text('Okay'),
+                onPressed: ()=> Navigator.of(context).pop(),
+              )
+            ],
+          )
+        );
+      },
+      //executes when app is closed
+      onLaunch: (Map<String, dynamic> message) async {
+        print("onLaunch: $message");
+      },
+      onResume: (Map<String, dynamic> message) async {
+        print("onResume: $message");
+      },
+    );
+
+
   }
 
   Future<Map<String,dynamic>> getUserData() async {
@@ -103,7 +140,7 @@ class _PatientHomeState extends State<PatientHome> {
                                 }).toList();
                               }),
                             title: Text('Take medication'),
-                            subtitle: Text('testing'),
+                            subtitle: Text('Medicine101'),
                             onTap: () {
                               /* cron.schedule(new Schedule.parse(_time), () async {
                                     //send notification everytime selectedtime is now
