@@ -171,7 +171,7 @@ class _EditReminderState extends State<EditReminder> {
                 Firestore.instance.collection('reminders').document(userId).setData(
                     {'reminders': FieldValue.arrayRemove([reminder])}, merge: true
                 ).then((_) {
-                  var myReminder = { 'endDateTime': DateFormat("MM/dd/yyyy").parse(enddate.text), 'startDateTime': DateTime.now(), 'time': DateFormat("H:mm").format(DateFormat("h:mm a").parse(time.text)), 'name': name.text, 'interval':  int.parse(days.text), 'checklist' : []};
+                  var myReminder = { 'endDateTime': DateFormat("MM/dd/yyyy HH:mm:ss").parse(enddate.text + " 23:59:59"), 'startDateTime': reminder["startDateTime"].toDate(), 'time': DateFormat("H:mm").format(DateFormat("h:mm a").parse(time.text)), 'name': name.text, 'interval':  int.parse(days.text), 'checklist' : []};
                   Firestore.instance.collection('reminders').document(userId).setData(
                       {'reminders': FieldValue.arrayUnion([myReminder])}, merge: true
                   ).then((_) {

@@ -154,7 +154,9 @@ class _CreateReminderState extends State<CreateReminder> {
           FlatButton(child: new Text("Cancel"), onPressed: () => Navigator.of(context).pop()),
           FlatButton(child: new Text("Done"),
               onPressed: _isButtonDisabled ? null : () {
-                var myReminder = { 'endDateTime': DateFormat("MM/dd/yyyy").parse(enddate.text), 'startDateTime': DateTime.now(), 'time': DateFormat("H:mm").format(DateFormat("h:mm a").parse(time.text)), 'name': name.text, 'interval':  int.parse(days.text), 'checklist' : []};
+                DateTime now = DateTime.now();
+                DateTime beginToday = new DateTime(now.year, now.month, now.day, 0, 0, 0, 0, 0);
+                var myReminder = { 'endDateTime': DateFormat("MM/dd/yyyy HH:mm:ss").parse(enddate.text + " 23:59:59"), 'startDateTime': beginToday, 'time': DateFormat("H:mm").format(DateFormat("h:mm a").parse(time.text)), 'name': name.text, 'interval':  int.parse(days.text), 'checklist' : []};
                 Firestore.instance.collection('reminders').document(userId).setData(
                     {'reminders': FieldValue.arrayUnion([myReminder])}, merge: true
                     ).then((_) {
