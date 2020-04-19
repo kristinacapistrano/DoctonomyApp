@@ -2,6 +2,10 @@ import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
 import '../models/message.dart';
 
+//use of FIREBASE MESSAGE - not implemented to be used within the app,
+//need firebase console to send app - this code is to connect the console
+//notification to app, so app can receive console's notification.
+
 class NotificationWidget extends StatefulWidget {
   @override
   _NotificationWidget createState() => _NotificationWidget();

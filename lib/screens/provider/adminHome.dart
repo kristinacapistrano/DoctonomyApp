@@ -5,7 +5,8 @@ import '../../util/state_widget.dart';
 
 class AdminHome extends StatefulWidget {
   static const String id = 'admin_home';
-
+  final String payload;
+  const AdminHome(this.payload);
   _AdminHomeState createState() => _AdminHomeState();
 }
 

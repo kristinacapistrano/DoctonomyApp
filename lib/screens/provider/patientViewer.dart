@@ -1,11 +1,15 @@
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:flutter/cupertino.dart';
+import 'package:cron/cron.dart';
+//import 'package:cloud_functions/cloud_functions.dart';
 import '../../models/state.dart';
 import '../../util/state_widget.dart';
-//import 'package:cloud_functions/cloud_functions.dart';
-import 'package:cron/cron.dart';
 import '../../widgets/AlertTextbox.dart';
+import '../../screens/provider/adminHome.dart';
+import '../../local_notications_helper.dart';
+
 
 
 class PatientViewer extends StatefulWidget {
@@ -18,6 +22,14 @@ class PatientViewer extends StatefulWidget {
 }
 
 class _PatientViewerState extends State<PatientViewer> {
+  //---------------------------------------------- notification start
+//  FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin = FlutterLocalNotificationsPlugin();
+//  AndroidInitializationSettings androidInitializationSettings;
+//  IOSInitializationSettings iosInitializationSettings;
+//  InitializationSettings initializationSettings;
+  //-------------------------------------- notification end
+  //--------------------another attempt
+  final notifications = FlutterLocalNotificationsPlugin();
   StateModel appState;
   String userId;
   String title;
@@ -27,7 +39,23 @@ class _PatientViewerState extends State<PatientViewer> {
   @override
   void initState() {
     super.initState();
+    initializing();
+
   }
+  void initializing() async {
+    FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin = FlutterLocalNotificationsPlugin();
+// initialise the plugin. app_icon needs to be a added as a drawable resource to the Android head project
+    var initializationSettingsAndroid = AndroidInitializationSettings('app_icon');
+    var initializationSettingsIOS = IOSInitializationSettings(
+        onDidReceiveLocalNotification: onDidReceiveLocalNotification);
+    var initializationSettings = InitializationSettings(
+        initializationSettingsAndroid, initializationSettingsIOS);
+    await flutterLocalNotificationsPlugin.initialize(initializationSettings,
+        onSelectNotification: selectNotification);
+  }
+
+
+  //-----------------------------------------notification end
 
   Future<Map<String,dynamic>> getUserData() async {
     DocumentReference docRef = Firestore.instance.collection('users').document(userId ?? "");
@@ -65,7 +93,8 @@ class _PatientViewerState extends State<PatientViewer> {
               future: getUserData(),
               builder: (context, AsyncSnapshot<Map<String,dynamic>> snapshot) {
                 if (snapshot.connectionState == ConnectionState.waiting) {
-                  return Center(child: CircularProgressIndicator());
+                  return
+                    Center(child: CircularProgressIndicator());
                 } else {
                   print(snapshot.data);
   //                {firstName: Testname2, lastName: Testlastname, allergies: [peanuts], phone: (480) 123-4567}
@@ -99,16 +128,17 @@ class _PatientViewerState extends State<PatientViewer> {
                           //TODO remove hardcoded card
                           Card(child: ListTile(
                             leading: Icon(Icons.alarm),
-                            title: Text('Take medication'),
-                            subtitle: Text('Every day at 5pm'),
+                            title: Text('Take medication - show notification'),
+                            subtitle: Text('Every day at ... implementing'),
                             onTap: () {
                               print("clicked Row");
-                              cron.schedule(new Schedule.parse('*/1 * * * *'), () async {
-                                print('every 1 minute');
-                              });
+                              showOngoingNotification(notifications,
+                                  title: 'Tite', body: 'Body');
+//                              cron.schedule(new Schedule.parse('*/1 * * * *'), () async {
+//                                print('every 1 minute');
+//                              });
                               /*CloudFunctions.instance.getHttpsCallable(
                                 functionName: "patientReminder",
-                                //no money for blaze upgrade
                                 );
                               print ("reminding every 5pm");*/
                             },
@@ -221,4 +251,106 @@ class _PatientViewerState extends State<PatientViewer> {
           )
     );
   }
+  //---- NEW ATTEMP
+  Future selectNotification(String payload) async {
+    if (payload != null) {
+      debugPrint('notification payload: ' + payload);
+    }
+    await Navigator.push(
+      context,
+      MaterialPageRoute(builder: (context) => AdminHome(payload)),
+    );
+  }
+  //for IOS
+  Future onDidReceiveLocalNotification(
+      int id, String title, String body, String payload) async {
+    // display a dialog with the notification details, tap ok to go to another page
+    showDialog(
+      context: context,
+      builder: (BuildContext context) => CupertinoAlertDialog(
+        title: Text(title),
+        content: Text(body),
+        actions: [
+          CupertinoDialogAction(
+            isDefaultAction: true,
+            child: Text('Ok'),
+            onPressed: () async {
+              Navigator.of(context, rootNavigator: true).pop();
+              await Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (context) => AdminHome(payload),
+                ),
+              );
+            },
+          )
+        ],
+      ),
+    );
+  }
+  // ------------------------------------------local notification start
+//  void _showNotifications() async {
+//    await notification();
+//  }
+//
+//  void _showNotificationsAfterSecond() async {
+//    await notificationAfterSec();
+//  }
+//
+//  Future<void> notification() async {
+//    var androidPlatformChannelSpecifics = AndroidNotificationDetails(
+//        'your channel id', 'your channel name', 'your channel description',
+//        importance: Importance.Max, priority: Priority.High, ticker: 'ticker');
+//    var iOSPlatformChannelSpecifics = IOSNotificationDetails();
+//    var platformChannelSpecifics = NotificationDetails(
+//        androidPlatformChannelSpecifics, iOSPlatformChannelSpecifics);
+//    await flutterLocalNotificationsPlugin.show(
+//        0, 'plain title', 'plain body', platformChannelSpecifics,
+//        payload: 'item x');
+//  }
+//  Future<void> notificationAfterSec() async {
+//    var timeDelayed = DateTime.now().add(Duration(seconds: 5));
+//    AndroidNotificationDetails androidNotificationDetails =
+//    AndroidNotificationDetails(
+//        'second channel ID', 'second Channel title', 'second channel body',
+//        priority: Priority.High,
+//        importance: Importance.Max,
+//        ticker: 'test');
+//
+//    IOSNotificationDetails iosNotificationDetails = IOSNotificationDetails();
+//
+//    NotificationDetails notificationDetails =
+//    NotificationDetails(androidNotificationDetails, iosNotificationDetails);
+//    await flutterLocalNotificationsPlugin.schedule(1, 'Hello there',
+//        'please subscribe my channel', timeDelayed, notificationDetails);
+//  }
+//  Future selectNotification(String payload) async {
+//    if (payload != null) {
+//      debugPrint('notification payload: ' + payload);
+//    }
+////    await Navigator.push(
+////      context,
+////      MaterialPageRoute(builder: (context) => SecondScreen(payload)),
+////    );
+//  }
+//  Future onDidReceiveLocalNotification(
+//      int id, String title, String body, String payload) async {
+//    return CupertinoAlertDialog(
+//      title: Text(title),
+//      content: Text(body),
+//      actions: <Widget>[
+//        CupertinoDialogAction(
+//            isDefaultAction: true,
+//            onPressed: () {
+//              print("");
+//            },
+//            child: Text("Okay")),
+//      ],
+//    );
+//  }
+
+  //--------------notification end - this implementation cancels the app and causes
+//----------------it to exit application
 }
+
+

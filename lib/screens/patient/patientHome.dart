@@ -11,7 +11,6 @@ import 'package:doctonomy_app/models/constants.dart';
 //import 'package:doctonomy_app/widgets/NotificationWidget.dart';
 import '../../widgets/AlertTextbox.dart';
 import '../../models/state.dart';
-import '../../widgets/LocalNoti.dart';
 import '../../util/state_widget.dart';
 
 import 'dart:async';
@@ -23,6 +22,7 @@ import 'package:flutter/services.dart';
 class PatientHome extends StatefulWidget {
   static const String id = 'patient_home';
 
+
   _PatientHomeState createState() => _PatientHomeState();
 }
 
@@ -32,6 +32,8 @@ class _PatientHomeState extends State<PatientHome> {
   var cron = new Cron();
   StateModel appState;
   String title = "";
+
+
   @override
   void initState() {
     super.initState();
@@ -151,7 +153,7 @@ class _PatientHomeState extends State<PatientHome> {
                                 }).toList();
                               }),
                             title: Text('Take medication'),
-                            subtitle: Text('Medicine101'),
+                            subtitle: Text('testing local noti'),
                             onTap: () async{
 
                               /* cron.schedule(new Schedule.parse(_time), () async {

@@ -67,7 +67,7 @@ class _AdminNavState extends State<AdminNav> {
               offstage: tab != 0,
               child: new TickerMode(
                 enabled: tab == 0,
-                child: new AdminHome(),
+                child: new AdminHome(''),
               ),
             ),
             new Offstage(
