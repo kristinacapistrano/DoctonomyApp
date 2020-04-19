@@ -51,7 +51,14 @@ class _EditReminderState extends State<EditReminder> {
     appState = StateWidget.of(context).state;
 
     return AlertDialog(
-        title: Text("Edit Reminder"),
+        title: Column(
+          mainAxisSize: MainAxisSize.min,
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: <Widget>[
+            Text("Edit Reminder", textAlign: TextAlign.left),
+            Text("Note: Editing a reminder will reset the checklist", style: TextStyle(color: Colors.red, fontSize: 10.0), textAlign: TextAlign.left),
+          ],
+        ),
         content: Column(
           mainAxisSize: MainAxisSize.min,
           children: <Widget>[
