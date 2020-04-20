@@ -5,6 +5,9 @@ import '../../util/state_widget.dart';
 
 class PatientProfile extends StatefulWidget {
   static const String id = 'patient_profile';
+  final String payload;
+
+  const PatientProfile({Key key, this.payload}) : super(key: key);
 
   _PatientProfileState createState() => _PatientProfileState();
 }

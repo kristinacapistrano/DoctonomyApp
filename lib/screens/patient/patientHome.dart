@@ -1,4 +1,6 @@
 
+import 'package:doctonomy_app/local_notications_helper.dart';
+import 'package:doctonomy_app/screens/patient/patientProfile.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/painting.dart';
@@ -7,8 +9,8 @@ import 'package:flutter/cupertino.dart';
 import 'package:cron/cron.dart';
 import 'package:doctonomy_app/models/reminder.dart';
 import 'package:doctonomy_app/models/constants.dart';
+import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 
-//import 'package:doctonomy_app/widgets/NotificationWidget.dart';
 import '../../widgets/AlertTextbox.dart';
 import '../../models/state.dart';
 import '../../util/state_widget.dart';
@@ -33,11 +35,19 @@ class _PatientHomeState extends State<PatientHome> {
   StateModel appState;
   String title = "";
 
+  FlutterLocalNotificationsPlugin notifications = FlutterLocalNotificationsPlugin();
 
   @override
-  void initState() {
+  void initState(){
     super.initState();
-
+// initialise the plugin. app_icon needs to be a added as a drawable resource to the Android head project
+    var initializationSettingsAndroid = AndroidInitializationSettings('hand');
+    var initializationSettingsIOS = IOSInitializationSettings(
+        onDidReceiveLocalNotification: onDidReceiveLocalNotification);
+    var initializationSettings = InitializationSettings(
+        initializationSettingsAndroid, initializationSettingsIOS);
+    notifications.initialize(initializationSettings,
+        onSelectNotification: selectNotification);
     /**
      * uses alert text box for notification to let users know they have to
      * give attention to notification
@@ -154,9 +164,10 @@ class _PatientHomeState extends State<PatientHome> {
                               }),
                             title: Text('Take medication'),
                             subtitle: Text('testing local noti'),
-                            onTap: () async{
+                            onTap: () async {
+                              await showOngoingNotification(notifications, title: 'Title', body: 'body');
 
-                              /* cron.schedule(new Schedule.parse(_time), () async {
+                                /* cron.schedule(new Schedule.parse(_time), () async {
                                     //send notification everytime selectedtime is now
                                });
                                 */
@@ -244,8 +255,8 @@ class _PatientHomeState extends State<PatientHome> {
 
         )
     );
-  }
 
+  }
 
   Future<Null> selectDate(BuildContext context) async {
     DateTime date = DateTime.now();
@@ -306,5 +317,15 @@ class _PatientHomeState extends State<PatientHome> {
       selectTime(context);
 
     }
+  }
+
+
+
+  Future selectNotification(String payload) async => await Navigator.push(
+    context,
+    MaterialPageRoute(builder: (context) => PatientProfile(payload: payload)),
+  );
+
+  Future onDidReceiveLocalNotification(int id, String title, String body, String payload) {
   }
 }
