@@ -155,7 +155,23 @@ class _PatientReminderViewerState extends State<PatientReminderViewer> {
 
                             if (cutoff == true) {
                               dateitems.add(Container(width: 60, child: FlatButton(child: Text("See\nAll", style: TextStyle(color: Colors.blue, fontSize: 11.0 ), textAlign: TextAlign.center), onPressed: () {
-                                //todo show all checklist
+                                List<Widget> alldateitems = getAllDates(startdate, enddate, time, interval).map((dateel) {
+                                  bool isfuture = today.isBefore(dateel);
+                                  bool checked = !isfuture && el["checklist"].contains(DateFormat("MM/dd/yyyy").format(dateel));
+                                  return Column(children: <Widget>[SizedBox(height: 24.0, width: 24.0, child: Opacity(opacity: isfuture ? 0.2 : 1.0, child: Checkbox(value: checked, onChanged: (_) {}),                                   )
+                                  ), Text(DateFormat("MM/dd").format(dateel), style: TextStyle(fontSize: 12.0),)]);
+                                }).toList();
+
+                                showDialog(context: context, builder: (context) {
+                                  return AlertDialog(
+                                    title: Text(el["name"] + " - Checklist"),
+                                    content: Container(height: 1000, width: 200, child: GridView.count(
+                                            crossAxisCount: 4,
+                                            children: alldateitems
+                                        )),
+                                    actions: <Widget>[FlatButton(child: Text('Done'), onPressed: () {Navigator.of(context).pop();})],
+                                  );
+                                });
                               })));
                             }
 
