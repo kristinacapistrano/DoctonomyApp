@@ -53,6 +53,17 @@ class _PatientReminderViewerState extends State<PatientReminderViewer> {
     });
   }
 
+  List getAllDates(startdate, enddate, time, interval) {
+    List dates = [];
+    DateTime daytime = DateFormat("H:mm").parse(time);
+    DateTime tempdate = new DateTime(startdate.year, startdate.month, startdate.day, daytime.hour, daytime.minute, 0, 0, 0);
+    while(tempdate.isBefore(enddate)) {
+      dates.add(tempdate);
+      tempdate = new DateTime(tempdate.year, tempdate.month, tempdate.day + interval, daytime.hour, daytime.minute, 0, 0, 0);
+    }
+    return dates;
+  }
+
   @override
   Widget build(BuildContext context) {
     appState = StateWidget.of(context).state;
