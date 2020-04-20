@@ -137,7 +137,8 @@ class _CreateReminderState extends State<CreateReminder> {
                     onTap: () {
                       DateTime now = new DateTime.now();
                       DateTime morning = new DateTime(now.year, now.month, now.day);
-                      showDatePicker(context: context, initialDate: DateFormat("MM/dd/yyyy").parse(enddate.text), firstDate: morning, lastDate: DateTime(2100)).then((value) {
+                      print(DateTime(now.year + 1, now.month, now.day));
+                      showDatePicker(context: context, initialDate: DateFormat("MM/dd/yyyy").parse(enddate.text), firstDate: morning, lastDate: DateTime(now.year + 1, now.month, now.day)).then((value) {
                         FocusScope.of(context).requestFocus(new FocusNode());
                         if (value != null) {
                           enddate.text = DateFormat("MM/dd/yyyy").format(value);
