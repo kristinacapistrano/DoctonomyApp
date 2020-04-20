@@ -173,8 +173,6 @@ class _PatientViewerState extends State<PatientViewer> {
                                         if (cutoff == true) {
                                           List bdates = alldates.where((x) => today.isAfter(x)).toList();
                                           List adates = alldates.where((x) => today.isBefore(x)).toList();
-                                          print(bdates);
-                                          print(adates);
                                           alldates = List();
                                           bool flipper = true;
                                           while(alldates.length < 7) {
