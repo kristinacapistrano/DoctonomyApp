@@ -109,12 +109,68 @@ class _PatientReminderViewerState extends State<PatientReminderViewer> {
                             var time = el["time"];
                             var timesText = " at " + timeToString(time);
 
-                            String start = dtToString(el["startDateTime"].toDate());
-                            String end = dtToString(el["endDateTime"].toDate());
+                            DateTime startdate = el["startDateTime"].toDate();
+                            DateTime enddate = el["endDateTime"].toDate();
+
+                            String start = dtToString(startdate);
+                            String end = dtToString(enddate);
+
+                            DateTime td = new DateTime.now();
+                            DateTime today = DateTime(td.year, td.month, td.day, 23, 59, 59);
+
+                            List alldates = getAllDates(startdate, enddate, time, interval);
+                            bool cutoff = alldates.length > 7;
+                            if (cutoff == true) {
+                              List bdates = alldates.where((x) => today.isAfter(x)).toList();
+                              List adates = alldates.where((x) => today.isBefore(x)).toList();
+                              print(bdates);
+                              print(adates);
+                              alldates = List();
+                              bool flipper = true;
+                              while(alldates.length < 7) {
+                                if (flipper) {
+                                  if (bdates.length > 0)
+                                    alldates.insert(0, bdates.removeLast());
+                                } else {
+                                  if (adates.length > 0)
+                                    alldates.add(adates.removeAt(0));
+                                }
+                                flipper = !flipper;
+                              }
+                            }
+
+                            List<Widget> dateitems = alldates.expand((dateel) {
+                              bool isfuture = today.isBefore(dateel);
+                              bool checked = !isfuture && el["checklist"].contains(DateFormat("MM/dd/yyyy").format(dateel));
+                              Column col = Column(children: <Widget>[SizedBox(
+                                height: 24.0,
+                                width: 24.0,
+                                child:
+                                Opacity(
+                                  opacity: isfuture ? 0.2 : 1.0,
+                                  child: Checkbox(value: checked, onChanged: (_) {}),
+                                )
+                              ), Text(DateFormat("MM/dd").format(dateel))]);
+                              return [Expanded(child: col), Container(width: 1, height: 20, color: Colors.grey)];
+                            }).toList();
+                            dateitems.removeLast();
+
+                            if (cutoff == true) {
+                              dateitems.add(Container(width: 60, child: FlatButton(child: Text("See\nAll", style: TextStyle(color: Colors.blue, fontSize: 11.0 ), textAlign: TextAlign.center), onPressed: () {
+                                //todo show all checklist
+                              })));
+                            }
 
                             total.add(ListTile(
                                 title: Text(el["name"], style: TextStyle(fontWeight: FontWeight.w500)),
-                                subtitle: Text(intervalText + timesText + "\nFrom " + start + " until " + end.toString()),
+                                subtitle: Column(
+                                  mainAxisSize: MainAxisSize.min,
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: <Widget>[
+                                    Text(intervalText + timesText + "\nFrom " + start + " until " + end.toString() + "\n"),
+                                    Row(children: dateitems)
+                                  ],
+                                ),
                                 dense: true,
                                 contentPadding: EdgeInsets.symmetric(horizontal: 10.0, vertical: 10.0),
                                 onTap: () {
