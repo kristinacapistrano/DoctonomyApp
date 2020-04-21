@@ -144,36 +144,66 @@ class _PatientHomeState extends State<PatientHome> {
                           ),
 
                           SizedBox(height: 20.0),
-                          Text('Reminders', style: TextStyle(fontWeight: FontWeight.w500)),
-                          //TODO remove hardcoded card
-                        Card(child: ListTile(
-                            leading: PopupMenuButton(
-                              onSelected: choiceAction,
-                                icon: Icon(
-                                    Icons.alarm_add,
-                                    color: Colors.blue,
-                                    ),
-
-                                itemBuilder: (BuildContext context){
-                                return Constants.choices.map((String choice){
-                                  return PopupMenuItem<String>(
-                                    value: choice,
-                                    child: Text(choice),
+                          Text('Your Reminders', style: TextStyle(fontWeight: FontWeight.w500)),//---------------------REMINDERS
+                          StreamBuilder<Object>(
+                              stream: null,
+                              builder: (context, snapshot) {
+                                if (!snapshot.hasData){
+                                  return Card(child: ListTile(
+                                      title: Text("No Reminders (Click here to add)"),
+                                      onTap: () {
+                                        showDialog(
+                                            context: context,
+                                            builder: (context) {
+                                              return AlertTextbox("Add Reminder", null, "", null, "Cancel", "Add", null, (val) {
+                                                Navigator.of(context).pop();
+                                              }, (val) {
+                                                Firestore.instance.collection('users').document(appState?.firebaseUserAuth?.uid ?? "").updateData({'reminders':FieldValue.arrayUnion([val])}).then((_) {
+                                                  setState(() {});
+                                                });
+                                                Navigator.of(context).pop();
+                                              });
+                                            });
+                                      },
+                                      dense: true
+                                  )
                                   );
-                                }).toList();
-                              }),
-                            title: Text('Take medication'),
-                            subtitle: Text('testing local noti'),
-                            onTap: () async {
-                              await showOngoingNotification(notifications, title: 'Title', body: 'body');
 
-                                /* cron.schedule(new Schedule.parse(_time), () async {
-                                    //send notification everytime selectedtime is now
-                               });
-                                */
-                            },
+                                }
+                                else {
+                                  return Card(child: ListTile(
+                                    leading: PopupMenuButton(
+                                        onSelected: choiceAction,
+                                        icon: Icon(
+                                          Icons.alarm_add,
+                                          color: Colors.blue,
+                                        ),
 
-                          )
+
+                                        itemBuilder: (BuildContext context) {
+                                          return Constants.choices.map((
+                                              String choice) {
+                                            return PopupMenuItem<String>(
+                                              value: choice,
+                                              child: Text(choice),
+                                            );
+                                          }).toList();
+                                        }),
+                                    title: Text('Take medication'),
+                                    subtitle: Text('testing local noti'),
+                                    onTap: () async {
+                                      await showOngoingNotification(
+                                          notifications, title: 'Title',
+                                          body: 'body');
+                                    },
+
+                                  )
+                                  );
+                                }
+
+                                return null;
+
+                              }
                           ),
 
                           //Allergy information
@@ -308,11 +338,23 @@ class _PatientHomeState extends State<PatientHome> {
       });
 
   }
-  void choiceAction(String choice){
+  Future<Null> addReminder(BuildContext context) async {
+    TimeOfDay time = TimeOfDay.now();
+    final TimeOfDay picked = await showTimePicker(context: context,
+        initialTime: time);
+    if ( picked != null && picked != time)
+      setState(() {
+        time = picked;
+        print(time.toString());
+
+      });
+
+  }
+  void choiceAction(String choice) {
     if(choice == Constants.selectDay){
       print('Selecting Day');
       _showMultiSelect(context);
-    }else if(choice == Constants.selectTime){
+    }else if(choice == Constants.selectTime) {
       print('Selecting Time');
       selectTime(context);
 
