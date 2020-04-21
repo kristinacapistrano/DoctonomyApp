@@ -1,13 +1,19 @@
 import 'dart:async';
-//import 'dart:convert';
-import 'package:firebase_auth/firebase_auth.dart';
+
 import 'package:cloud_firestore/cloud_firestore.dart';
-import '../models/user.dart';
-//import 'package:flutter_firebase_auth_example/models/settings.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/services.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
-enum authProblems { UserNotFound, PasswordNotValid, NetworkError, UnknownError, reset}
+import '../models/user.dart';
+
+enum authProblems {
+  UserNotFound,
+  PasswordNotValid,
+  NetworkError,
+  UnknownError,
+  reset
+}
 
 class Auth {
   static Future<String> signUp(String email, String password) async {
@@ -28,6 +34,19 @@ class Auth {
         /*_addSettings(new Settings(
           settingsId: user.userId,
         ));*/
+      } else {
+        print("user ${user.firstName} ${user.email} exists");
+      }
+    });
+  }
+
+  static void updateUser(User user) async {
+    checkUserExist(user.userId).then((value) {
+      if (value) {
+        print("user ${user.firstName} ${user.email} added");
+        Firestore.instance
+            .document("users/${user.userId}")
+            .setData(user.toJson(), merge: true);
       } else {
         print("user ${user.firstName} ${user.email} exists");
       }
@@ -56,7 +75,8 @@ class Auth {
 //  }
 
   static Future<String> signIn(String email, String password) async {
-    AuthResult result = await FirebaseAuth.instance.signInWithEmailAndPassword(email: email, password: password);
+    AuthResult result = await FirebaseAuth.instance
+        .signInWithEmailAndPassword(email: email, password: password);
     FirebaseUser user = result.user;
     return user.uid;
   }
@@ -64,7 +84,8 @@ class Auth {
   static Future<User> getUserFirestore(String userId) async {
     if (userId != null) {
       User user;
-      DocumentReference docRef = Firestore.instance.collection('users').document(userId);
+      DocumentReference docRef =
+          Firestore.instance.collection('users').document(userId);
 
       await docRef.get().then((docSnapshot) async {
         if (docSnapshot.exists) {
