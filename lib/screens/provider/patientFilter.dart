@@ -64,28 +64,6 @@ class _PatientFilterState extends State<PatientFilter> {
         if (doc.documents.isEmpty) return [];
         return doc.documents.toList();
       });
-    
-    // List<DocumentSnapshot> allergyList = getCollectionList("allergies", _allergyID);
-    // List<DocumentSnapshot> medicationList = getCollectionList("medications", _medicationID);
-    // List<DocumentSnapshot> retList = new List();
-    // for(var doc in allergyList){
-    //   if(!medicationList.contains(doc)){
-    //     retList.add(doc);
-    //   }
-    // }
-    // for(var doc in medicationList){
-    //   retList.add(doc);
-    // }
-    // return retList;
-  }
-
-  List<DocumentSnapshot> getCollectionList(String collection, String id){
-    Firestore.instance.collection("users")
-      .where(collection,arrayContains: id)
-      .getDocuments().then((doc){
-        if (doc.documents.isEmpty) return [];
-        return doc.documents.toList();
-      });
   }
 
   bool checkID (String id) {
