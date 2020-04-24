@@ -421,14 +421,7 @@ class _PatientViewerState extends State<PatientViewer> {
 
                           SizedBox(height: 20.0),
                           Text('Actions', style: TextStyle(fontWeight: FontWeight.w500)),
-                          Card(child: ListTile(
-                            trailing: Icon(Icons.send),
-                            title: Text('Send a message'),
-                            onTap: () {
-                              print("clicked Row");
-                            },
-                          )
-                          ),
+
                           Card(child: ListTile(
                             trailing: Icon(Icons.clear),
                             title: Text('Remove from my list'),

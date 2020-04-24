@@ -51,10 +51,6 @@ class _PatientNavState extends State<PatientNav> {
                 
                 icon: const Icon(Icons.person),
                 title: new Text('Profile'),
-              ),
-              new BottomNavigationBarItem(
-                icon: const Icon(Icons.settings),
-                title: new Text('Options'),
               )
             ]),
         body: new Stack(
