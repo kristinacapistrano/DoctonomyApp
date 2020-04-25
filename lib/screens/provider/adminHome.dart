@@ -36,9 +36,12 @@ class _AdminHomeState extends State<AdminHome> {
 
     final userId = appState?.firebaseUserAuth?.uid ?? '';
     final email = appState?.firebaseUserAuth?.email ?? '';
+    final fname = appState?.user?.firstName ?? '';
 
     final userIdLabel = Text('User Id: ');
     final emailLabel = Text('Email: ');
+    final nameLabel = Text('Name: ');
+
 
     return Scaffold(
       appBar: AppBar(
@@ -87,7 +90,10 @@ class _AdminHomeState extends State<AdminHome> {
                     color: Colors.red,
                     colorBlendMode: BlendMode.dst,
                   ),
-                  SizedBox(height: 48.0),
+                  SizedBox(height: 6.0),
+                  nameLabel,
+                  Text(fname, style: TextStyle(fontWeight: FontWeight.bold)),
+                  SizedBox(height: 12.0),
                   userIdLabel,
                   Text(userId, style: TextStyle(fontWeight: FontWeight.bold)),
                   SizedBox(height: 12.0),
