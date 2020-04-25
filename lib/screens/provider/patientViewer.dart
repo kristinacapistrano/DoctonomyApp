@@ -1,3 +1,4 @@
+import 'package:doctonomy_app/models/Medication.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:doctonomy_app/widgets/CreateReminder.dart';
 import 'package:flutter/material.dart';
@@ -11,6 +12,7 @@ import '../../models/user.dart';
 import 'package:cron/cron.dart';
 import '../../widgets/AlertTextbox.dart';
 import '../../models/allergy.dart';
+import '../../models/Medication.dart';
 import './patientReminderViewer.dart';
 import '../../widgets/CreateReminder.dart';
 import '../../widgets/EditReminder.dart';
@@ -32,6 +34,8 @@ class _PatientViewerState extends State<PatientViewer> {
   String title;
   List<Allergy> allergies = new List();
   Map<String,String> allergyMap = new Map();
+  List<Medication> medications = new List();
+  Map<String,String> medicationMap = new Map();
   _PatientViewerState(this.userId, this.title);
   var cron = new Cron();
   @override
@@ -64,6 +68,23 @@ class _PatientViewerState extends State<PatientViewer> {
     Map<String, String> ret = new Map();
     for(var al in list){
       ret.putIfAbsent(al.id, () => al.name);
+    }
+    return ret;
+  }
+  
+  List<Medication> _medicationListFromSnapshot(QuerySnapshot snapshot){
+    return snapshot.documents.map((doc){
+      return Medication(
+        id: doc.documentID,
+        name: doc.data['name'] ?? '',
+      );
+    }).toList();
+  }
+
+  Map<String, String> _medicationMapFromList(List<Medication> list){
+    Map<String, String> ret = new Map();
+    for(var med in list){
+      ret.putIfAbsent(med.id, () => med.name);
     }
     return ret;
   }
@@ -418,6 +439,125 @@ class _PatientViewerState extends State<PatientViewer> {
                                 );
                               }
                           }),
+
+                          //Medication information
+                          SizedBox(height: 20.0),
+                          Text('Medications', style: TextStyle(fontWeight: FontWeight.w500)),
+                          StreamBuilder (
+                            stream: Firestore.instance.collection('medications').snapshots(),
+                            builder: (context, querysnapshot) {
+                              medications = _medicationListFromSnapshot(querysnapshot.data);
+                              medicationMap = _medicationMapFromList(medications);
+                              List<dynamic> medicationList = snapshot.data["medications"]?.toList() ?? []; 
+                              String name;
+                              if (medicationList.length > 0) {//if patient has medications already in their list...
+                                List<Widget> tiles = medicationList.fold(List<Widget>(), (total, el) {
+                                  name = medicationMap[el] ?? "";
+                                  total.add(ListTile(title: Text(name, style: TextStyle(fontWeight: FontWeight.w500)), dense: true, onTap: () {
+                                    showDialog(
+                                        context: context,
+                                        builder: (context) {
+                                          return AlertTextbox("Edit Medication", null, name, "Delete", "Cancel", "Save", (name) {//delete
+                                            medicationList.removeAt(medicationList.indexOf(el));
+                                            Firestore.instance.collection('users').document(userId ?? "").updateData({'medications':medicationList}).then((_) {
+                                              setState(() {});
+                                            });
+                                            Navigator.of(context).pop(); //after delete
+                                          }, (val) {// cancel
+                                            Navigator.of(context).pop(); // cancel
+                                          }, (val) {
+                                            Firestore.instance.collection('medications').document(el ?? "").updateData({"name":val}).then((_){
+                                              setState((){});
+                                            });
+                                            Navigator.of(context).pop();
+                                          });
+                                        });
+                                  }));
+                                  total.add(Divider(thickness: 1, indent: 10, endIndent: 10, height: 1));
+                                  return total;
+                                });
+                                tiles.add(ListTile(title: Text("+ Add New"), dense: true, onTap: () {
+                                  showDialog(
+                                      context: context,
+                                      builder: (context) {
+                                        return AlertTextbox("Add Medication", null, "", null, "Cancel", "Add", null, (val) {
+                                          Navigator.of(context).pop();
+                                        }, (val) {
+                                          print('beginning add functionality');
+                                          Firestore.instance.collection('medications').where("name", isEqualTo: val).getDocuments().then((query){
+                                            if(query.documents.isEmpty){
+                                              Firestore.instance.collection("medications").add({"name":val}).then((doc){
+                                                medicationList.add(doc.documentID);
+                                              }).then((_){
+                                                Firestore.instance.collection('users').document(userId ?? "").updateData({'medications':medicationList});
+                                                setState(() {});
+                                              }).catchError((e){
+                                                print(e);
+                                              });
+                                            } else {
+                                              print("query not empty");
+                                              List<String> keys = medicationMap.keys.toList();
+                                              print(keys);
+                                              for(var key in keys){
+                                                if(medicationMap[key] == val) {
+                                                  medicationList.add(key);
+                                                  break;
+                                                }
+                                              }
+                                              Firestore.instance.collection("users").document(userId ?? "").updateData({'medications':medicationList});
+                                            }
+                                          setState(() {});
+                                          });
+                                          Navigator.of(context).pop();
+                                        });
+                                      });
+                                }));
+                                return Card(child: Column(children: tiles.toList()));
+                              } else { //else -> User Medication list is empty; carry out instructions below.
+                                return Card(child: ListTile(
+                                  title: Text("No Medications (Click here to add)"),
+                                  onTap: () {
+                                    showDialog(
+                                        context: context,
+                                        builder: (context) {
+                                          return AlertTextbox("Add Medication", null, "", null, "Cancel", "Add", null, (val) {
+                                            Navigator.of(context).pop();
+                                          }, (val) {
+                                              print('beginning add functionality');
+                                          Firestore.instance.collection('medications').where("name", isEqualTo: val).getDocuments().then((query){
+                                            if(query.documents.isEmpty){
+                                              Firestore.instance.collection("medications").add({"name":val}).then((doc){
+                                                medicationList.add(doc.documentID);
+                                              }).then((_){
+                                                Firestore.instance.collection('users').document(userId ?? "").updateData({'medications':medicationList});
+                                                setState(() {});
+                                              }).catchError((e){
+                                                print(e);
+                                              });
+                                            } else {
+                                              print("query not empty");
+                                              List<String> keys = medicationMap.keys.toList();
+                                              print(keys);
+                                              for(var key in keys){
+                                                if(medicationMap[key] == val) {
+                                                  medicationList.add(key);
+                                                  break;
+                                                }
+                                              }
+                                              Firestore.instance.collection("users").document(userId ?? "").updateData({'medications':medicationList});
+                                            }
+                                          setState(() {});
+                                          });
+                                          Navigator.of(context).pop();
+                                          });
+                                        });
+                                  },
+                                  dense: true
+                                )
+                                );
+                              }
+                          }),
+
 
                           SizedBox(height: 20.0),
                           Text('Actions', style: TextStyle(fontWeight: FontWeight.w500)),
