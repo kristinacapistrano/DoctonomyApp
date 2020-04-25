@@ -173,27 +173,28 @@ class _CreateReminderState extends State<CreateReminder> {
               onPressed: _isButtonDisabled
                   ? null
                   : () {
-                      DateTime now = DateTime.now();
+                      DateTime now = DateTime.now().toLocal();
                       DateTime beginToday =
-                          DateTime(now.year, now.month, now.day, 0, 0, 0, 0, 0);
-                      DateTime timeDate = DateFormat("HH:mm").parse(time.text);
+                          DateTime(now.year, now.month, now.day, 0, 0, 0, 0, 0)
+                              .toLocal();
+                      DateTime timeDate = DateFormat("H:mm a").parse(time.text);
                       DateTime nextTriggerDate = DateTime(
                         beginToday.year,
                         beginToday.month,
                         beginToday.day,
                         timeDate.hour,
                         timeDate.minute,
-                      );
+                      ).toLocal();
                       var myReminder = {
                         'uid': userId,
                         'endDateTime': DateFormat("MM/dd/yyyy HH:mm:ss")
-                            .parse(enddate.text + " 23:59:59"),
+                            .parse(enddate.text + " 23:59:59")
+                            .toLocal(),
                         'startDateTime': beginToday,
-                        'time': DateFormat("H:mm")
-                            .format(DateFormat("HH:mm").parse(time.text)),
+                        'time': DateFormat("H:mm a").format(timeDate),
                         'name': name.text,
                         'interval': int.parse(days.text),
-                        'nextTriggerDate': nextTriggerDate.toUtc(),
+                        'nextTriggerDate': nextTriggerDate,
                         'checklist': []
                       };
                       Firestore.instance

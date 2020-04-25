@@ -1,3 +1,4 @@
+import 'dart:io';
 import 'dart:math';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
@@ -36,6 +37,7 @@ class _PatientHomeState extends State<PatientHome> {
   @override
   void initState() {
     super.initState();
+    if (Platform.isIOS) iOSPermission();
     //use alert dialog
     _firebaseMessaging.configure(
       onMessage: (Map<String, dynamic> message) async {
@@ -65,6 +67,13 @@ class _PatientHomeState extends State<PatientHome> {
         print("onResume: $message");
       },
     );
+  }
+
+  void iOSPermission() {
+    _firebaseMessaging.requestNotificationPermissions(
+        IosNotificationSettings(sound: true, badge: true, alert: true));
+    _firebaseMessaging.onIosSettingsRegistered
+        .listen((IosNotificationSettings settings) {});
   }
 
   Future<Map<String, dynamic>> getUserData() async {
