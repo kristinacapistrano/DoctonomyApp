@@ -457,6 +457,7 @@ class _PatientViewerState extends State<PatientViewer> {
                                     showDialog(
                                         context: context,
                                         builder: (context) {
+                                          name = medicationMap[el];
                                           return AlertTextbox("Edit Medication", null, name, "Delete", "Cancel", "Save", (name) {//delete
                                             medicationList.removeAt(medicationList.indexOf(el));
                                             Firestore.instance.collection('users').document(userId ?? "").updateData({'medications':medicationList}).then((_) {
