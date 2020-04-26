@@ -339,6 +339,7 @@ class _PatientViewerState extends State<PatientViewer> {
                                     showDialog(
                                         context: context,
                                         builder: (context) {
+                                          name = allergyMap[el];
                                           return AlertTextbox("Edit Allergy", null, name, "Delete", "Cancel", "Save", (name) {//delete
                                             allergyList.removeAt(allergyList.indexOf(el));
                                             Firestore.instance.collection('users').document(userId ?? "").updateData({'allergies':allergyList}).then((_) {
