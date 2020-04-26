@@ -18,6 +18,8 @@ import '../../util/auth.dart';
 import '../../util/state_widget.dart';
 import '../../widgets/AlertTextbox.dart';
 import 'ReminderListViewer.dart';
+import '../../widgets/CreateReminder.dart';
+import '../../widgets/EditReminder.dart';
 
 class PatientHome extends StatefulWidget {
   static const String id = 'patient_home';
@@ -486,13 +488,13 @@ class _PatientHomeState extends State<PatientHome> {
                                                     horizontal: 10.0,
                                                     vertical: 10.0),
                                             onTap: () {
-//                                              showDialog(
-//                                                  context: context,
-//                                                  builder: (context) {
-//                                                    return EditReminder(userId: appState?.firebaseUserAuth?.uid, reminder: Map<String, dynamic>.from(el));
-//                                                  }).then((val) {
-//                                                setState(() {});
-//                                              });
+                                              showDialog(
+                                                  context: context,
+                                                  builder: (context) {
+                                                    return EditReminder(userId: appState?.firebaseUserAuth?.uid, reminder: Map<String, dynamic>.from(el));
+                                                  }).then((val) {
+                                                setState(() {});
+                                              });
                                             }));
                                         total.add(Divider(
                                             thickness: 1,
@@ -521,18 +523,17 @@ class _PatientHomeState extends State<PatientHome> {
                                     } else {
                                       return Card(
                                           child: ListTile(
-                                              title: Text(
-                                                  "No Reminders have been created by your provider yet"),
+                                              title: Text("No Reminders (Click here to add)"),
                                               onTap: () {
-//                                            showDialog(
-//                                                context: context,
-//                                                builder: (context) {
-//                                                  return CreateReminder(userId: appState?.firebaseUserAuth?.uid);
-//                                                }).then((val) {
-//                                              if (val != null) {
-//                                                setState(() {});
-//                                              }
-//                                            });
+                                            showDialog(
+                                                context: context,
+                                                builder: (context) {
+                                                  return CreateReminder(userId: appState?.firebaseUserAuth?.uid);
+                                                }).then((val) {
+                                              if (val != null) {
+                                                setState(() {});
+                                              }
+                                            });
                                               },
                                               dense: true));
                                     }

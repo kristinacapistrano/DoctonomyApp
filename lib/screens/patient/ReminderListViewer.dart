@@ -219,46 +219,41 @@ class _ReminderListViewerState extends State<ReminderListViewer> {
                                 dense: true,
                                 contentPadding: EdgeInsets.symmetric(horizontal: 10.0, vertical: 10.0),
                                 onTap: () {
-//                                  showDialog(
-//                                      context: context,
-//                                      builder: (context) {
-//                                        return EditReminder(userId: appState?.firebaseUserAuth?.uid, reminder: Map<String, dynamic>.from(el));
-//                                      }).then((val) {
-//                                    setState(() {});
-//                                  });
+                                  showDialog(
+                                      context: context,
+                                      builder: (context) {
+                                        return EditReminder(userId: appState?.firebaseUserAuth?.uid, reminder: Map<String, dynamic>.from(el));
+                                      }).then((val) {
+                                    setState(() {});
+                                  });
                                 }));
                             total.add(Divider(thickness: 1, indent: 10, endIndent: 10, height: 1));
                             return total;
                           });
-
-                          // If patients should be able to add their own reminders, delete this, and uncomment below
-                          if (tiles.length > 0) {
-                            tiles.removeLast();
-                          }
-//                          tiles.add(ListTile(title: Text("Add a reminder"), onTap: () {
-//                            showDialog(
-//                                context: context,
-//                                builder: (context) {
-//                                  return CreateReminder(userId: appState?.firebaseUserAuth?.uid);
-//                                }).then((val) {
-//                                setState(() {});
-//                            });
-//                          }, dense: true));
+                          tiles.add(ListTile(title: Text("Add a reminder"), onTap: () {
+                            showDialog(
+                                context: context,
+                                builder: (context) {
+                                  return CreateReminder(userId: appState?.firebaseUserAuth?.uid);
+                                }).then((val) {
+                                setState(() {});
+                            });
+                          }, dense: true));
 
                           return Card(child: Column(children: tiles.toList()));
                         } else {
                           return Card(child: ListTile(
-                              title: Text("No Reminders have been created by your provider yet"),
+                              title: Text("No Reminders (Click here to add)"),
                               onTap: () {
-//                                showDialog(
-//                                    context: context,
-//                                    builder: (context) {
-//                                      return CreateReminder(userId: appState?.firebaseUserAuth?.uid);
-//                                    }).then((val) {
-//                                  if (val != null) {
-//                                    setState(() {});
-//                                  }
-//                                });
+                                showDialog(
+                                    context: context,
+                                    builder: (context) {
+                                      return CreateReminder(userId: appState?.firebaseUserAuth?.uid);
+                                    }).then((val) {
+                                  if (val != null) {
+                                    setState(() {});
+                                  }
+                                });
                               },
                               dense: true
                           )
