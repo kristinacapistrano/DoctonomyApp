@@ -1,27 +1,7 @@
 class Medication {
-  String name;
-  String consumptionMethod;
-  String frequency;
-  List usage = new List();
+  final String id;
+  final String name;
   
 
-  Medication(name){
-    this.name = name;
-  }
-
-  String get medName {
-    return name;
-  }
-
-  String get method {
-    return consumptionMethod;
-  }
-
-  String get freq {
-    return frequency;
-  }
-
-  List get uses {
-    return usage;
-  }
+  Medication({this.id, this.name});
 }
