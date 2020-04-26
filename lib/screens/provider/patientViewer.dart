@@ -430,6 +430,66 @@ class _PatientViewerState extends State<PatientViewer> {
                               Navigator.pop(context);
                             },
                           )
+                          ),
+                          Card(child: ListTile(
+                            trailing: Icon(Icons.warning, color: Colors.red),
+                            title: Text('Grant Provider Permissions'),
+                            onTap: () {
+                              showDialog(
+                                  context: context,
+                                  builder: (context) {
+                                    bool checked = false;
+                                    return StatefulBuilder( // StatefulBuilder
+                                        builder: (context, setState) {
+                                          return AlertDialog(
+                                              content: ListTile(
+                                                title: Text(
+                                                    "Are you sure you want to grant Provider Permissions to this user?"),
+                                                subtitle:
+                                                  Column(mainAxisSize: MainAxisSize.min,
+                                                      children: <Widget>[
+                                                    Text(
+                                                        "Warning: This will allow the user to view all patient data",
+                                                        style: TextStyle(color: Colors.red, fontSize: 16.0)),
+                                                    Row(mainAxisSize: MainAxisSize.min, children: <Widget>[
+                                                      Text("Yes, I'm Sure", style: TextStyle(color: Colors.black, fontSize: 16.0)),
+                                                      Checkbox(value: checked, onChanged: (tap) {
+                                                        checked = tap;
+                                                        setState(() {});
+                                                      })
+                                                    ],)
+                                                  ]
+                                                  )
+                                              ),
+                                              actions: <Widget>[
+                                                FlatButton(
+                                                    child: Text('Proceed'),
+                                                    onPressed: checked ? () {
+                                                      Navigator.pop(context, "grant");
+                                                    } : null
+                                                ),
+                                                FlatButton(
+                                                    child: Text('Cancel'),
+                                                    onPressed: () {
+                                                      Navigator.pop(context);
+                                                    }
+                                                )
+                                              ],
+                                              shape: RoundedRectangleBorder(
+                                                  borderRadius: BorderRadius.all(
+                                                      Radius.circular(20.0)))
+                                          );
+                                        });
+                                  })
+                                  .then((resp) {
+                                  if (resp == "grant") {
+                                    Firestore.instance.document("users/${appState?.firebaseUserAuth?.uid}").updateData({'patients': FieldValue.arrayRemove([userId])});
+                                    Firestore.instance.document("users/${userId}").updateData({'admin': true});
+                                    Navigator.pop(context);
+                                  }
+                              });
+                            },
+                          )
                           )
                         ],
                       ),
