@@ -1,4 +1,7 @@
+import 'package:date_format/date_format.dart';
 import 'package:doctonomy_app/models/Medication.dart';
+import 'package:doctonomy_app/models/surgery.dart';
+import 'package:doctonomy_app/screens/provider/createProcedure.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:doctonomy_app/widgets/CreateReminder.dart';
 import 'package:flutter/material.dart';
@@ -17,6 +20,7 @@ import './patientReminderViewer.dart';
 import '../../widgets/CreateReminder.dart';
 import '../../widgets/EditReminder.dart';
 import 'dart:math';
+import 'package:intl/intl.dart';
 
 
 class PatientViewer extends StatefulWidget {
@@ -36,6 +40,8 @@ class _PatientViewerState extends State<PatientViewer> {
   Map<String,String> allergyMap = new Map();
   List<Medication> medications = new List();
   Map<String,String> medicationMap = new Map();
+  List<Surgery> procedures = new List();
+  Map<String, Surgery> procedureMap = new Map();
   _PatientViewerState(this.userId, this.title);
   var cron = new Cron();
   @override
@@ -85,6 +91,25 @@ class _PatientViewerState extends State<PatientViewer> {
     Map<String, String> ret = new Map();
     for(var med in list){
       ret.putIfAbsent(med.id, () => med.name);
+    }
+    return ret;
+  }
+
+  List<Surgery> _procedureListFromSnapshot(QuerySnapshot snapshot){
+    return snapshot.documents.map((doc){
+      return Surgery(
+        id: doc.documentID,
+        name: doc.data['name'] ?? '',
+        date: doc.data['date'] ?? '',
+        description: doc.data['description'] ?? ''
+      );
+    }).toList();
+  }
+
+  Map<String, Surgery> _procedureMapFromList(List<Surgery> list){
+    Map<String, Surgery> ret = new Map();
+    for(var surg in list){
+      ret.putIfAbsent(surg.id, () => surg);
     }
     return ret;
   }
@@ -152,35 +177,94 @@ class _PatientViewerState extends State<PatientViewer> {
                         children: <Widget>[
                           SizedBox(height: 20.0),
                           Text('Upcoming Procedures', style: TextStyle(fontWeight: FontWeight.w500)),
-                          //TODO remove hardcoded card
-                          Card(child: ListTile(
-                            leading: Icon(Icons.healing),
-                            title: Text('Surgery'),
-                            subtitle: Text('Coming up on 2/20/20'),
-                            onTap: () {
-                              print("clicked Row");
-                            },
-                          )
-                          ),
-                          Card(child: ListTile(
-                            leading: Icon(Icons.healing),
-                            title: Text('Procedure #2'),
-                            subtitle: Text('Coming up on 5/05/20'),
-                            onTap: () {
-                              print("clicked Row");
-                            },
-                          )
-                          ),
-                          Card(child: ListTile(
-                            trailing: Icon(Icons.healing),
-                            title: Text('Schedule new procedure'),
-                            onTap: () {
-                              print("clicked Row");
-                            },
-                          )
-                          ),
+                          StreamBuilder (
+                            stream: Firestore.instance.collection('procedures').snapshots(),
+                            builder: (context, querysnapshot) {
+                              procedures = _procedureListFromSnapshot(querysnapshot.data);
+                              procedureMap = _procedureMapFromList(procedures);
+                              List<dynamic> procedureList = snapshot.data["procedures"]?.toList() ?? [];
+                              if (procedureList.length > 0) {//if patient has procedure already in their list...
+                                List<Widget> tiles = procedureList.fold(List<Widget>(), (total, el) {
+                                  Surgery surg = procedureMap[el];
+                                  String name = surg.name ?? "";
+                                  //DateTime surgeryDate = surg.date ?? DateTime.now();
+                                  String date = surg.date ?? "";
+                                  total.add(ListTile(title: Text(name, style: TextStyle(fontWeight: FontWeight.w500)), subtitle: Text('Scheduled on: ' + date), leading: Icon(Icons.healing), dense: true, onTap: () {
+                                    showDialog(
+                                        context: context,
+                                        builder: (context) {
+                                          name = procedureMap[el].name;
+                                          return AlertTextbox("Edit Allergy", null, name, "Delete", "Cancel", null, (name) {//delete
+                                            procedureList.removeAt(procedureList.indexOf(el));
+                                            Firestore.instance.collection('users').document(userId ?? "").updateData({'procedures':procedureList}).then((_) {
+                                              setState(() {});
+                                            });
+                                            Navigator.of(context).pop(); //after delete
+                                          }, (val) {// cancel
+                                            Navigator.of(context).pop(); // cancel
+                                          }, () {
+                                          });
+                                        });
+                                  }));
+                                  total.add(Divider(thickness: 1, indent: 10, endIndent: 10, height: 1));
+                                  return total;
+                                });
+                                tiles.add(ListTile(title: Text("+ Add New"), trailing: Icon(Icons.healing), dense: true, onTap: () {
+                                  showDialog(
+                                      context: context,
+                                      builder: (context) {
+                                         return CreateProcedure(userId: userId,); 
+                                      });
+                                }));
+                                return Card(child: Column(children: tiles.toList()));
+                              } else { //else -> User Allergy list is empty; carry out instructions below.
+                                return Card(child: ListTile(
+                                  title: Text("No Scheduled Procedures (Click here to schedule)"),
+                                  onTap: () {
+                                    showDialog(
+                                        context: context,
+                                        builder: (context) {
+                                          return CreateProcedure(userId: userId);
+                                          // AlertTextbox("Add Allergy", null, "", null, "Cancel", "Add", null, (val) {
+                                          //   Navigator.of(context).pop();
+                                          // }, (val) {
+                                          //     print('beginning add functionality');
+                                          // Firestore.instance.collection('allergies').where("name", isEqualTo: val).getDocuments().then((query){
+                                          //   if(query.documents.isEmpty){
+                                          //     Firestore.instance.collection("allergies").add({"name":val}).then((doc){
+                                          //       procedureList.add(doc.documentID);
+                                          //     }).then((_){
+                                          //       Firestore.instance.collection('users').document(userId ?? "").updateData({'allergies':procedureList});
+                                          //       setState(() {});
+                                          //     }).catchError((e){
+                                          //       print(e);
+                                          //     });
+                                          //   } else {
+                                          //     print("query not empty");
+                                          //     List<String> keys = allergyMap.keys.toList();
+                                          //     print(keys);
+                                          //     for(var key in keys){
+                                          //       if(allergyMap[key] == val) {
+                                          //         procedureList.add(key);
+                                          //         break;
+                                          //       }
+                                          //     }
+                                          //     Firestore.instance.collection("users").document(userId ?? "").updateData({'allergies':procedureList});
+                                          //   }
+                                          // setState(() {});
+                                          // });
+                                          // Navigator.of(context).pop();
+                                          // });
+                                        });
+                                  },
+                                  dense: true
+                                )
+                                );
+                              }
+                          }),
+
                           SizedBox(height: 20.0),
-                          Text('Reminders', style: TextStyle(fontWeight: FontWeight.w500)),
+                          Text('Upcomming Reminders', style: TextStyle(fontWeight: FontWeight.w500)),
                           FutureBuilder(
                               future: getUserReminders(),
                               builder: (context, AsyncSnapshot<Map<String,dynamic>> snapshot) {
