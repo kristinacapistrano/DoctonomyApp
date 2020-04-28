@@ -17,9 +17,9 @@ import '../../models/user.dart';
 import '../../util/auth.dart';
 import '../../util/state_widget.dart';
 import '../../widgets/AlertTextbox.dart';
-import 'ReminderListViewer.dart';
 import '../../widgets/CreateReminder.dart';
 import '../../widgets/EditReminder.dart';
+import 'ReminderListViewer.dart';
 
 class PatientHome extends StatefulWidget {
   static const String id = 'patient_home';
@@ -491,7 +491,12 @@ class _PatientHomeState extends State<PatientHome> {
                                               showDialog(
                                                   context: context,
                                                   builder: (context) {
-                                                    return EditReminder(userId: appState?.firebaseUserAuth?.uid, reminder: Map<String, dynamic>.from(el));
+                                                    return EditReminder(
+                                                        userId: appState
+                                                            ?.firebaseUserAuth
+                                                            ?.uid,
+                                                        reminder: Map<String,
+                                                            dynamic>.from(el));
                                                   }).then((val) {
                                                 setState(() {});
                                               });
@@ -523,17 +528,21 @@ class _PatientHomeState extends State<PatientHome> {
                                     } else {
                                       return Card(
                                           child: ListTile(
-                                              title: Text("No Reminders (Click here to add)"),
+                                              title: Text(
+                                                  "No Reminders (Click here to add)"),
                                               onTap: () {
-                                            showDialog(
-                                                context: context,
-                                                builder: (context) {
-                                                  return CreateReminder(userId: appState?.firebaseUserAuth?.uid);
-                                                }).then((val) {
-                                              if (val != null) {
-                                                setState(() {});
-                                              }
-                                            });
+                                                showDialog(
+                                                    context: context,
+                                                    builder: (context) {
+                                                      return CreateReminder(
+                                                          userId: appState
+                                                              ?.firebaseUserAuth
+                                                              ?.uid);
+                                                    }).then((val) {
+                                                  if (val != null) {
+                                                    setState(() {});
+                                                  }
+                                                });
                                               },
                                               dense: true));
                                     }
@@ -550,222 +559,115 @@ class _PatientHomeState extends State<PatientHome> {
                                   .collection('allergies')
                                   .snapshots(),
                               builder: (context, querysnapshot) {
-                                allergies = _allergyListFromSnapshot(
-                                    querysnapshot.data);
-                                allergyMap = _allergyMapFromList(allergies);
-                                List<dynamic> allergyList =
-                                    snapshot.data["allergies"]?.toList() ?? [];
-                                String name;
-                                if (allergyList.length > 0) {
-                                  //if patient has allergies already in their list...
-                                  List<Widget> tiles = allergyList
-                                      .fold(List<Widget>(), (total, el) {
-                                    name = allergyMap[el] ?? "";
-                                    total.add(ListTile(
-                                        title: Text(name,
-                                            style: TextStyle(
-                                                fontWeight: FontWeight.w500)),
-                                        dense: true,
-                                        onTap: () {
-                                          showDialog(
-                                              context: context,
-                                              builder: (context) {
-                                                return AlertTextbox(
-                                                    "Edit Allergy",
-                                                    null,
-                                                    name,
-                                                    "Delete",
-                                                    "Cancel",
-                                                    "Save", (name) {
-                                                  //delete
-                                                  allergyList.removeAt(
-                                                      allergyList.indexOf(el));
-                                                  Firestore.instance
-                                                      .collection('users')
-                                                      .document(appState
-                                                              ?.firebaseUserAuth
-                                                              ?.uid ??
-                                                          "")
-                                                      .updateData({
-                                                    'allergies': allergyList
-                                                  }).then((_) {
-                                                    setState(() {});
-                                                  });
-                                                  Navigator.of(context)
-                                                      .pop(); //after delete
-                                                }, (val) {
-                                                  // cancel
-                                                  Navigator.of(context)
-                                                      .pop(); // cancel
-                                                }, (val) {
-                                                  Firestore.instance
-                                                      .collection('allergies')
-                                                      .document(el ?? "")
-                                                      .updateData({
-                                                    "name": val
-                                                  }).then((_) {
-                                                    setState(() {});
-                                                  });
-                                                  Navigator.of(context).pop();
-                                                });
-                                              });
-                                        }));
-                                    total.add(Divider(
-                                        thickness: 1,
-                                        indent: 10,
-                                        endIndent: 10,
-                                        height: 1));
-                                    return total;
-                                  });
-                                  tiles.add(ListTile(
-                                      title: Text("+ Add New"),
-                                      dense: true,
-                                      onTap: () {
-                                        showDialog(
-                                            context: context,
-                                            builder: (context) {
-                                              return AlertTextbox(
-                                                  "Add Allergy",
-                                                  null,
-                                                  "",
-                                                  null,
-                                                  "Cancel",
-                                                  "Add",
-                                                  null, (val) {
-                                                Navigator.of(context).pop();
-                                              }, (val) {
-                                                print(
-                                                    'beginning add functionality');
-                                                Firestore.instance
-                                                    .collection('allergies')
-                                                    .where("name",
-                                                        isEqualTo: val)
-                                                    .getDocuments()
-                                                    .then((query) {
-                                                  if (query.documents.isEmpty) {
+                                if (querysnapshot.connectionState ==
+                                    ConnectionState.active) {
+                                  allergies = _allergyListFromSnapshot(
+                                      querysnapshot.data);
+                                  allergyMap = _allergyMapFromList(allergies);
+                                  List<dynamic> allergyList =
+                                      snapshot.data["allergies"]?.toList() ??
+                                          [];
+                                  String name;
+                                  if (allergyList.length > 0) {
+                                    //if patient has allergies already in their list...
+                                    List<Widget> tiles = allergyList
+                                        .fold(List<Widget>(), (total, el) {
+                                      name = allergyMap[el] ?? "";
+                                      total.add(ListTile(
+                                          title: Text(name,
+                                              style: TextStyle(
+                                                  fontWeight: FontWeight.w500)),
+                                          dense: true,
+                                          onTap: () {
+                                            showDialog(
+                                                context: context,
+                                                builder: (context) {
+                                                  return AlertTextbox(
+                                                      "Edit Allergy",
+                                                      null,
+                                                      name,
+                                                      "Delete",
+                                                      "Cancel",
+                                                      "Save", (name) {
+                                                    //delete
+                                                    allergyList.removeAt(
+                                                        allergyList
+                                                            .indexOf(el));
                                                     Firestore.instance
-                                                        .collection("allergies")
-                                                        .add({
-                                                      "name": val
-                                                    }).then((doc) {
-                                                      allergyList
-                                                          .add(doc.documentID);
-                                                    }).then((_) {
-                                                      Firestore.instance
-                                                          .collection('users')
-                                                          .document(appState
-                                                                  ?.firebaseUserAuth
-                                                                  ?.uid ??
-                                                              "")
-                                                          .updateData({
-                                                        'allergies': allergyList
-                                                      });
-                                                      setState(() {});
-                                                    }).catchError((e) {
-                                                      print(e);
-                                                    });
-                                                  } else {
-                                                    print("query not empty");
-                                                    List<String> keys =
-                                                        allergyMap.keys
-                                                            .toList();
-                                                    print(keys);
-                                                    for (var key in keys) {
-                                                      if (allergyMap[key] ==
-                                                          val) {
-                                                        allergyList.add(key);
-                                                        break;
-                                                      }
-                                                    }
-                                                    Firestore.instance
-                                                        .collection("users")
+                                                        .collection('users')
                                                         .document(appState
                                                                 ?.firebaseUserAuth
                                                                 ?.uid ??
                                                             "")
                                                         .updateData({
                                                       'allergies': allergyList
+                                                    }).then((_) {
+                                                      setState(() {});
                                                     });
-                                                  }
-                                                  setState(() {});
-                                                });
-                                                Navigator.of(context).pop();
-                                              });
-                                            });
-                                      }));
-                                  return Card(
-                                      child: Column(children: tiles.toList()));
-                                } else {
-                                  //else -> User Allergy list is empty; carry out instructions below.
-                                  return Card(
-                                      child: ListTile(
-                                          title: Text(
-                                              "No Allergies (Click here to add)"),
-                                          onTap: () {
-                                            showDialog(
-                                                context: context,
-                                                builder: (context) {
-                                                  return AlertTextbox(
-                                                      "Add Allergy",
-                                                      null,
-                                                      "",
-                                                      null,
-                                                      "Cancel",
-                                                      "Add",
-                                                      null, (val) {
-                                                    Navigator.of(context).pop();
+                                                    Navigator.of(context)
+                                                        .pop(); //after delete
                                                   }, (val) {
-                                                    print(
-                                                        'beginning add functionality');
+                                                    // cancel
+                                                    Navigator.of(context)
+                                                        .pop(); // cancel
+                                                  }, (val) {
                                                     Firestore.instance
                                                         .collection('allergies')
-                                                        .where("name",
-                                                            isEqualTo: val)
-                                                        .getDocuments()
-                                                        .then((query) {
-                                                      if (query
-                                                          .documents.isEmpty) {
+                                                        .document(el ?? "")
+                                                        .updateData({
+                                                      "name": val
+                                                    }).then((_) {
+                                                      setState(() {});
+                                                    });
+                                                    Navigator.of(context).pop();
+                                                  });
+                                                });
+                                          }));
+                                      total.add(Divider(
+                                          thickness: 1,
+                                          indent: 10,
+                                          endIndent: 10,
+                                          height: 1));
+                                      return total;
+                                    });
+                                    tiles.add(ListTile(
+                                        title: Text("+ Add New"),
+                                        dense: true,
+                                        onTap: () {
+                                          showDialog(
+                                              context: context,
+                                              builder: (context) {
+                                                return AlertTextbox(
+                                                    "Add Allergy",
+                                                    null,
+                                                    "",
+                                                    null,
+                                                    "Cancel",
+                                                    "Add",
+                                                    null, (val) {
+                                                  Navigator.of(context).pop();
+                                                }, (val) {
+                                                  print(
+                                                      'beginning add functionality');
+                                                  Firestore.instance
+                                                      .collection('allergies')
+                                                      .where("name",
+                                                          isEqualTo: val)
+                                                      .getDocuments()
+                                                      .then((query) {
+                                                    if (query
+                                                        .documents.isEmpty) {
+                                                      Firestore.instance
+                                                          .collection(
+                                                              "allergies")
+                                                          .add({
+                                                        "name": val
+                                                      }).then((doc) {
+                                                        allergyList.add(
+                                                            doc.documentID);
+                                                      }).then((_) {
                                                         Firestore.instance
-                                                            .collection(
-                                                                "allergies")
-                                                            .add({
-                                                          "name": val
-                                                        }).then((doc) {
-                                                          allergyList.add(
-                                                              doc.documentID);
-                                                        }).then((_) {
-                                                          Firestore.instance
-                                                              .collection(
-                                                                  'users')
-                                                              .document(appState
-                                                                      ?.firebaseUserAuth
-                                                                      ?.uid ??
-                                                                  "")
-                                                              .updateData({
-                                                            'allergies':
-                                                                allergyList
-                                                          });
-                                                          setState(() {});
-                                                        }).catchError((e) {
-                                                          print(e);
-                                                        });
-                                                      } else {
-                                                        print(
-                                                            "query not empty");
-                                                        List<String> keys =
-                                                            allergyMap.keys
-                                                                .toList();
-                                                        print(keys);
-                                                        for (var key in keys) {
-                                                          if (allergyMap[key] ==
-                                                              val) {
-                                                            allergyList
-                                                                .add(key);
-                                                            break;
-                                                          }
-                                                        }
-                                                        Firestore.instance
-                                                            .collection("users")
+                                                            .collection('users')
                                                             .document(appState
                                                                     ?.firebaseUserAuth
                                                                     ?.uid ??
@@ -774,14 +676,140 @@ class _PatientHomeState extends State<PatientHome> {
                                                           'allergies':
                                                               allergyList
                                                         });
+                                                        setState(() {});
+                                                      }).catchError((e) {
+                                                        print(e);
+                                                      });
+                                                    } else {
+                                                      print("query not empty");
+                                                      List<String> keys =
+                                                          allergyMap.keys
+                                                              .toList();
+                                                      print(keys);
+                                                      for (var key in keys) {
+                                                        if (allergyMap[key] ==
+                                                            val) {
+                                                          allergyList.add(key);
+                                                          break;
+                                                        }
                                                       }
-                                                      setState(() {});
-                                                    });
-                                                    Navigator.of(context).pop();
+                                                      Firestore.instance
+                                                          .collection("users")
+                                                          .document(appState
+                                                                  ?.firebaseUserAuth
+                                                                  ?.uid ??
+                                                              "")
+                                                          .updateData({
+                                                        'allergies': allergyList
+                                                      });
+                                                    }
+                                                    setState(() {});
                                                   });
+                                                  Navigator.of(context).pop();
                                                 });
-                                          },
-                                          dense: true));
+                                              });
+                                        }));
+                                    return Card(
+                                        child:
+                                            Column(children: tiles.toList()));
+                                  } else {
+                                    //else -> User Allergy list is empty; carry out instructions below.
+                                    return Card(
+                                        child: ListTile(
+                                            title: Text(
+                                                "No Allergies (Click here to add)"),
+                                            onTap: () {
+                                              showDialog(
+                                                  context: context,
+                                                  builder: (context) {
+                                                    return AlertTextbox(
+                                                        "Add Allergy",
+                                                        null,
+                                                        "",
+                                                        null,
+                                                        "Cancel",
+                                                        "Add",
+                                                        null, (val) {
+                                                      Navigator.of(context)
+                                                          .pop();
+                                                    }, (val) {
+                                                      print(
+                                                          'beginning add functionality');
+                                                      Firestore.instance
+                                                          .collection(
+                                                              'allergies')
+                                                          .where("name",
+                                                              isEqualTo: val)
+                                                          .getDocuments()
+                                                          .then((query) {
+                                                        if (query.documents
+                                                            .isEmpty) {
+                                                          Firestore.instance
+                                                              .collection(
+                                                                  "allergies")
+                                                              .add({
+                                                            "name": val
+                                                          }).then((doc) {
+                                                            allergyList.add(
+                                                                doc.documentID);
+                                                          }).then((_) {
+                                                            Firestore.instance
+                                                                .collection(
+                                                                    'users')
+                                                                .document(appState
+                                                                        ?.firebaseUserAuth
+                                                                        ?.uid ??
+                                                                    "")
+                                                                .updateData({
+                                                              'allergies':
+                                                                  allergyList
+                                                            });
+                                                            setState(() {});
+                                                          }).catchError((e) {
+                                                            print(e);
+                                                          });
+                                                        } else {
+                                                          print(
+                                                              "query not empty");
+                                                          List<String> keys =
+                                                              allergyMap.keys
+                                                                  .toList();
+                                                          print(keys);
+                                                          for (var key
+                                                              in keys) {
+                                                            if (allergyMap[
+                                                                    key] ==
+                                                                val) {
+                                                              allergyList
+                                                                  .add(key);
+                                                              break;
+                                                            }
+                                                          }
+                                                          Firestore.instance
+                                                              .collection(
+                                                                  "users")
+                                                              .document(appState
+                                                                      ?.firebaseUserAuth
+                                                                      ?.uid ??
+                                                                  "")
+                                                              .updateData({
+                                                            'allergies':
+                                                                allergyList
+                                                          });
+                                                        }
+                                                        setState(() {});
+                                                      });
+                                                      Navigator.of(context)
+                                                          .pop();
+                                                    });
+                                                  });
+                                            },
+                                            dense: true));
+                                  }
+                                } else {
+                                  return Container(
+                                    child: Text("No Allergies"),
+                                  );
                                 }
                               }),
                         ],
