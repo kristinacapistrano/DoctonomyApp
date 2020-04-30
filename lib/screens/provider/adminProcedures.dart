@@ -77,10 +77,35 @@ class _AdminProceduresState extends State<AdminProcedures> {
                         title: Text(name),
                         subtitle: Text(description),
                         onTap: () {
-                          print("Clicked Procedure: " + document.documentID);
-                          Firestore.instance.runTransaction((Transaction myTransaction) async {
-                            await myTransaction.delete(snapshot.data.documents[index].reference);
+                          showDialog(context: context,
+                          builder: (BuildContext context) {
+                            return AlertDialog(
+                              title: new Text("Delete Procedure"),
+                              content:new Text("Are you sure you want to proceed?"),
+                              actions: <Widget>[
+                                FlatButton(
+                                  child: Text("YES"),
+                                  onPressed: () {
+
+                                    print("Clicked Procedure: " + document.documentID);
+                                    Firestore.instance.runTransaction((Transaction myTransaction) async {
+                                      await myTransaction.delete(snapshot.data.documents[index].reference);
+                                    });
+                                    Navigator.of(context).pop();
+                                  }
+                                ),
+                                FlatButton(
+                                    child: Text("NO"),
+                                    onPressed: () {
+                                      print("Clicked Procedure: " + document.documentID);
+                                      Navigator.of(context).pop();
+                                    }
+                                )
+                              ],
+
+                            );
                           });
+
                         }
                       )
                   );
