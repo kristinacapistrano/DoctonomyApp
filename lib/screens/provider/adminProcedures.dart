@@ -78,6 +78,9 @@ class _AdminProceduresState extends State<AdminProcedures> {
                         subtitle: Text(description),
                         onTap: () {
                           print("Clicked Procedure: " + document.documentID);
+                          Firestore.instance.runTransaction((Transaction myTransaction) async {
+                            await myTransaction.delete(snapshot.data.documents[index].reference);
+                          });
                         }
                       )
                   );
