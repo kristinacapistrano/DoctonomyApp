@@ -210,21 +210,24 @@ class _EditReminderState extends State<EditReminder> {
                           .setData({
                         'reminders': FieldValue.arrayRemove([reminder])
                       }, merge: true).then((_) {
-                        DateTime startdatetime = reminder["startDateTime"].toDate();
-                        DateTime timeDate = DateFormat("HH:mm").parse(time.text);
+                        DateTime startdatetime =
+                            reminder["startDateTime"].toDate();
+                        DateTime timeDate =
+                            DateFormat("H:mm a").parse(time.text);
                         DateTime nextTriggerDate = DateTime(
                           startdatetime.year,
                           startdatetime.month,
                           startdatetime.day,
                           timeDate.hour,
                           timeDate.minute,
-                        );
+                        ).toLocal();
                         var myReminder = {
                           'endDateTime': DateFormat("MM/dd/yyyy HH:mm:ss")
-                              .parse(enddate.text + " 23:59:59").toLocal(),
+                              .parse(enddate.text + " 23:59:59")
+                              .toLocal(),
                           'startDateTime': startdatetime,
                           'time': DateFormat("H:mm a")
-                              .format(DateFormat("h:mm a").parse(time.text)),
+                              .format(DateFormat("H:mm a").parse(time.text)),
                           'name': name.text,
                           'interval': int.parse(days.text),
                           'checklist': [],
