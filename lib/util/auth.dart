@@ -1,13 +1,19 @@
 import 'dart:async';
-//import 'dart:convert';
-import 'package:firebase_auth/firebase_auth.dart';
+
 import 'package:cloud_firestore/cloud_firestore.dart';
-import '../models/user.dart';
-//import 'package:flutter_firebase_auth_example/models/settings.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/services.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
-enum authProblems { UserNotFound, PasswordNotValid, NetworkError, UnknownError }
+import '../models/user.dart';
+
+enum authProblems {
+  UserNotFound,
+  PasswordNotValid,
+  NetworkError,
+  UnknownError,
+  reset
+}
 
 class Auth {
   static Future<String> signUp(String email, String password) async {
@@ -28,6 +34,19 @@ class Auth {
         /*_addSettings(new Settings(
           settingsId: user.userId,
         ));*/
+      } else {
+        print("user ${user.firstName} ${user.email} exists");
+      }
+    });
+  }
+
+  static void updateUser(User user) async {
+    checkUserExist(user.userId).then((value) {
+      if (value) {
+        print("user ${user.firstName} ${user.email} added");
+        Firestore.instance
+            .document("users/${user.userId}")
+            .setData(user.toJson(), merge: true);
       } else {
         print("user ${user.firstName} ${user.email} exists");
       }
@@ -56,18 +75,27 @@ class Auth {
 //  }
 
   static Future<String> signIn(String email, String password) async {
-    AuthResult result = await FirebaseAuth.instance.signInWithEmailAndPassword(email: email, password: password);
+    AuthResult result = await FirebaseAuth.instance
+        .signInWithEmailAndPassword(email: email, password: password);
     FirebaseUser user = result.user;
     return user.uid;
   }
 
   static Future<User> getUserFirestore(String userId) async {
     if (userId != null) {
-      return Firestore.instance
-          .collection('users')
-          .document(userId)
-          .get()
-          .then((documentSnapshot) => User.fromDocument(documentSnapshot));
+      User user;
+      DocumentReference docRef =
+          Firestore.instance.collection('users').document(userId);
+
+      await docRef.get().then((docSnapshot) async {
+        if (docSnapshot.exists) {
+          user = User.fromDocument(docSnapshot);
+        } else {
+          await docRef.setData({});
+          user = await getUserFirestore(userId);
+        }
+      });
+      return user;
     } else {
       print('firestore userId can not be null');
       return null;
@@ -134,7 +162,7 @@ class Auth {
     FirebaseAuth.instance.signOut();
   }
 
-  static Future<void> forgotPasswordEmail(String email) async {
+  static Future<void> sendForgotPasswordEmail(String email) async {
     await FirebaseAuth.instance.sendPasswordResetEmail(email: email);
   }
 
@@ -160,42 +188,4 @@ class Auth {
       return 'Unknown error occured.';
     }
   }
-
-/*static Stream<User> getUserFirestore(String userId) {
-    print("...getUserFirestore...");
-    if (userId != null) {
-      //try firestore
-      return Firestore.instance
-          .collection("users")
-          .where("userId", isEqualTo: userId)
-          .snapshots()
-          .map((QuerySnapshot snapshot) {
-        return snapshot.documents.map((doc) {
-          return User.fromDocument(doc);
-        }).first;
-      });
-    } else {
-      print('firestore user not found');
-      return null;
-    }
-  }*/
-
-/*static Stream<Settings> getSettingsFirestore(String settingsId) {
-    print("...getSettingsFirestore...");
-    if (settingsId != null) {
-      //try firestore
-      return Firestore.instance
-          .collection("settings")
-          .where("settingsId", isEqualTo: settingsId)
-          .snapshots()
-          .map((QuerySnapshot snapshot) {
-        return snapshot.documents.map((doc) {
-          return Settings.fromDocument(doc);
-        }).first;
-      });
-    } else {
-      print('no firestore settings available');
-      return null;
-    }
-  }*/
 }
