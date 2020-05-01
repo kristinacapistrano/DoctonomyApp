@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:cloud_firestore/cloud_firestore.dart';
 
 import '../../models/state.dart';
 import '../../util/state_widget.dart';
@@ -7,15 +6,12 @@ import '../../util/state_widget.dart';
 class PatientProfile extends StatefulWidget {
   static const String id = 'patient_profile';
 
-
   @override
   _PatientProfileState createState() => _PatientProfileState();
-
 }
 
 class _PatientProfileState extends State<PatientProfile> {
   StateModel appState;
-
 
   @override
   void initState() {
@@ -45,10 +41,8 @@ class _PatientProfileState extends State<PatientProfile> {
     final emailLabel = Text('Email: ');
     final nameLabel = Text('Name: ');
 
-
-    final fname = appState?.user.firstName;
-    final lname = appState?.user.lastName;
-
+    final fname = appState?.user?.firstName ?? "";
+    final lname = appState?.user?.lastName ?? "";
 
     return Scaffold(
       body: Container(
@@ -74,7 +68,8 @@ class _PatientProfileState extends State<PatientProfile> {
                   ),
                   SizedBox(height: 25.0),
                   nameLabel,
-                  Text(fname+" " +lname, style: TextStyle(fontWeight: FontWeight.bold)),
+                  Text(fname + " " + lname,
+                      style: TextStyle(fontWeight: FontWeight.bold)),
                   SizedBox(height: 12.0),
                   userIdLabel,
                   Text(userId, style: TextStyle(fontWeight: FontWeight.bold)),
